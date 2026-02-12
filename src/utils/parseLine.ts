@@ -7,7 +7,7 @@ import { Message } from '../types/message';
  * [12/11/23, 9:45:30 pm] John: Hello
  */
 
-const regex = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?\s?(am|pm|AM|PM)?)\]?)\s(?:-|:)?\s?([^:]+)(?::\s(.*))?$/i;
+const regex = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]?)\s(?:-|:)?\s?([^:]+)(?::\s(.*))?$/i;
 
 export interface ParsedLine {
   date: string;
