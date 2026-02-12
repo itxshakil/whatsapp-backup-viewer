@@ -1,13 +1,13 @@
 import React from 'react';
 import { useChatStore } from '../store/chatStore';
-import { User, MessageSquare, MoreVertical, Search, LogOut } from 'lucide-react';
+import { User, MessageSquare, MoreVertical, Search, LogOut, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { SidebarHeader } from './SidebarHeader';
 import { SearchBar } from './SearchBar';
 
 export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
-  const { metadata, clearChat, savedChats, loadChat, deleteChat } = useChatStore();
+  const { metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData } = useChatStore();
 
   const handleCloseChat = () => {
     clearChat();
@@ -123,8 +123,21 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Footer / Logout */}
-      <div className="p-4 border-t border-gray-100 dark:border-gray-800">
+      {/* Footer / Actions */}
+      <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
+        {savedChats.length > 0 && (
+          <button
+            onClick={() => {
+              if (window.confirm('Are you sure you want to clear ALL saved chats? This cannot be undone.')) {
+                clearAllData();
+              }
+            }}
+            className="flex items-center justify-center gap-2 w-full py-2 text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-xs font-medium"
+          >
+            <Trash2 size={14} />
+            Clear All Data
+          </button>
+        )}
         <button
           onClick={handleCloseChat}
           className="flex items-center justify-center gap-2 w-full py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-sm font-medium"

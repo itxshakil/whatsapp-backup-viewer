@@ -8,7 +8,7 @@ import { BarChart3, ChevronDown, Download, MessageSquare, MoreVertical, Phone, S
 import { AnalyticsView } from './components/AnalyticsView';
 
 const ChatContent = () => {
-  const { messages, metadata, searchQuery } = useChatStore();
+  const { messages, metadata, searchQuery, savedChats, loadChat } = useChatStore();
   const [showAnalytics, setShowAnalytics] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [showScrollBottom, setShowScrollBottom] = React.useState(false);
@@ -34,6 +34,21 @@ const ChatContent = () => {
       setTimeout(scrollToBottom, 100);
     }
   }, [metadata?.fileName, searchQuery, showAnalytics]);
+
+  // Handle URL actions (PWA Shortcuts)
+  const hasHandledAction = React.useRef(false);
+  React.useEffect(() => {
+    if (hasHandledAction.current) return;
+    
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'recent' && savedChats.length > 0) {
+      const mostRecent = savedChats[0];
+      if (mostRecent.id) {
+        loadChat(mostRecent.id);
+        hasHandledAction.current = true;
+      }
+    }
+  }, [savedChats, loadChat]);
 
   if (!metadata) {
     return (
