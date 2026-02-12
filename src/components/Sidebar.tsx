@@ -6,8 +6,13 @@ import dayjs from 'dayjs';
 import { SidebarHeader } from './SidebarHeader';
 import { SearchBar } from './SearchBar';
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const { metadata, clearChat, messages } = useChatStore();
+
+  const handleCloseChat = () => {
+    clearChat();
+    if (onClose) onClose();
+  };
 
   if (!metadata) {
     return (
@@ -69,7 +74,7 @@ export const Sidebar: React.FC = () => {
       {/* Footer / Logout */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800">
         <button
-          onClick={clearChat}
+          onClick={handleCloseChat}
           className="flex items-center justify-center gap-2 w-full py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-sm font-medium"
         >
           <LogOut size={16} />

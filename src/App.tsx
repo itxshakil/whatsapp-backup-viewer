@@ -35,35 +35,38 @@ const ChatContent = () => {
 
   if (!metadata) {
     return (
-      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex-1 flex items-center justify-center p-4 animate-fade-in">
         <FileUploader />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full animate-fade-in">
       {/* Chat Header */}
       <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700">
-        <div className="flex items-center">
-          <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3">
+        <div className="flex items-center min-w-0">
+          {/* Mobile Spacer for Toggle Button */}
+          <div className="w-10 md:hidden flex-shrink-0"></div>
+          
+          <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
             <span className="text-gray-600 dark:text-gray-300 font-bold">{metadata.fileName.charAt(0).toUpperCase()}</span>
           </div>
-          <div className="flex flex-col">
-            <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate max-w-[200px]">
+          <div className="flex flex-col min-w-0">
+            <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate">
               {metadata.fileName}
             </h3>
-            <p className="text-[11px] text-gray-500 dark:text-[#8696a0]">
+            <p className="text-[11px] text-gray-500 dark:text-[#8696a0] truncate">
               {metadata.participants.length} participants
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-5 text-gray-500 dark:text-[#8696a0]">
-          <Video size={20} className="cursor-not-allowed opacity-50" />
-          <Phone size={18} className="cursor-not-allowed opacity-50" />
-          <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1"></div>
-          <Search size={20} className="cursor-pointer" />
-          <MoreVertical size={20} className="cursor-pointer" />
+        <div className="flex items-center gap-3 md:gap-5 text-gray-500 dark:text-[#8696a0] flex-shrink-0">
+          <Video size={18} className="cursor-not-allowed opacity-50 hidden sm:block" />
+          <Phone size={16} className="cursor-not-allowed opacity-50 hidden sm:block" />
+          <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block"></div>
+          <Search size={18} className="cursor-pointer" />
+          <MoreVertical size={18} className="cursor-pointer" />
         </div>
       </div>
 

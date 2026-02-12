@@ -69,7 +69,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   }
 
   return (
-    <div className="flex flex-col px-4 py-4 md:px-16 lg:px-24">
+    <div className="flex flex-col px-2 py-4 md:px-16 lg:px-24 max-w-full">
       {renderedMessages}
     </div>
   );

@@ -15,9 +15,10 @@ export const normalizeMessages = (rawText: string): Message[] => {
     if (!line.trim() && !currentMessage) return;
 
     // Detect and remove RTL/LTR marks that sometimes appear in WhatsApp exports
+    // We only trim for parseLine detection to handle cases with leading/trailing spaces
     const cleanLine = line.replace(/[\u200e\u200f]/g, '');
 
-    const parsed = parseLine(cleanLine);
+    const parsed = parseLine(cleanLine.trim());
 
     if (parsed) {
       // New message starts
@@ -38,7 +39,7 @@ export const normalizeMessages = (rawText: string): Message[] => {
       ]).toDate();
 
       currentMessage = {
-        id: `msg-${index}`,
+        id: `msg-${index}-${Math.random().toString(36).substr(2, 9)}`,
         timestamp,
         sender: parsed.sender,
         content: parsed.content,

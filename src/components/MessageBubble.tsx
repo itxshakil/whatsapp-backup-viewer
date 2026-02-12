@@ -46,7 +46,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div className={`flex w-full mb-1 ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'}`}>
       <div
-        className={`relative max-w-[85%] sm:max-w-[65%] px-2.5 py-1.5 shadow-sm ${
+        className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm ${
           isMe
             ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-l-lg rounded-br-lg ' + (showTail ? 'rounded-tr-none' : 'rounded-tr-lg')
             : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] rounded-r-lg rounded-bl-lg ' + (showTail ? 'rounded-tl-none' : 'rounded-tl-lg')
