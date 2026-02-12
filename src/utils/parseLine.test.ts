@@ -43,4 +43,28 @@ describe('parseLine', () => {
       isSystem: false
     });
   });
+
+  it('should handle square bracket format', () => {
+    const line = '[12/11/23, 9:45:30 pm] John: Hello';
+    const result = parseLine(line);
+    expect(result).toEqual({
+      date: '12/11/23',
+      time: '9:45:30 pm',
+      sender: 'John',
+      content: 'Hello',
+      isSystem: false
+    });
+  });
+
+  it('should handle system message in square bracket format', () => {
+    const line = '[12/11/23, 9:45:30 pm] John joined using invite link';
+    const result = parseLine(line);
+    expect(result).toEqual({
+      date: '12/11/23',
+      time: '9:45:30 pm',
+      sender: 'System',
+      content: 'John joined using invite link',
+      isSystem: true
+    });
+  });
 });

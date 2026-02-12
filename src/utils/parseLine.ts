@@ -4,9 +4,10 @@ import { Message } from '../types/message';
  * WhatsApp export format example:
  * 12/11/23, 9:45 pm - John: Hello
  * 12/11/23, 9:46 pm - Messages are end-to-end encrypted
+ * [12/11/23, 9:45:30 pm] John: Hello
  */
 
-const regex = /^(\d{1,4}\/\d{1,2}\/\d{1,4}),\s(\d{1,2}:\d{2}(?::\d{2})?\s?(am|pm|AM|PM)?)\s-\s([^:]+)(?::\s(.*))?$/i;
+const regex = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?\s?(am|pm|AM|PM)?)\]?)\s(?:-|:)?\s?([^:]+)(?::\s(.*))?$/i;
 
 export interface ParsedLine {
   date: string;

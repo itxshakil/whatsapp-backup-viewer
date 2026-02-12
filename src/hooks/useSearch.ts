@@ -8,7 +8,7 @@ export const useSearch = (messages: Message[], query: string) => {
     const lowerQuery = query.toLowerCase();
     return messages.filter(
       (m) =>
-        m.type === 'text' &&
+        (m.type === 'text' || m.type === 'system' || m.type === 'document') &&
         (m.content.toLowerCase().includes(lowerQuery) ||
          m.sender.toLowerCase().includes(lowerQuery))
     );

@@ -45,4 +45,29 @@ Line 3`;
     expect(messages).toHaveLength(1);
     expect(messages[0].content).toBe('Line 1\n\nLine 3');
   });
+
+  it('should detect media attachments', () => {
+    const rawText = `12/11/23, 9:45 pm - John: <attached: image.jpg>
+12/11/23, 9:46 pm - Jane: video.mp4 (file attached)
+12/11/23, 9:47 pm - John: document.pdf <attached>`;
+    const messages = normalizeMessages(rawText);
+
+    expect(messages).toHaveLength(3);
+    expect(messages[0].type).toBe('image');
+    expect(messages[0].content).toBe('image.jpg');
+    expect(messages[1].type).toBe('video');
+    expect(messages[1].content).toBe('video.mp4');
+    expect(messages[2].type).toBe('document');
+    expect(messages[2].content).toBe('document.pdf');
+  });
+
+  it('should handle square bracket format with seconds', () => {
+    const rawText = `[12/11/23, 9:45:30 pm] John: Hello`;
+    const messages = normalizeMessages(rawText);
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0].sender).toBe('John');
+    expect(messages[0].content).toBe('Hello');
+    expect(messages[0].timestamp.getSeconds()).toBe(30);
+  });
 });

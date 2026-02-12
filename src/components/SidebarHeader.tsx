@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { User, MoreVertical, Moon, Sun } from 'lucide-react';
+import { User, MoreVertical, Moon, Sun, Download } from 'lucide-react';
+import { useChatStore } from '../store/chatStore';
 
 export const SidebarHeader: React.FC = () => {
+  const { messages, metadata } = useChatStore();
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark') || 
@@ -34,10 +36,25 @@ export const SidebarHeader: React.FC = () => {
           {isDark ? <Sun size={20} /> : <Moon size={20} />}
         </button>
         <button 
-          className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
-          title="Settings"
+          className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors disabled:opacity-30"
+          title="Export as JSON"
+          disabled={!metadata || messages.length === 0}
+          onClick={() => {
+            if (!metadata || messages.length === 0) return;
+            const data = {
+              metadata,
+              messages
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${metadata.fileName.replace('.txt', '')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
         >
-          <MoreVertical size={20} />
+          <Download size={20} />
         </button>
       </div>
     </div>

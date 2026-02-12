@@ -1,4 +1,5 @@
 import React from 'react';
+import { FileIcon, ImageIcon, VideoIcon, MusicIcon, Download } from 'lucide-react';
 import { Message } from '../types/message';
 import { useChatStore } from '../store/chatStore';
 
@@ -30,6 +31,65 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           ) : part
         )}
       </>
+    );
+  };
+
+  const renderMediaContent = () => {
+    const isImage = message.type === 'image';
+    const isVideo = message.type === 'video';
+    const isAudio = message.type === 'audio';
+    const isDoc = message.type === 'document';
+
+    if (!isImage && !isVideo && !isAudio && !isDoc) return null;
+
+    return (
+      <div className="mb-2 overflow-hidden rounded-lg bg-black/5 dark:bg-black/20">
+        {isImage && (
+          <div className="relative group">
+            <div className="flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-800">
+              <ImageIcon className="w-12 h-12 text-gray-400" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] bg-black/50 text-white px-2 py-1 rounded-full flex items-center gap-1">
+                <ImageIcon size={12} /> IMAGE
+              </span>
+            </div>
+          </div>
+        )}
+        {isVideo && (
+          <div className="relative group flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-800">
+            <VideoIcon className="w-12 h-12 text-gray-400" />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[10px] bg-black/50 text-white px-2 py-1 rounded-full flex items-center gap-1">
+                <VideoIcon size={12} /> VIDEO
+              </span>
+            </div>
+          </div>
+        )}
+        {isAudio && (
+          <div className="p-3 flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
+              <MusicIcon size={20} />
+            </div>
+            <div className="flex-1">
+              <div className="h-1 w-full bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className="h-full w-1/3 bg-green-500"></div>
+              </div>
+              <p className="text-[10px] mt-1 text-gray-500 dark:text-gray-400">Audio Message</p>
+            </div>
+          </div>
+        )}
+        {isDoc && (
+          <div className="p-3 flex items-center gap-3 bg-black/5 dark:bg-white/5">
+            <FileIcon className="text-gray-500 dark:text-gray-400" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{message.content}</p>
+              <p className="text-[10px] text-gray-500 uppercase">Document</p>
+            </div>
+            <Download size={18} className="text-teal-600 dark:text-teal-500 cursor-not-allowed" />
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -77,8 +137,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
 
         <div className="relative min-w-[80px] pb-1">
+          {renderMediaContent()}
           <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words pr-[2px]">
-            {highlightText(message.content, searchQuery)}
+            {message.type === 'text' ? highlightText(message.content, searchQuery) : null}
             <span className="inline-block w-[50px]"></span>
           </div>
           <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0 bottom-[-4px] flex-shrink-0 select-none pb-0.5 pr-0.5">
