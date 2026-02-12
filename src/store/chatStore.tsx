@@ -6,6 +6,8 @@ interface ChatContextType {
   metadata: ChatMetadata | null;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  error: string | null;
+  setError: (error: string | null) => void;
   setChatData: (messages: Message[], metadata: ChatMetadata) => void;
   clearChat: () => void;
 }
@@ -16,21 +18,24 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [metadata, setMetadata] = useState<ChatMetadata | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const setChatData = (newMessages: Message[], newMetadata: ChatMetadata) => {
     setMessages(newMessages);
     setMetadata(newMetadata);
     setSearchQuery(''); // Reset search on new upload
+    setError(null);
   };
 
   const clearChat = () => {
     setMessages([]);
     setMetadata(null);
     setSearchQuery('');
+    setError(null);
   };
 
   return (
-    <ChatContext.Provider value={{ messages, metadata, searchQuery, setSearchQuery, setChatData, clearChat }}>
+    <ChatContext.Provider value={{ messages, metadata, searchQuery, setSearchQuery, error, setError, setChatData, clearChat }}>
       {children}
     </ChatContext.Provider>
   );

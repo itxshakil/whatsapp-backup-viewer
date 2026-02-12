@@ -1,36 +1,56 @@
 import React, { useCallback } from 'react';
 import { useChatStore } from '../store/chatStore';
 import { normalizeMessages } from '../utils/normalizeMessages';
-import { Upload } from 'lucide-react';
+import { Upload, AlertCircle } from 'lucide-react';
 
 export const FileUploader: React.FC = () => {
-  const { setChatData } = useChatStore();
+  const { setChatData, setError, error } = useChatStore();
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    setError(null);
+
     if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
-      alert('Please upload a .txt file');
+      setError('Please upload a .txt file (WhatsApp export)');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const text = e.target?.result as string;
-      const messages = normalizeMessages(text);
-      
-      const participants = Array.from(new Set(messages.map(m => m.sender)))
-        .filter(s => s !== 'System');
+      try {
+        const text = e.target?.result as string;
+        if (!text || text.trim().length === 0) {
+          setError('The uploaded file is empty.');
+          return;
+        }
 
-      setChatData(messages, {
-        fileName: file.name,
-        participants,
-        messageCount: messages.length
-      });
+        const messages = normalizeMessages(text);
+        
+        if (messages.length === 0) {
+          setError('Could not find any valid WhatsApp messages in this file. Please make sure it is a correct WhatsApp "Export Chat" file.');
+          return;
+        }
+
+        const participants = Array.from(new Set(messages.map(m => m.sender)))
+          .filter(s => s !== 'System');
+
+        setChatData(messages, {
+          fileName: file.name,
+          participants,
+          messageCount: messages.length
+        });
+      } catch (err) {
+        console.error('Parsing error:', err);
+        setError('An error occurred while parsing the file. It might be corrupted or in an unsupported format.');
+      }
+    };
+    reader.onerror = () => {
+      setError('Failed to read the file.');
     };
     reader.readAsText(file);
-  }, [setChatData]);
+  }, [setChatData, setError]);
 
   return (
     <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-300 rounded-lg bg-white/50 hover:bg-white/80 transition-colors">
@@ -49,6 +69,13 @@ export const FileUploader: React.FC = () => {
           onChange={handleFileUpload}
         />
       </label>
+
+      {error && (
+        <div className="mt-6 flex items-start gap-2 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm max-w-[300px]">
+          <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+          <p>{error}</p>
+        </div>
+      )}
     </div>
   );
 };
