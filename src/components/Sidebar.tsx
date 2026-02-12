@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useChatStore } from '../store/chatStore';
-import { User, MessageSquare, MoreVertical, Search, LogOut, Trash2 } from 'lucide-react';
+import { User, MessageSquare, MoreVertical, Search, LogOut, Trash2, Calendar } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { SidebarHeader } from './SidebarHeader';
 import { SearchBar } from './SearchBar';
 
 export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
-  const { metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData } = useChatStore();
+  const { messages, metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData } = useChatStore();
 
   const handleCloseChat = () => {
     clearChat();
     if (onClose) onClose();
+  };
+
+  const availableDates = useMemo(() => {
+    if (!messages.length) return [];
+    const dates = new Set<string>();
+    messages.forEach(msg => {
+      dates.add(dayjs(msg.timestamp).format('YYYY-MM-DD'));
+    });
+    return Array.from(dates).sort().reverse(); // Newest first
+  }, [messages]);
+
+  const jumpToDate = (date: string) => {
+    const element = document.getElementById(`date-${date}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (onClose) onClose();
+    }
   };
 
   if (!metadata) {
@@ -121,6 +138,30 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
           </div>
         </div>
+
+        {/* Date Jump Section */}
+        {availableDates.length > 1 && (
+          <div className="p-4 bg-white dark:bg-[#111b21] border-t border-gray-100 dark:border-gray-800">
+            <h4 className="text-xs font-semibold text-teal-600 dark:text-teal-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Calendar size={14} />
+              Jump to Date
+            </h4>
+            <div className="grid grid-cols-2 gap-2 max-h-[150px] overflow-y-auto pr-1">
+              {availableDates.slice(0, 12).map(date => (
+                <button
+                  key={date}
+                  onClick={() => jumpToDate(date)}
+                  className="text-[11px] py-1.5 px-2 bg-gray-50 dark:bg-[#202c33] hover:bg-teal-50 dark:hover:bg-teal-900/20 text-gray-600 dark:text-[#e9edef] rounded border border-gray-100 dark:border-gray-700 transition-colors text-center truncate"
+                >
+                  {dayjs(date).format('MMM D, YYYY')}
+                </button>
+              ))}
+            </div>
+            {availableDates.length > 12 && (
+              <p className="text-[10px] text-gray-400 mt-2 text-center italic">Scroll for more dates</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Footer / Actions */}

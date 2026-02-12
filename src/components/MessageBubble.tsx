@@ -1,7 +1,8 @@
 import React from 'react';
-import { FileIcon, ImageIcon, VideoIcon, MusicIcon, Download } from 'lucide-react';
+import { FileIcon, ImageIcon, VideoIcon, MusicIcon, Download, Copy, Check } from 'lucide-react';
 import { Message } from '../types/message';
 import { useChatStore } from '../store/chatStore';
+import { useState } from 'react';
 
 interface MessageBubbleProps {
   message: Message;
@@ -15,8 +16,37 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   showTail = true,
 }) => {
   const { searchQuery } = useChatStore();
+  const [copied, setCopied] = useState(false);
   const isSystem = message.type === 'system';
   const isMe = message.isCurrentUser;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(message.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const renderContentWithLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return highlightText(part, searchQuery);
+    });
+  };
 
   const highlightText = (text: string, highlight: string) => {
     if (!highlight.trim()) return text;
@@ -135,12 +165,23 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div className={`flex w-full mb-1 ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'}`}>
       <div
-        className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm ${
+        className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm group/bubble ${
           isMe
             ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-l-lg rounded-br-lg rounded-tr-none' : 'rounded-lg')
             : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')
         }`}
       >
+        {/* Copy Button */}
+        {!isSystem && (
+          <button
+            onClick={handleCopy}
+            className={`absolute top-1 ${isMe ? 'left-[-30px]' : 'right-[-30px]'} p-1.5 rounded-full bg-white/50 dark:bg-black/20 text-gray-500 dark:text-gray-400 opacity-0 group-hover/bubble:opacity-100 transition-opacity hover:bg-white dark:hover:bg-black/40`}
+            title="Copy message"
+          >
+            {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+          </button>
+        )}
+
         {/* Tail */}
         {showTail && (
           <div
@@ -170,7 +211,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         <div className="relative min-w-[80px]">
           {renderMediaContent()}
           <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-3">
-            {message.type === 'text' ? highlightText(message.content, searchQuery) : null}
+            {message.type === 'text' ? renderContentWithLinks(message.content) : null}
             <span className="inline-block w-[60px]"></span>
           </div>
           <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0.5 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1">

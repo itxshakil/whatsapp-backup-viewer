@@ -44,7 +44,10 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
       return (
         <React.Fragment key={message.id}>
           {showDateHeader && (
-            <div className="flex justify-center my-4 sticky top-2 z-10 pointer-events-none">
+            <div 
+              id={`date-${currentDate.format('YYYY-MM-DD')}`}
+              className="flex justify-center my-4 sticky top-2 z-10 pointer-events-none"
+            >
               <div className="bg-white/90 dark:bg-[#182229]/90 backdrop-blur-sm dark:text-[#8696a0] text-gray-600 text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm uppercase pointer-events-auto">
                 {dateLabel}
               </div>
