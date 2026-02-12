@@ -15,10 +15,20 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   showSender = true,
   showTail = true,
 }) => {
-  const { searchQuery } = useChatStore();
+  const { searchQuery, highlightedMessageId, setHighlightedMessageId } = useChatStore();
   const [copied, setCopied] = useState(false);
   const isSystem = message.type === 'system';
   const isMe = message.isCurrentUser;
+  const isHighlighted = highlightedMessageId === message.id;
+
+  React.useEffect(() => {
+    if (isHighlighted) {
+      const timer = setTimeout(() => {
+        setHighlightedMessageId(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isHighlighted, setHighlightedMessageId]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -163,9 +173,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   }
 
   return (
-    <div className={`flex w-full mb-1 ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'}`}>
+    <div 
+      id={`msg-${message.id}`}
+      className={`flex w-full mb-1 group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'} ${isHighlighted ? 'bg-teal-500/10 dark:bg-teal-500/20' : ''}`}
+    >
       <div
-        className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm group/bubble ${
+        className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm group/bubble ${isHighlighted ? 'ring-2 ring-teal-500/50' : ''} ${
           isMe
             ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-l-lg rounded-br-lg rounded-tr-none' : 'rounded-lg')
             : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')

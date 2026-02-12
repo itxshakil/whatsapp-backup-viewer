@@ -4,15 +4,21 @@ import { ChatLayout } from './components/ChatLayout';
 import { FileUploader } from './components/FileUploader';
 import { Sidebar } from './components/Sidebar';
 import { MessageList } from './components/MessageList';
-import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, MoreVertical, Phone, Search, Video } from 'lucide-react';
+import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, MoreVertical, Phone, Search, Video, ImageIcon } from 'lucide-react';
 import { AnalyticsView } from './components/AnalyticsView';
+import { MediaGallery } from './components/MediaGallery';
 
 const ChatContent = () => {
   const { messages, metadata, searchQuery, savedChats, loadChat } = useChatStore();
   const [showAnalytics, setShowAnalytics] = React.useState(false);
+  const [showMediaGallery, setShowMediaGallery] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [showScrollBottom, setShowScrollBottom] = React.useState(false);
   const [showScrollTop, setShowScrollTop] = React.useState(false);
+
+  const jumpToBottom = () => {
+    scrollToBottom();
+  };
 
   const scrollToBottom = () => {
     scrollRef.current?.scrollTo({
@@ -115,14 +121,29 @@ const ChatContent = () => {
           >
             <BarChart3 size={20} />
           </button>
+          <button 
+            onClick={() => setShowMediaGallery(true)}
+            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+            title="Media Gallery"
+          >
+            <ImageIcon size={20} />
+          </button>
           <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block"></div>
           <Search size={18} className="cursor-pointer" />
+          <button 
+            onClick={jumpToBottom}
+            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors sm:hidden"
+            title="Jump to Bottom"
+          >
+            <ChevronDown size={18} />
+          </button>
           <MoreVertical size={18} className="cursor-pointer" />
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 relative flex flex-col min-h-0">
+        {showMediaGallery && <MediaGallery onClose={() => setShowMediaGallery(false)} />}
         {showAnalytics ? (
           <AnalyticsView messages={messages} participants={metadata.participants} />
         ) : (
@@ -148,10 +169,10 @@ const ChatContent = () => {
             {showScrollBottom && (
               <button
                 onClick={scrollToBottom}
-                className="fixed bottom-6 right-6 w-10 h-10 bg-white dark:bg-[#202c33] shadow-md rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-20"
+                className="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-[#202c33] shadow-lg rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-30 border border-gray-100 dark:border-gray-700"
                 title="Scroll to bottom"
               >
-                <ChevronDown size={24} />
+                <ChevronDown size={28} />
               </button>
             )}
           </div>

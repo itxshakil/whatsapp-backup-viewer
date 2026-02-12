@@ -16,6 +16,8 @@ interface ChatContextType {
   loadChat: (id: number) => Promise<void>;
   deleteChat: (id: number) => Promise<void>;
   saveCurrentChat: () => Promise<void>;
+  highlightedMessageId: string | null;
+  setHighlightedMessageId: (id: string | null) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -36,6 +38,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   }, [messages]);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savedChats, setSavedChats] = useState<SavedChat[]>([]);
 
@@ -187,7 +190,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       savedChats,
       loadChat,
       deleteChat,
-      saveCurrentChat
+      saveCurrentChat,
+      highlightedMessageId,
+      setHighlightedMessageId
     }}>
       {children}
     </ChatContext.Provider>

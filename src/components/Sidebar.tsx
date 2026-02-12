@@ -5,9 +5,12 @@ import dayjs from 'dayjs';
 
 import { SidebarHeader } from './SidebarHeader';
 import { SearchBar } from './SearchBar';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const { messages, metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData } = useChatStore();
+  const [showCalendar, setShowCalendar] = React.useState(false);
 
   const handleCloseChat = () => {
     clearChat();
@@ -142,22 +145,47 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         {/* Date Jump Section */}
         {availableDates.length > 1 && (
           <div className="p-4 bg-white dark:bg-[#111b21] border-t border-gray-100 dark:border-gray-800">
-            <h4 className="text-xs font-semibold text-teal-600 dark:text-teal-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Calendar size={14} />
-              Jump to Date
-            </h4>
-            <div className="grid grid-cols-2 gap-2 max-h-[150px] overflow-y-auto pr-1">
-              {availableDates.slice(0, 12).map(date => (
-                <button
-                  key={date}
-                  onClick={() => jumpToDate(date)}
-                  className="text-[11px] py-1.5 px-2 bg-gray-50 dark:bg-[#202c33] hover:bg-teal-50 dark:hover:bg-teal-900/20 text-gray-600 dark:text-[#e9edef] rounded border border-gray-100 dark:border-gray-700 transition-colors text-center truncate"
-                >
-                  {dayjs(date).format('MMM D, YYYY')}
-                </button>
-              ))}
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-semibold text-teal-600 dark:text-teal-500 uppercase tracking-wider flex items-center gap-2">
+                <Calendar size={14} />
+                Jump to Date
+              </h4>
+              <button 
+                onClick={() => setShowCalendar(!showCalendar)}
+                className="text-[10px] text-gray-500 hover:text-teal-600 transition-colors font-medium"
+              >
+                {showCalendar ? 'Show List' : 'Show Calendar'}
+              </button>
             </div>
-            {availableDates.length > 12 && (
+
+            {showCalendar ? (
+              <div className="flex justify-center bg-gray-50 dark:bg-[#202c33] rounded-lg p-1 scale-90 origin-top">
+                <DayPicker 
+                  mode="single"
+                  onSelect={(date) => date && jumpToDate(dayjs(date).format('YYYY-MM-DD'))}
+                  disabled={(date) => !availableDates.includes(dayjs(date).format('YYYY-MM-DD'))}
+                  modifiers={{
+                    available: (date) => availableDates.includes(dayjs(date).format('YYYY-MM-DD'))
+                  }}
+                  modifiersClassNames={{
+                    available: "font-bold text-teal-600 dark:text-teal-400"
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 max-h-[150px] overflow-y-auto pr-1">
+                {availableDates.slice(0, 12).map(date => (
+                  <button
+                    key={date}
+                    onClick={() => jumpToDate(date)}
+                    className="text-[11px] py-1.5 px-2 bg-gray-50 dark:bg-[#202c33] hover:bg-teal-50 dark:hover:bg-teal-900/20 text-gray-600 dark:text-[#e9edef] rounded border border-gray-100 dark:border-gray-700 transition-colors text-center truncate"
+                  >
+                    {dayjs(date).format('MMM D, YYYY')}
+                  </button>
+                ))}
+              </div>
+            )}
+            {!showCalendar && availableDates.length > 12 && (
               <p className="text-[10px] text-gray-400 mt-2 text-center italic">Scroll for more dates</p>
             )}
           </div>

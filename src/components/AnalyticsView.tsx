@@ -27,12 +27,18 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
       byHour[hour]++;
     });
 
-    // Messages by day of week
+    // Message by day of week
     const byDay = new Array(7).fill(0); // 0 = Sunday
     messages.forEach(m => {
       const day = m.timestamp.getDay();
       byDay[day]++;
     });
+
+    // Busy hours
+    const topHours = byHour
+      .map((count, hour) => ({ hour, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
 
     // Emoji breakdown
     const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
@@ -66,7 +72,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
       .sort(([, a], [, b]) => b - a)
       .slice(0, 10);
 
-    return { totalMessages, textMessages, mediaMessages, perUser, byHour, byDay, topWords, topEmojis };
+    return { totalMessages, textMessages, mediaMessages, perUser, byHour, byDay, topWords, topEmojis, topHours };
   }, [messages, participants]);
 
   const maxByHour = Math.max(...stats.byHour);
@@ -97,6 +103,40 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
             label="Media Files" 
             value={stats.mediaMessages.toLocaleString()} 
           />
+        </div>
+
+        {/* Highlight Stats */}
+        <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
+            <BarChart3 size={16} />
+            Quick Insights
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+             <div className="flex items-center gap-3">
+               <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+                 <Clock size={20} />
+               </div>
+               <div>
+                 <p className="text-xs text-gray-500 dark:text-[#8696a0]">Busiest Time</p>
+                 <p className="text-sm font-bold text-gray-800 dark:text-[#e9edef]">
+                   {stats.topHours[0].hour}:00 - {stats.topHours[0].hour}:59 
+                   <span className="text-[10px] font-normal text-gray-400 ml-2">({stats.topHours[0].count} messages)</span>
+                 </p>
+               </div>
+             </div>
+             <div className="flex items-center gap-3">
+               <div className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600">
+                 <span className="text-xl">❤️</span>
+               </div>
+               <div>
+                 <p className="text-xs text-gray-500 dark:text-[#8696a0]">Top Emoji</p>
+                 <p className="text-sm font-bold text-gray-800 dark:text-[#e9edef]">
+                   {stats.topEmojis[0]?.[0] || 'None'} 
+                   <span className="text-[10px] font-normal text-gray-400 ml-2">({stats.topEmojis[0]?.[1] || 0} times)</span>
+                 </p>
+               </div>
+             </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
