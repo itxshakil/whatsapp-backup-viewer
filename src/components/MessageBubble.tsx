@@ -146,8 +146,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           <div
             className={`absolute top-0 w-2 h-2.5 ${
               isMe
-                ? 'right-[-8px] text-[#dcf8c6] dark:text-[#005c4b]'
-                : 'left-[-8px] text-white dark:text-[#202c33]'
+                ? 'right-[-6px] text-[#dcf8c6] dark:text-[#005c4b]'
+                : 'left-[-6px] text-white dark:text-[#202c33]'
             }`}
           >
             <svg viewBox="0 0 8 13" width="8" height="13">
@@ -162,18 +162,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
 
         {showSender && !isMe && (
-          <div className="text-[12.5px] font-semibold text-teal-600 dark:text-teal-500 leading-tight mb-1">
+          <div className="text-[12.5px] font-semibold text-teal-600 dark:text-teal-500 leading-tight mb-1 px-0.5">
             {highlightText(message.sender, searchQuery)}
           </div>
         )}
 
-        <div className="relative min-w-[80px] pb-1">
+        <div className="relative min-w-[80px]">
           {renderMediaContent()}
-          <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words pr-[2px]">
+          <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-3">
             {message.type === 'text' ? highlightText(message.content, searchQuery) : null}
-            <span className="inline-block w-[50px]"></span>
+            <span className="inline-block w-[60px]"></span>
           </div>
-          <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0 bottom-[-4px] flex-shrink-0 select-none pb-0.5 pr-0.5">
+          <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0.5 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1">
             {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase()}
           </div>
         </div>
