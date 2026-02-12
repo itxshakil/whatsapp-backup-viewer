@@ -4,7 +4,7 @@ import { ChatLayout } from './components/ChatLayout';
 import { FileUploader } from './components/FileUploader';
 import { Sidebar } from './components/Sidebar';
 import { MessageList } from './components/MessageList';
-import { BarChart3, ChevronDown, Download, MessageSquare, MoreVertical, Phone, Search, Video } from 'lucide-react';
+import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, MoreVertical, Phone, Search, Video } from 'lucide-react';
 import { AnalyticsView } from './components/AnalyticsView';
 
 const ChatContent = () => {
@@ -12,10 +12,18 @@ const ChatContent = () => {
   const [showAnalytics, setShowAnalytics] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [showScrollBottom, setShowScrollBottom] = React.useState(false);
+  const [showScrollTop, setShowScrollTop] = React.useState(false);
 
   const scrollToBottom = () => {
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
+      behavior: 'smooth'
+    });
+  };
+
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({
+      top: 0,
       behavior: 'smooth'
     });
   };
@@ -25,6 +33,8 @@ const ChatContent = () => {
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
     // Show button if we are more than 300px away from bottom
     setShowScrollBottom(scrollHeight - scrollTop - clientHeight > 300);
+    // Show top button if we are more than 300px away from top
+    setShowScrollTop(scrollTop > 300);
   };
 
   // Scroll to bottom when a new chat is loaded or search changes
@@ -123,6 +133,17 @@ const ChatContent = () => {
           >
             <MessageList messages={messages} />
             
+            {/* Scroll to Top Button */}
+            {showScrollTop && (
+              <button
+                onClick={scrollToTop}
+                className="fixed bottom-20 right-6 w-10 h-10 bg-white dark:bg-[#202c33] shadow-md rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-20"
+                title="Scroll to top"
+              >
+                <ChevronUp size={24} />
+              </button>
+            )}
+
             {/* Scroll to Bottom Button */}
             {showScrollBottom && (
               <button
