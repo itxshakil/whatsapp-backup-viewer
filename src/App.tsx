@@ -4,10 +4,34 @@ import { ChatLayout } from './components/ChatLayout';
 import { FileUploader } from './components/FileUploader';
 import { Sidebar } from './components/Sidebar';
 import { MessageList } from './components/MessageList';
-import { Search, MoreVertical, Phone, Video } from 'lucide-react';
+import { Search, MoreVertical, Phone, Video, ChevronDown } from 'lucide-react';
 
 const ChatContent = () => {
-  const { messages, metadata } = useChatStore();
+  const { messages, metadata, searchQuery } = useChatStore();
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [showScrollBottom, setShowScrollBottom] = React.useState(false);
+
+  const scrollToBottom = () => {
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    // Show button if we are more than 300px away from bottom
+    setShowScrollBottom(scrollHeight - scrollTop - clientHeight > 300);
+  };
+
+  // Scroll to bottom when a new chat is loaded or search changes
+  React.useEffect(() => {
+    if (metadata) {
+      // Small timeout to ensure DOM is rendered
+      setTimeout(scrollToBottom, 100);
+    }
+  }, [metadata?.fileName, searchQuery]);
 
   if (!metadata) {
     return (
@@ -35,17 +59,32 @@ const ChatContent = () => {
           </div>
         </div>
         <div className="flex items-center gap-5 text-gray-500 dark:text-[#8696a0]">
-          <Video size={20} />
-          <Phone size={18} />
+          <Video size={20} className="cursor-not-allowed opacity-50" />
+          <Phone size={18} className="cursor-not-allowed opacity-50" />
           <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1"></div>
-          <Search size={20} />
-          <MoreVertical size={20} />
+          <Search size={20} className="cursor-pointer" />
+          <MoreVertical size={20} className="cursor-pointer" />
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto relative scroll-smooth"
+      >
         <MessageList messages={messages} />
+        
+        {/* Scroll to Bottom Button */}
+        {showScrollBottom && (
+          <button
+            onClick={scrollToBottom}
+            className="fixed bottom-6 right-6 w-10 h-10 bg-white dark:bg-[#202c33] shadow-md rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-20"
+            title="Scroll to bottom"
+          >
+            <ChevronDown size={24} />
+          </button>
+        )}
       </div>
     </div>
   );
