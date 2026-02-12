@@ -1,5 +1,3 @@
-import { Message } from '../types/message';
-
 /**
  * WhatsApp export format example:
  * 12/11/23, 9:45 pm - John: Hello
@@ -50,7 +48,7 @@ export const parseLine = (line: string): ParsedLine | null => {
 
   // Map invisible-character senders to 'You'
   if (isInvisible(sender)) {
-    sender = 'You';
+    sender = 'Hidden';
   }
 
   return {

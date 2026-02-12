@@ -73,7 +73,7 @@ export const normalizeMessages = (rawText: string): Message[] => {
         sender: parsed.sender,
         content: content,
         type: type,
-        isCurrentUser: parsed.sender.toLowerCase() === 'you'
+        isCurrentUser: parsed.sender.toLowerCase() === 'you' || parsed.sender === 'Hidden'
       };
       messages.push(currentMessage);
     } else if (currentMessage) {

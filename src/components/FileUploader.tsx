@@ -20,7 +20,7 @@ export const FileUploader: React.FC = () => {
 
     try {
       let text = '';
-      let fileName = file.name;
+      let originalFileName = file.name;
       const mediaFiles: { [key: string]: Blob } = {};
 
       if (file.name.endsWith('.zip')) {
@@ -34,7 +34,6 @@ export const FileUploader: React.FC = () => {
         }
 
         text = await txtFile.async('text');
-        fileName = txtFile.name;
 
         // Extract media files
         const mediaExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'mov', 'avi', 'mp3', 'wav', 'ogg', 'm4a', 'opus'];
@@ -80,9 +79,82 @@ export const FileUploader: React.FC = () => {
       const participants = Array.from(new Set(messages.map(m => m.sender)))
         .filter(s => s !== 'System');
 
+      // Smart 1-on-1 detection for ZIP files
+      let finalParticipants = [...participants];
+      let cleanTitle = originalFileName.replace(/^WhatsApp Chat (with|-) /, '').replace(/\.(txt|zip)$/, '');
+      
+      if (originalFileName.endsWith('.zip')) {
+        const otherPartyName = cleanTitle;
+        const hasHidden = participants.includes('Hidden');
+        const hasYou = participants.includes('You');
+
+        // If it's a 1-on-1 chat where one participant is 'Hidden' and the other is 'You'
+        if (participants.length === 2 && hasHidden && hasYou) {
+          messages.forEach(msg => {
+            if (msg.sender === 'Hidden') {
+              msg.sender = otherPartyName;
+              msg.isCurrentUser = false;
+            } else if (msg.sender === 'You') {
+              msg.isCurrentUser = true;
+            }
+          });
+          finalParticipants = finalParticipants.map(p => p === 'Hidden' ? otherPartyName : p);
+        } 
+        // Or if only 'Hidden' exists
+        else if (participants.length === 1 && hasHidden) {
+          messages.forEach(msg => {
+            if (msg.sender === 'Hidden') {
+              msg.sender = otherPartyName;
+              msg.isCurrentUser = false;
+            }
+          });
+          finalParticipants = [otherPartyName];
+        }
+        // Handle case where it's 2 participants, one is explicitly named and matches ZIP title, 
+        // and the other is also explicitly named (Shakil). 
+        // We assume the one matching ZIP name is the other party.
+        else if (participants.length === 2) {
+          const namedParticipantMatchingZip = participants.find(p => p.toLowerCase() === otherPartyName.toLowerCase());
+          const otherParticipant = participants.find(p => p.toLowerCase() !== otherPartyName.toLowerCase());
+          
+          if (namedParticipantMatchingZip && otherParticipant) {
+             messages.forEach(msg => {
+               if (msg.sender === namedParticipantMatchingZip) {
+                 msg.isCurrentUser = false;
+               } else {
+                 msg.sender = 'You';
+                 msg.isCurrentUser = true;
+               }
+             });
+             finalParticipants = [namedParticipantMatchingZip, 'You'];
+          } else {
+            // Fallback to previous named participant logic if zip name doesn't match
+            const namedParticipant = participants.find(p => p !== 'You' && p !== 'Hidden');
+            if (namedParticipant) {
+               messages.forEach(msg => {
+                 if (msg.sender === namedParticipant) {
+                   msg.isCurrentUser = false;
+                 } else if (msg.sender === 'You' || msg.sender === 'Hidden') {
+                   msg.isCurrentUser = true;
+                 }
+               });
+            }
+          }
+        }
+      }
+
+      // Cleanup remaining 'Hidden' if any (e.g. in groups)
+      messages.forEach(msg => {
+        if (msg.sender === 'Hidden') {
+          msg.sender = 'You';
+          msg.isCurrentUser = true;
+        }
+      });
+      finalParticipants = Array.from(new Set(finalParticipants.map(p => p === 'Hidden' ? 'You' : p)));
+
       const metadata = {
-        fileName: fileName.replace(/^WhatsApp Chat with /, '').replace(/\.txt$/, ''),
-        participants,
+        fileName: cleanTitle,
+        participants: finalParticipants,
         messageCount: messages.length
       };
 

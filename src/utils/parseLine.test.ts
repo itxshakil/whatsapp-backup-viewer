@@ -67,4 +67,10 @@ describe('parseLine', () => {
       isSystem: true
     });
   });
+
+  it('should map invisible characters to Hidden', () => {
+    const line = '12/11/23, 9:45 pm - \u200e\u200f\u200b: Hello';
+    const result = parseLine(line);
+    expect(result?.sender).toBe('Hidden');
+  });
 });
