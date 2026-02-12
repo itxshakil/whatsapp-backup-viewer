@@ -18,5 +18,14 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Recent Chats",
+      "short_name": "Recent",
+      "description": "View your recently opened WhatsApp chats",
+      "url": "/?action=recent",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

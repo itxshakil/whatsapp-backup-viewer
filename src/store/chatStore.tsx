@@ -11,6 +11,7 @@ interface ChatContextType {
   setError: (error: string | null) => void;
   setChatData: (messages: Message[], metadata: ChatMetadata, shouldSave?: boolean) => Promise<void>;
   clearChat: () => void;
+  clearAllData: () => Promise<void>;
   savedChats: SavedChat[];
   loadChat: (id: number) => Promise<void>;
   deleteChat: (id: number) => Promise<void>;
@@ -110,6 +111,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         
         // Update last opened
         await db.chats.update(id, { lastOpened: Date.now() });
+        
+        // Update App Badge (PWA feature)
+        if ('setAppBadge' in navigator) {
+          (navigator as any).setAppBadge(1).catch(() => {});
+        }
+        
         refreshSavedChats();
       }
     } catch (err) {
@@ -136,6 +143,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     setMetadata(null);
     setSearchQuery('');
     setError(null);
+    
+    // Clear App Badge
+    if ('clearAppBadge' in navigator) {
+      (navigator as any).clearAppBadge().catch(() => {});
+    }
+  };
+
+  const clearAllData = async () => {
+    try {
+      await db.chats.clear();
+      clearChat();
+      await refreshSavedChats();
+    } catch (err) {
+      console.error('Failed to clear all data:', err);
+      setError('Failed to clear database.');
+    }
   };
 
   return (
@@ -148,6 +171,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setError, 
       setChatData, 
       clearChat,
+      clearAllData,
       savedChats,
       loadChat,
       deleteChat,

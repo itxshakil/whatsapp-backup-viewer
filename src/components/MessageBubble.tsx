@@ -108,8 +108,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       <div
         className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm ${
           isMe
-            ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-l-lg rounded-br-lg ' + (showTail ? 'rounded-tr-none' : 'rounded-tr-lg')
-            : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] rounded-r-lg rounded-bl-lg ' + (showTail ? 'rounded-tl-none' : 'rounded-tl-lg')
+            ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-l-lg rounded-br-lg rounded-tr-none' : 'rounded-lg')
+            : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')
         }`}
       >
         {/* Tail */}
@@ -124,7 +124,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <svg viewBox="0 0 8 13" width="8" height="13">
               <path
                 fill="currentColor"
-                d={isMe ? "M0 0v13l8-13H0z" : "M8 0v13L0 13V0h8z"}
+                d={isMe 
+                  ? "M1.2,0.1L0,0c0.1,0.1,1.1,1.2,1.2,2.9V13L8,0.1C4.3,0.1,2.1,0.1,1.2,0.1z" 
+                  : "M6.8,0.1L8,0c-0.1,0.1-1.1,1.2-1.2,2.9V13L0,0.1C3.7,0.1,5.9,0.1,6.8,0.1z"}
               ></path>
             </svg>
           </div>
