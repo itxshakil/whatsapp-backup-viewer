@@ -1,79 +1,122 @@
 import React, { useCallback } from 'react';
 import { useChatStore } from '../store/chatStore';
 import { normalizeMessages } from '../utils/normalizeMessages';
-import { Upload, AlertCircle, Save } from 'lucide-react';
+import { Upload, AlertCircle, Save, FileArchive } from 'lucide-react';
 import { useState } from 'react';
+import JSZip from 'jszip';
+import { Message } from '../types/message';
 
 export const FileUploader: React.FC = () => {
   const { setChatData, setError, error, saveCurrentChat, savedChats, loadChat, deleteChat } = useChatStore();
   const [shouldSave, setShouldSave] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setError(null);
+    setIsProcessing(true);
 
-    if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
-      setError('Please upload a .txt file (WhatsApp export)');
-      return;
-    }
+    try {
+      let text = '';
+      let fileName = file.name;
+      const mediaFiles: { [key: string]: Blob } = {};
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const text = e.target?.result as string;
-        if (!text || text.trim().length === 0) {
-          setError('The uploaded file is empty.');
-          return;
-        }
-
-        const messages = normalizeMessages(text);
+      if (file.name.endsWith('.zip')) {
+        const zip = await JSZip.loadAsync(file);
+        const txtFile = Object.values(zip.files).find(f => f.name.endsWith('.txt'));
         
-        if (messages.length === 0) {
-          setError('Could not find any valid WhatsApp messages in this file. Please make sure it is a correct WhatsApp "Export Chat" file.');
+        if (!txtFile) {
+          setError('Could not find a .txt file in the ZIP archive.');
+          setIsProcessing(false);
           return;
         }
 
-        const participants = Array.from(new Set(messages.map(m => m.sender)))
-          .filter(s => s !== 'System');
+        text = await txtFile.async('text');
+        fileName = txtFile.name;
 
-        const metadata = {
-          fileName: file.name,
-          participants,
-          messageCount: messages.length
-        };
-
-        await setChatData(messages, metadata, shouldSave);
-      } catch (err) {
-        console.error('Parsing error:', err);
-        setError('An error occurred while parsing the file. It might be corrupted or in an unsupported format.');
+        // Extract media files
+        const mediaExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'mov', 'avi', 'mp3', 'wav', 'ogg', 'm4a', 'opus'];
+        for (const [path, zipEntry] of Object.entries(zip.files)) {
+          const ext = path.split('.').pop()?.toLowerCase();
+          if (ext && mediaExtensions.includes(ext)) {
+            mediaFiles[path] = await zipEntry.async('blob');
+          }
+        }
+      } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+        text = await file.text();
+      } else {
+        setError('Please upload a .txt file or a .zip archive containing the chat export.');
+        setIsProcessing(false);
+        return;
       }
-    };
-    reader.onerror = () => {
-      setError('Failed to read the file.');
-    };
-    reader.readAsText(file);
-  }, [setChatData, setError, shouldSave, saveCurrentChat]);
+
+      if (!text || text.trim().length === 0) {
+        setError('The chat text file is empty.');
+        setIsProcessing(false);
+        return;
+      }
+
+      const messages = normalizeMessages(text);
+      
+      if (messages.length === 0) {
+        setError('Could not find any valid WhatsApp messages. Please make sure it is a correct WhatsApp "Export Chat" file.');
+        setIsProcessing(false);
+        return;
+      }
+
+      // Link media files to messages
+      messages.forEach(msg => {
+        if (msg.type !== 'text' && msg.type !== 'system') {
+          const filename = msg.content;
+          if (mediaFiles[filename]) {
+            msg.mediaBlob = mediaFiles[filename];
+            msg.mediaUrl = URL.createObjectURL(mediaFiles[filename]);
+          }
+        }
+      });
+
+      const participants = Array.from(new Set(messages.map(m => m.sender)))
+        .filter(s => s !== 'System');
+
+      const metadata = {
+        fileName: fileName,
+        participants,
+        messageCount: messages.length
+      };
+
+      await setChatData(messages, metadata, shouldSave);
+    } catch (err) {
+      console.error('File processing error:', err);
+      setError('An error occurred while processing the file. It might be corrupted or in an unsupported format.');
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [setChatData, setError, shouldSave]);
 
   return (
     <div className="flex flex-col w-full max-w-2xl gap-6">
-      <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-300 rounded-lg bg-white/50 hover:bg-white/80 transition-colors">
-        <Upload className="w-12 h-12 text-gray-400 mb-4" />
+      <div className={`flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-300 rounded-lg bg-white/50 hover:bg-white/80 transition-colors ${isProcessing ? 'opacity-50 cursor-wait' : ''}`}>
+        <div className="flex gap-4 mb-4">
+          <Upload className="w-12 h-12 text-gray-400" />
+          <FileArchive className="w-12 h-12 text-gray-400" />
+        </div>
         <h3 className="text-lg font-medium text-gray-700 mb-2">Upload WhatsApp Chat</h3>
         <p className="text-sm text-gray-500 mb-6 text-center">
-          Select the exported .txt file from your computer. <br/>
+          Select the exported .txt file or a .zip archive (including media). <br/>
           No data will be uploaded to any server.
         </p>
         
         <div className="flex flex-col items-center gap-4">
-          <label className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full cursor-pointer transition-colors font-medium shadow-sm">
-            Choose File
+          <label className={`bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full cursor-pointer transition-colors font-medium shadow-sm ${isProcessing ? 'pointer-events-none' : ''}`}>
+            {isProcessing ? 'Processing...' : 'Choose File'}
             <input
               type="file"
-              accept=".txt"
+              accept=".txt,.zip"
               className="hidden"
               onChange={handleFileUpload}
+              disabled={isProcessing}
             />
           </label>
 

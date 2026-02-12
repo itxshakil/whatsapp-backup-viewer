@@ -23,6 +23,18 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [metadata, setMetadata] = useState<ChatMetadata | null>(null);
+
+  // Helper to cleanup Blob URLs
+  useEffect(() => {
+    return () => {
+      messages.forEach(msg => {
+        if (msg.mediaUrl?.startsWith('blob:')) {
+          URL.revokeObjectURL(msg.mediaUrl);
+        }
+      });
+    };
+  }, [messages]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [savedChats, setSavedChats] = useState<SavedChat[]>([]);
