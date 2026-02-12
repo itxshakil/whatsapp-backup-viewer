@@ -81,7 +81,7 @@ export const FileUploader: React.FC = () => {
         .filter(s => s !== 'System');
 
       const metadata = {
-        fileName: fileName,
+        fileName: fileName.replace(/^WhatsApp Chat with /, '').replace(/\.txt$/, ''),
         participants,
         messageCount: messages.length
       };

@@ -17,11 +17,23 @@ export interface ParsedLine {
   isSystem: boolean;
 }
 
+const isInvisible = (text: string) => {
+  // Check if string consists only of zero-width or non-breaking spaces
+  // \u200e - Left-to-Right Mark
+  // \u200f - Right-to-Left Mark
+  // \u200b - Zero Width Space
+  // \u200c - Zero Width Non-Joiner
+  // \u200d - Zero Width Joiner
+  // \ufeff - Zero Width No-Break Space
+  // \u00a0 - Non-breaking space
+  return /^[\u200e\u200f\u200b-\u200d\ufeff\u00a0\s]+$/.test(text);
+};
+
 export const parseLine = (line: string): ParsedLine | null => {
   const match = line.match(regex);
   if (!match) return null;
 
-  const [, date, time, , sender, content] = match;
+  let [, date, time, , sender, content] = match;
 
   // If content is undefined, it's likely a system message (no colon after sender)
   // Example: "12/11/23, 9:46 pm - John joined using invite link"
@@ -34,6 +46,11 @@ export const parseLine = (line: string): ParsedLine | null => {
       content: sender,
       isSystem: true
     };
+  }
+
+  // Map invisible-character senders to 'You'
+  if (isInvisible(sender)) {
+    sender = 'You';
   }
 
   return {

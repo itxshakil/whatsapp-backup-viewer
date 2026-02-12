@@ -1,7 +1,22 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SidebarHeader } from './SidebarHeader';
 import { ChatProvider } from '../store/chatStore';
+
+// Mock matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // Deprecated
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
 const renderWithProvider = (ui: React.ReactElement) => {
   return render(
@@ -12,6 +27,11 @@ const renderWithProvider = (ui: React.ReactElement) => {
 };
 
 describe('SidebarHeader', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    document.documentElement.classList.remove('dark');
+  });
+
   it('renders correctly', () => {
     renderWithProvider(<SidebarHeader />);
     expect(screen.getByTitle(/Mode/i)).toBeInTheDocument();
