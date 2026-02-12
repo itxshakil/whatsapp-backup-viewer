@@ -1,0 +1,468 @@
+✅ Recommended Stack (Optimized for You)
+
+Since you prefer:
+
+> React + TypeScript + Tailwind + Vite only (no UI libraries)
+
+Use:
+
+* **React 18**
+* **TypeScript**
+* **TailwindCSS**
+* **Vite**
+* No backend
+* No external UI libraries
+* No component frameworks
+
+Optional:
+
+* `dayjs` (lightweight date parsing)
+* `dexie` (if you later use IndexedDB)
+
+---
+
+# 🧱 High-Level Architecture (100% Local)
+
+```
+User uploads:
+   ├── chat.txt
+   └── media folder (optional)
+
+↓
+FileReader API
+↓
+Parser (TypeScript logic)
+↓
+Normalized Message Model
+↓
+React State Store
+↓
+WhatsApp-style UI Renderer
+```
+
+No server.
+No API calls.
+No data leaves the browser.
+
+---
+
+# 📄 PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+---
+
+# 🟢 Product Name
+
+**Local WhatsApp Backup Viewer**
+
+---
+
+# 1. 🎯 Product Vision
+
+Allow users to open exported WhatsApp chat files locally in the browser and view them in a UI that closely resembles WhatsApp — without uploading data anywhere.
+
+Privacy-first.
+Offline-first.
+No backend.
+
+---
+
+# 2. 👤 Target Users
+
+* Privacy-conscious users
+* Developers
+* Journalists
+* Legal users reviewing chats
+* People reading old chats
+* Portfolio demo viewers
+
+---
+
+# 3. 📦 Supported Input
+
+## Phase 1 (MVP)
+
+* WhatsApp "Export Chat" text file (`.txt`)
+* Without media
+
+## Phase 2
+
+* With media
+* Attached images/videos/documents
+* Emoji support
+
+---
+
+# 4. 🧩 Core Features (MVP)
+
+---
+
+## 4.1 File Upload
+
+### Requirements:
+
+* Drag & drop OR file picker
+* Accept `.txt`
+* Show file name
+* Validate file format
+
+### Edge Cases:
+
+* Wrong format
+* Corrupted file
+* Empty file
+
+---
+
+## 4.2 Chat Parsing Engine
+
+WhatsApp export format examples:
+
+```
+12/11/23, 9:45 pm - John: Hello
+12/11/23, 9:46 pm - You: Hi!
+```
+
+### Requirements:
+
+* Parse date
+* Parse time
+* Parse sender
+* Parse message
+* Handle multiline messages
+* Handle system messages:
+
+  * “John joined using invite link”
+  * “Messages are end-to-end encrypted”
+
+### Output Model:
+
+```ts
+interface Message {
+  id: string
+  timestamp: Date
+  sender: string
+  content: string
+  type: "text" | "system"
+  isCurrentUser: boolean
+}
+```
+
+---
+
+## 4.3 WhatsApp-Style UI
+
+### Layout
+
+```
+-----------------------------------
+| Sidebar        | Chat Window    |
+| Chat Info      | Messages       |
+| Search         | Input disabled |
+-----------------------------------
+```
+
+### Message Bubble Requirements:
+
+* Left/right alignment
+* Green bubble for current user
+* White bubble for others
+* Time shown bottom-right
+* Group consecutive messages visually
+
+---
+
+## 4.4 Search Functionality
+
+* Search messages
+* Highlight results
+* Scroll to result
+
+---
+
+## 4.5 Theme Support
+
+* Light mode
+* Dark mode
+* Toggle switch
+* Stored in localStorage
+
+---
+
+## 4.6 Performance
+
+Must handle:
+
+* 50,000+ messages
+* Without freezing
+
+Use:
+
+* Virtual scrolling (custom or simple windowing)
+
+---
+
+# 5. 🧠 Non-Functional Requirements
+
+| Requirement    | Detail                 |
+| -------------- | ---------------------- |
+| Privacy        | No network requests    |
+| Performance    | Large file parsing     |
+| Accessibility  | Keyboard navigation    |
+| Responsiveness | Mobile + Desktop       |
+| Offline        | Works without internet |
+
+---
+
+# 6. 🖥 UI/UX Design Guidelines
+
+## Color Palette (WhatsApp Inspired)
+
+Light:
+
+* Background: #e5ddd5
+* My message: #dcf8c6
+* Other message: #ffffff
+
+Dark:
+
+* Background: #111b21
+* My message: #005c4b
+* Other message: #202c33
+
+---
+
+# 7. 🗂 Folder Structure
+
+```
+src/
+│
+├── components/
+│   ├── ChatLayout.tsx
+│   ├── MessageBubble.tsx
+│   ├── MessageList.tsx
+│   ├── Sidebar.tsx
+│   ├── FileUploader.tsx
+│   ├── SearchBar.tsx
+│   └── ThemeToggle.tsx
+│
+├── hooks/
+│   ├── useChatParser.ts
+│   ├── useSearch.ts
+│
+├── utils/
+│   ├── parseLine.ts
+│   ├── normalizeMessages.ts
+│   └── formatTime.ts
+│
+├── types/
+│   └── message.ts
+│
+├── store/
+│   └── chatStore.ts
+│
+├── App.tsx
+└── main.tsx
+```
+
+---
+
+# 8. 🔍 Parsing Logic Strategy
+
+Core regex:
+
+```ts
+const regex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s(\d{1,2}:\d{2}\s?(am|pm)?)\s-\s([^:]+):\s(.*)$/i
+```
+
+Algorithm:
+
+1. Split file into lines
+2. Loop line by line
+3. If matches regex → new message
+4. If not → append to previous message
+
+---
+
+# 9. 🚀 MVP Development Plan (4 Weeks)
+
+---
+
+## Week 1
+
+* Setup Vite + React + TS + Tailwind
+* Basic layout
+* File upload
+* Simple parser
+
+---
+
+## Week 2
+
+* Message bubble component
+* Left/right alignment
+* Date formatting
+* Group consecutive messages
+
+---
+
+## Week 3
+
+* Search feature
+* Theme toggle
+* Scroll to bottom
+* Performance improvements
+
+---
+
+## Week 4
+
+* Edge cases
+* Large file testing
+* UI polish
+* Mobile responsiveness
+* Deploy static site (Vercel)
+
+---
+
+# 10. 🌟 Phase 2 Features (Advanced)
+
+* Media rendering
+* IndexedDB caching
+* Multiple chats
+* Export as PDF
+* Shareable JSON file
+* Chat statistics (message count per user)
+* Emoji rendering support
+* PWA install support
+
+---
+
+# 11. ⚠️ Technical Challenges
+
+| Problem            | Solution                 |
+| ------------------ | ------------------------ |
+| Large files freeze | Chunk parsing            |
+| Memory overload    | Lazy render              |
+| Date formats vary  | Flexible regex           |
+| Multiline messages | State tracking           |
+| Different locales  | Configurable date parser |
+
+---
+
+# 12. 🏆 Why This Project Is Powerful for Your CV
+
+Because it shows:
+
+* File parsing
+* Performance optimization
+* Complex UI state
+* Component architecture
+* Privacy-focused design
+* Clean TypeScript modeling
+
+Much stronger than a simple CRUD app.
+
+---
+🔥 1️⃣ Exact UI Layout Mock Structure (WhatsApp-like)
+We replicate WhatsApp Web structure.
+🧱 Layout Structure
+App
+ ├── Sidebar
+ │     ├── ChatHeader
+ │     ├── ChatMetaInfo
+ │     ├── SearchBar
+ │     └── StatsPanel (optional)
+ │
+ └── ChatContainer
+       ├── ChatHeaderBar
+       ├── MessageViewport (scrollable)
+       │      └── VirtualizedMessageList
+       │             └── MessageBubble
+       └── ScrollToBottomButton
+🎨 Layout Wireframe
+---------------------------------------------------------
+| Sidebar (300px) |        Chat Area (flex-1)         |
+|------------------|------------------------------------|
+| Chat Name        | Chat Header (Name + Search Icon)  |
+| Date Range       |------------------------------------|
+| Participants     |                                    |
+|------------------|        Scrollable Messages         |
+| Search Input     |                                    |
+|                  |   [Left Bubble]                    |
+| Theme Toggle     |                     [Right Bubble]|
+|                  |                                    |
+---------------------------------------------------------
+
+
+⚡ 4️⃣ Performance Strategy for 100k+ Messages
+This is critical.
+Rendering 100k messages directly = browser death.
+Solution: Virtualization
+Option 1 (Best): Build simple manual windowing
+Render only visible messages:
+Total Messages: 100k
+Render: 40 visible + 10 buffer
+Algorithm:
+Detect scroll position
+Calculate visible range
+Slice messages array
+Render only that slice
+Example Concept
+const visibleMessages = messages.slice(startIndex, endIndex)
+Memory Optimization
+Store raw text in memory only once
+Normalize immediately
+Use primitive fields only
+Avoid nested objects
+Lazy Parsing (For Extremely Large Files)
+Instead of:
+rawText.split("\n")
+You can:
+Use ReadableStream
+Parse chunk by chunk
+(Maybe phase 2)
+
+📈 5️⃣ How To Make This Monetizable SaaS
+Now we think like founders.
+💰 Monetization Model 1 — Freemium
+Free:
+View chat
+Basic search
+Pro ($5-$10 one-time):
+Export as PDF
+Chat analytics
+Word frequency
+Relationship stats
+Emoji breakdown
+Message heatmap
+Multiple chat save
+💰 Monetization Model 2 — Legal / Evidence Tool
+Add:
+Tamper-proof view
+Metadata inspector
+Hash verification
+Certified PDF export
+Target:
+Lawyers
+Courts
+HR
+Charge:
+$19 one-time
+💰 Monetization Model 3 — Desktop App
+Wrap with:
+Tauri
+Electron
+Sell:
+$15 license
+Why?
+Privacy-focused desktop tool.
+💰 Monetization Model 4 — AI Chat Insights
+Optional cloud feature:
+Upload chat
+AI gives:
+Sentiment timeline
+Toxicity detection
+Relationship insights
+Attachment style patterns
+Subscription-based.
+
