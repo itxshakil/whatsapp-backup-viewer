@@ -1,4 +1,4 @@
-export type MessageType = "text" | "system";
+export type MessageType = "text" | "system" | "image" | "video" | "audio" | "document";
 
 export interface Message {
   id: string;
@@ -7,6 +7,7 @@ export interface Message {
   content: string;
   type: MessageType;
   isCurrentUser: boolean;
+  mediaUrl?: string;
 }
 
 export interface ChatMetadata {

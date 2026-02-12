@@ -4,10 +4,12 @@ import { ChatLayout } from './components/ChatLayout';
 import { FileUploader } from './components/FileUploader';
 import { Sidebar } from './components/Sidebar';
 import { MessageList } from './components/MessageList';
-import { Search, MoreVertical, Phone, Video, ChevronDown } from 'lucide-react';
+import { BarChart3, ChevronDown, Download, MessageSquare, MoreVertical, Phone, Search, Video } from 'lucide-react';
+import { AnalyticsView } from './components/AnalyticsView';
 
 const ChatContent = () => {
   const { messages, metadata, searchQuery } = useChatStore();
+  const [showAnalytics, setShowAnalytics] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [showScrollBottom, setShowScrollBottom] = React.useState(false);
 
@@ -27,11 +29,11 @@ const ChatContent = () => {
 
   // Scroll to bottom when a new chat is loaded or search changes
   React.useEffect(() => {
-    if (metadata) {
+    if (metadata && !showAnalytics) {
       // Small timeout to ensure DOM is rendered
       setTimeout(scrollToBottom, 100);
     }
-  }, [metadata?.fileName, searchQuery]);
+  }, [metadata?.fileName, searchQuery, showAnalytics]);
 
   if (!metadata) {
     return (
@@ -41,10 +43,22 @@ const ChatContent = () => {
     );
   }
 
+  const handleExportJSON = () => {
+    if (!metadata || messages.length === 0) return;
+    const data = JSON.stringify({ metadata, messages }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${metadata.fileName.replace('.txt', '')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="flex flex-col h-full animate-fade-in">
+    <div className="flex flex-col h-full animate-fade-in relative">
       {/* Chat Header */}
-      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700">
+      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700 z-20">
         <div className="flex items-center min-w-0">
           {/* Mobile Spacer for Toggle Button */}
           <div className="w-10 md:hidden flex-shrink-0"></div>
@@ -52,41 +66,59 @@ const ChatContent = () => {
           <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
             <span className="text-gray-600 dark:text-gray-300 font-bold">{metadata.fileName.charAt(0).toUpperCase()}</span>
           </div>
-          <div className="flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>
             <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate">
               {metadata.fileName}
             </h3>
             <p className="text-[11px] text-gray-500 dark:text-[#8696a0] truncate">
-              {metadata.participants.length} participants
+              {showAnalytics ? 'Back to chat' : `${metadata.participants.length} participants`}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 md:gap-5 text-gray-500 dark:text-[#8696a0] flex-shrink-0">
-          <Video size={18} className="cursor-not-allowed opacity-50 hidden sm:block" />
-          <Phone size={16} className="cursor-not-allowed opacity-50 hidden sm:block" />
+          <button 
+            onClick={handleExportJSON}
+            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+            title="Export as JSON"
+          >
+            <Download size={18} />
+          </button>
+          <button 
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            className={`p-1.5 rounded-full transition-colors ${showAnalytics ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+            title="Chat Analytics"
+          >
+            <BarChart3 size={20} />
+          </button>
           <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block"></div>
           <Search size={18} className="cursor-pointer" />
           <MoreVertical size={18} className="cursor-pointer" />
         </div>
       </div>
 
-      {/* Messages Area */}
-      <div 
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto relative scroll-smooth"
-      >
-        <MessageList messages={messages} />
-        
-        {/* Scroll to Bottom Button */}
-        {showScrollBottom && (
-          <button
-            onClick={scrollToBottom}
-            className="fixed bottom-6 right-6 w-10 h-10 bg-white dark:bg-[#202c33] shadow-md rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-20"
-            title="Scroll to bottom"
+      {/* Main Content Area */}
+      <div className="flex-1 relative flex flex-col min-h-0">
+        {showAnalytics ? (
+          <AnalyticsView messages={messages} participants={metadata.participants} />
+        ) : (
+          <div 
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto relative scroll-smooth"
           >
-            <ChevronDown size={24} />
-          </button>
+            <MessageList messages={messages} />
+            
+            {/* Scroll to Bottom Button */}
+            {showScrollBottom && (
+              <button
+                onClick={scrollToBottom}
+                className="fixed bottom-6 right-6 w-10 h-10 bg-white dark:bg-[#202c33] shadow-md rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-20"
+                title="Scroll to bottom"
+              >
+                <ChevronDown size={24} />
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>
