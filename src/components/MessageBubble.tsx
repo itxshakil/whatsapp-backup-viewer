@@ -42,41 +42,64 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
     if (!isImage && !isVideo && !isAudio && !isDoc) return null;
 
+    const mediaUrl = message.mediaUrl;
+
     return (
       <div className="mb-2 overflow-hidden rounded-lg bg-black/5 dark:bg-black/20">
         {isImage && (
           <div className="relative group">
-            <div className="flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-800">
-              <ImageIcon className="w-12 h-12 text-gray-400" />
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-[10px] bg-black/50 text-white px-2 py-1 rounded-full flex items-center gap-1">
-                <ImageIcon size={12} /> IMAGE
-              </span>
+            {mediaUrl ? (
+              <img 
+                src={mediaUrl} 
+                alt="Chat attachment" 
+                className="max-w-full h-auto max-h-[300px] object-contain mx-auto block cursor-pointer"
+                onClick={() => window.open(mediaUrl, '_blank')}
+              />
+            ) : (
+              <div className="flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-800">
+                <ImageIcon className="w-12 h-12 text-gray-400" />
+              </div>
+            )}
+            <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-[10px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-1">
+              <ImageIcon size={12} /> IMAGE
             </div>
           </div>
         )}
         {isVideo && (
-          <div className="relative group flex items-center justify-center aspect-video bg-gray-200 dark:bg-gray-800">
-            <VideoIcon className="w-12 h-12 text-gray-400" />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-[10px] bg-black/50 text-white px-2 py-1 rounded-full flex items-center gap-1">
-                <VideoIcon size={12} /> VIDEO
-              </span>
+          <div className="relative group flex items-center justify-center bg-gray-200 dark:bg-gray-800">
+            {mediaUrl ? (
+              <video 
+                src={mediaUrl} 
+                controls 
+                className="max-w-full max-h-[300px]"
+              />
+            ) : (
+              <div className="aspect-video flex items-center justify-center w-full">
+                <VideoIcon className="w-12 h-12 text-gray-400" />
+              </div>
+            )}
+            <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-[10px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center gap-1">
+              <VideoIcon size={12} /> VIDEO
             </div>
           </div>
         )}
         {isAudio && (
-          <div className="p-3 flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-              <MusicIcon size={20} />
-            </div>
-            <div className="flex-1">
-              <div className="h-1 w-full bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full w-1/3 bg-green-500"></div>
+          <div className="p-3">
+            {mediaUrl ? (
+              <audio src={mediaUrl} controls className="w-full h-8" />
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
+                  <MusicIcon size={20} />
+                </div>
+                <div className="flex-1">
+                  <div className="h-1 w-full bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full w-1/3 bg-green-500"></div>
+                  </div>
+                  <p className="text-[10px] mt-1 text-gray-500 dark:text-gray-400">Audio Message (not loaded)</p>
+                </div>
               </div>
-              <p className="text-[10px] mt-1 text-gray-500 dark:text-gray-400">Audio Message</p>
-            </div>
+            )}
           </div>
         )}
         {isDoc && (
@@ -86,7 +109,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               <p className="text-sm font-medium truncate">{message.content}</p>
               <p className="text-[10px] text-gray-500 uppercase">Document</p>
             </div>
-            <Download size={18} className="text-teal-600 dark:text-teal-500 cursor-not-allowed" />
+            {mediaUrl ? (
+              <a href={mediaUrl} download={message.content} className="text-teal-600 dark:text-teal-500 hover:text-teal-700">
+                <Download size={18} />
+              </a>
+            ) : (
+              <Download size={18} className="text-teal-600 dark:text-teal-500 cursor-not-allowed opacity-50" />
+            )}
           </div>
         )}
       </div>

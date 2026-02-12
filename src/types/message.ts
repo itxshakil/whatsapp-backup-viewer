@@ -8,6 +8,7 @@ export interface Message {
   type: MessageType;
   isCurrentUser: boolean;
   mediaUrl?: string;
+  mediaBlob?: Blob;
 }
 
 export interface ChatMetadata {
