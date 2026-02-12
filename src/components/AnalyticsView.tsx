@@ -132,23 +132,24 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
               <Clock size={16} />
               Activity by Hour
             </h3>
-            <div className="flex items-end justify-between h-40 gap-1 pt-4">
+            <div className="flex items-end justify-between h-40 gap-1 pt-6 relative group/container">
               {stats.byHour.map((count, hour) => (
-                <div key={hour} className="flex-1 flex flex-col items-center group relative">
+                <div key={hour} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                   <div 
-                    className="w-full bg-green-500/40 group-hover:bg-green-500 transition-colors rounded-t-sm"
+                    className="w-full bg-green-500/40 group-hover:bg-green-500 transition-colors rounded-t-sm relative"
                     style={{ height: `${(count / maxByHour) * 100 || 2}%` }}
                   >
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-1.5 py-0.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-xl font-bold border border-white/10">
                       {count} msgs
                     </div>
                   </div>
-                  <span className="text-[8px] text-gray-400 mt-1">
+                  <span className="text-[8px] text-gray-400 mt-1 flex-shrink-0">
                     {hour % 6 === 0 ? `${hour}h` : ''}
                   </span>
                 </div>
               ))}
             </div>
+            <p className="text-[10px] text-gray-400 mt-4 text-center italic">Hover over bars to see message counts</p>
           </div>
 
           {/* Activity by Day */}

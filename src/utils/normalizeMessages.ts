@@ -21,7 +21,10 @@ export const normalizeMessages = (rawText: string): Message[] => {
 
     if (parsed) {
       // New message starts
-      const dateTimeStr = `${parsed.date} ${parsed.time}`.replace(',', '');
+      let dateTimeStr = `${parsed.date} ${parsed.time}`.replace(',', '').toLowerCase();
+      // Normalize AM/PM (remove dots, ensure space)
+      dateTimeStr = dateTimeStr.replace(/([ap])\.m\./g, '$1m');
+      dateTimeStr = dateTimeStr.replace(/(\d)(am|pm)/g, '$1 $2');
       const timestamp = dayjs(dateTimeStr, [
         'DD/MM/YY h:mm:ss a',
         'MM/DD/YY h:mm:ss a',
