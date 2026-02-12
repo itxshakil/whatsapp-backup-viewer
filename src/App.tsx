@@ -2,6 +2,9 @@ import React from 'react';
 import { ChatProvider, useChatStore } from './store/chatStore';
 import { ChatLayout } from './components/ChatLayout';
 import { FileUploader } from './components/FileUploader';
+import { Sidebar } from './components/Sidebar';
+import { MessageList } from './components/MessageList';
+import { Search, MoreVertical, Phone, Video } from 'lucide-react';
 
 const ChatContent = () => {
   const { messages, metadata } = useChatStore();
@@ -15,71 +18,35 @@ const ChatContent = () => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-2">
-      {messages.map((msg) => (
-        <div
-          key={msg.id}
-          className={`flex ${msg.type === 'system' ? 'justify-center' : (msg.isCurrentUser ? 'justify-end' : 'justify-start')}`}
-        >
-          <div
-            className={`max-w-[85%] sm:max-w-[70%] p-2 rounded-lg text-sm shadow-sm ${
-              msg.type === 'system'
-                ? 'bg-amber-50 text-amber-800 text-xs px-4 py-1 rounded-md shadow-none border border-amber-100 max-w-[90%] text-center'
-                : (msg.isCurrentUser
-                  ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-gray-800 dark:text-gray-100'
-                  : 'bg-white dark:bg-[#202c33] text-gray-800 dark:text-gray-100')
-            }`}
-          >
-            {msg.type !== 'system' && (
-              <div className="font-bold text-xs text-gray-500 mb-1">{msg.sender}</div>
-            )}
-            {msg.type !== 'system' && (
-              <div className="flex justify-between items-end gap-2 mt-1">
-                <div className="whitespace-pre-wrap flex-1">{msg.content}</div>
-                <div className="text-[10px] text-gray-400 min-w-fit leading-none pb-0.5">
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
-              </div>
-            )}
-            {msg.type === 'system' && (
-              <div className="whitespace-pre-wrap">{msg.content}</div>
-            )}
+    <div className="flex flex-col h-full">
+      {/* Chat Header */}
+      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700">
+        <div className="flex items-center">
+          <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3">
+            <span className="text-gray-600 dark:text-gray-300 font-bold">{metadata.fileName.charAt(0).toUpperCase()}</span>
+          </div>
+          <div className="flex flex-col">
+            <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate max-w-[200px]">
+              {metadata.fileName}
+            </h3>
+            <p className="text-[11px] text-gray-500 dark:text-[#8696a0]">
+              {metadata.participants.length} participants
+            </p>
           </div>
         </div>
-      ))}
-    </div>
-  );
-};
-
-const SidebarContent = () => {
-  const { metadata, clearChat } = useChatStore();
-
-  if (!metadata) {
-    return (
-      <div className="p-4 text-center text-gray-500">
-        No chat loaded
+        <div className="flex items-center gap-5 text-gray-500 dark:text-[#8696a0]">
+          <Video size={20} />
+          <Phone size={18} />
+          <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1"></div>
+          <Search size={20} />
+          <MoreVertical size={20} />
+        </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="p-4 flex flex-col h-full">
-      <h2 className="font-bold text-lg mb-4 truncate" title={metadata.fileName}>
-        {metadata.fileName}
-      </h2>
-      <div className="space-y-2 mb-8">
-        <p className="text-sm text-gray-600">Messages: {metadata.messageCount}</p>
-        <p className="text-sm text-gray-600 font-medium">Participants:</p>
-        <ul className="text-xs text-gray-500 list-disc list-inside">
-          {metadata.participants.map(p => <li key={p}>{p}</li>)}
-        </ul>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto">
+        <MessageList messages={messages} />
       </div>
-      <button
-        onClick={clearChat}
-        className="mt-auto w-full py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
-      >
-        Close Chat
-      </button>
     </div>
   );
 };
@@ -88,7 +55,7 @@ function App() {
   return (
     <ChatProvider>
       <ChatLayout
-        sidebar={<SidebarContent />}
+        sidebar={<Sidebar />}
         content={<ChatContent />}
       />
     </ChatProvider>
