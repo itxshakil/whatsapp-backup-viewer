@@ -7,8 +7,9 @@ import { MessageList } from './components/MessageList';
 import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, MoreVertical, Phone, Search, Video, ImageIcon } from 'lucide-react';
 import { AnalyticsView } from './components/AnalyticsView';
 import { MediaGallery } from './components/MediaGallery';
+import { AboutPage } from './components/AboutPage';
 
-const ChatContent = () => {
+const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   const { messages, metadata, searchQuery, savedChats, loadChat } = useChatStore();
   const [showAnalytics, setShowAnalytics] = React.useState(false);
   const [showMediaGallery, setShowMediaGallery] = React.useState(false);
@@ -68,7 +69,17 @@ const ChatContent = () => {
 
   if (!metadata) {
     return (
-      <div className="flex-1 flex items-center justify-center p-4 animate-fade-in">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative">
+        {/* About button for empty state */}
+        <div className="absolute top-4 right-4 z-20">
+          <button 
+            onClick={onShowAbout}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#202c33] hover:bg-gray-50 dark:hover:bg-[#2a3942] text-gray-600 dark:text-gray-300 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-all text-xs font-medium"
+          >
+            <MoreVertical size={14} className="rotate-90" />
+            About & Help
+          </button>
+        </div>
         <FileUploader />
       </div>
     );
@@ -183,12 +194,15 @@ const ChatContent = () => {
 };
 
 function App() {
+  const [showAbout, setShowAbout] = React.useState(false);
+
   return (
     <ChatProvider>
       <ChatLayout
-        sidebar={<Sidebar />}
-        content={<ChatContent />}
+        sidebar={<Sidebar onShowAbout={() => setShowAbout(true)} />}
+        content={<ChatContent onShowAbout={() => setShowAbout(true)} />}
       />
+      {showAbout && <AboutPage onClose={() => setShowAbout(false)} />}
     </ChatProvider>
   );
 }
