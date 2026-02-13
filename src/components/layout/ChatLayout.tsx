@@ -5,7 +5,7 @@ interface ChatLayoutProps {
   content: React.ReactNode;
 }
 
-export const ChatLayout: React.FC<ChatLayoutProps> = ({ sidebar, content }) => {
+export const ChatLayout: React.FC<ChatLayoutProps> = React.memo(({ sidebar, content }) => {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
@@ -49,4 +49,4 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({ sidebar, content }) => {
       </div>
     </div>
   );
-};
+});

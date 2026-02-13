@@ -1,20 +1,20 @@
 import React, { useMemo } from 'react';
 import { MessageBubble } from './MessageBubble';
-import { Message } from '../types/message';
+import { Message } from '../../types/message';
 import dayjs from 'dayjs';
-import { useChatStore } from '../store/chatStore';
-import { useSearch } from '../hooks/useSearch';
+import { useChatStore } from '../../store/chatStore';
+import { useSearch } from '../../hooks/useSearch';
 
 interface MessageListProps {
   messages: Message[];
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+export const MessageList: React.FC<MessageListProps> = React.memo(({ messages }) => {
   const { searchQuery } = useChatStore();
   const filteredMessages = useSearch(messages, searchQuery);
 
   const renderedMessages = useMemo(() => {
-    return filteredMessages.map((message, index) => {
+    return filteredMessages.map((message: any, index: number) => {
       const prevMessage = index > 0 ? filteredMessages[index - 1] : null;
 
       // Date grouping logic
@@ -46,9 +46,9 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
           {showDateHeader && (
             <div 
               id={`date-${currentDate.format('YYYY-MM-DD')}`}
-              className="flex justify-center my-4 sticky top-2 z-10"
+              className="flex justify-center my-4 sticky top-2 z-10 pointer-events-none"
             >
-              <div className="bg-white/90 dark:bg-[#182229]/90 backdrop-blur-sm dark:text-[#8696a0] text-gray-600 text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm uppercase">
+              <div className="bg-white/90 dark:bg-[#182229]/90 backdrop-blur-sm dark:text-[#8696a0] text-gray-600 text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm uppercase pointer-events-auto">
                 {dateLabel}
               </div>
             </div>
@@ -76,4 +76,4 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
       {renderedMessages}
     </div>
   );
-};
+});

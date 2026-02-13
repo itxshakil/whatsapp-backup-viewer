@@ -1,60 +1,61 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ChatProvider, useChatStore } from './store/chatStore';
-import { ChatLayout } from './components/ChatLayout';
-import { FileUploader } from './components/FileUploader';
-import { Sidebar } from './components/Sidebar';
-import { MessageList } from './components/MessageList';
+import { ChatLayout } from './components/layout/ChatLayout';
+import { FileUploader } from './components/ui/FileUploader';
+import { Sidebar } from './components/layout/Sidebar';
+import { MessageList } from './components/chat/MessageList';
 import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, MoreVertical, Phone, Search, Video, ImageIcon } from 'lucide-react';
-import { AnalyticsView } from './components/AnalyticsView';
-import { MediaGallery } from './components/MediaGallery';
-import { AboutPage } from './components/AboutPage';
+import { AnalyticsView } from './components/analytics/AnalyticsView';
+import { MediaGallery } from './components/chat/MediaGallery';
+import { AboutPage } from './components/ui/AboutPage';
 
 const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   const { messages, metadata, searchQuery, savedChats, loadChat } = useChatStore();
-  const [showAnalytics, setShowAnalytics] = React.useState(false);
-  const [showMediaGallery, setShowMediaGallery] = React.useState(false);
-  const scrollRef = React.useRef<HTMLDivElement>(null);
-  const [showScrollBottom, setShowScrollBottom] = React.useState(false);
-  const [showScrollTop, setShowScrollTop] = React.useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showMediaGallery, setShowMediaGallery] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const jumpToBottom = () => {
+  const handleJumpToBottom = useCallback(() => {
     scrollToBottom();
-  };
+  }, []);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
-      behavior: 'smooth'
+      behavior: 'auto'
     });
-  };
+  }, []);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     scrollRef.current?.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'auto'
     });
-  };
+  }, []);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
     // Show button if we are more than 300px away from bottom
     setShowScrollBottom(scrollHeight - scrollTop - clientHeight > 300);
     // Show top button if we are more than 300px away from top
     setShowScrollTop(scrollTop > 300);
-  };
+  }, []);
 
   // Scroll to bottom when a new chat is loaded or search changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (metadata && !showAnalytics) {
       // Small timeout to ensure DOM is rendered
-      setTimeout(scrollToBottom, 100);
+      const timer = setTimeout(scrollToBottom, 100);
+      return () => clearTimeout(timer);
     }
-  }, [metadata?.fileName, searchQuery, showAnalytics]);
+  }, [metadata?.fileName, searchQuery, showAnalytics, scrollToBottom]);
 
   // Handle URL actions (PWA Shortcuts)
-  const hasHandledAction = React.useRef(false);
-  React.useEffect(() => {
+  const hasHandledAction = useRef(false);
+  useEffect(() => {
     if (hasHandledAction.current) return;
     
     const params = new URLSearchParams(window.location.search);
@@ -85,7 +86,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     );
   }
 
-  const handleExportJSON = () => {
+  const handleExportJSON = useCallback(() => {
     if (!metadata || messages.length === 0) return;
     const data = JSON.stringify({ metadata, messages }, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
@@ -95,7 +96,11 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     a.download = `${metadata.fileName.replace('.txt', '')}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  };
+  }, [metadata, messages]);
+
+  const toggleAnalytics = useCallback(() => setShowAnalytics(prev => !prev), []);
+  const openMediaGallery = useCallback(() => setShowMediaGallery(true), []);
+  const closeMediaGallery = useCallback(() => setShowMediaGallery(false), []);
 
   return (
     <div className="flex flex-col h-full animate-fade-in relative">
@@ -108,7 +113,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
           <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
             <span className="text-gray-600 dark:text-gray-300 font-bold">{metadata.fileName.charAt(0).toUpperCase()}</span>
           </div>
-          <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => setShowAnalytics(!showAnalytics)}>
+          <div className="flex flex-col min-w-0 cursor-pointer" onClick={toggleAnalytics}>
             <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate">
               {metadata.fileName}
             </h3>
@@ -126,14 +131,14 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             <Download size={18} />
           </button>
           <button 
-            onClick={() => setShowAnalytics(!showAnalytics)}
+            onClick={toggleAnalytics}
             className={`p-1.5 rounded-full transition-colors ${showAnalytics ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             title="Chat Analytics"
           >
             <BarChart3 size={20} />
           </button>
           <button 
-            onClick={() => setShowMediaGallery(true)}
+            onClick={openMediaGallery}
             className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
             title="Media Gallery"
           >
@@ -142,7 +147,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
           <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block"></div>
           <Search size={18} className="cursor-pointer" />
           <button 
-            onClick={jumpToBottom}
+            onClick={handleJumpToBottom}
             className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors sm:hidden"
             title="Jump to Bottom"
           >
@@ -154,14 +159,14 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
 
       {/* Main Content Area */}
       <div className="flex-1 relative flex flex-col min-h-0">
-        {showMediaGallery && <MediaGallery onClose={() => setShowMediaGallery(false)} />}
+        {showMediaGallery && <MediaGallery onClose={closeMediaGallery} />}
         {showAnalytics ? (
           <AnalyticsView messages={messages} participants={metadata.participants} />
         ) : (
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto relative scroll-smooth"
+            className="flex-1 overflow-y-auto relative"
           >
             <MessageList messages={messages} />
             
@@ -194,15 +199,18 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
 };
 
 function App() {
-  const [showAbout, setShowAbout] = React.useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+
+  const handleShowAbout = useCallback(() => setShowAbout(true), []);
+  const handleHideAbout = useCallback(() => setShowAbout(false), []);
 
   return (
     <ChatProvider>
       <ChatLayout
-        sidebar={<Sidebar onShowAbout={() => setShowAbout(true)} />}
-        content={<ChatContent onShowAbout={() => setShowAbout(true)} />}
+        sidebar={<Sidebar onShowAbout={handleShowAbout} />}
+        content={<ChatContent onShowAbout={handleShowAbout} />}
       />
-      {showAbout && <AboutPage onClose={() => setShowAbout(false)} />}
+      {showAbout && <AboutPage onClose={handleHideAbout} />}
     </ChatProvider>
   );
 }

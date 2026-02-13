@@ -5,6 +5,38 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(customParseFormat);
 
+const MEDIA_EXTENSIONS = {
+  image: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+  video: ['mp4', 'mov', 'avi'],
+  audio: ['mp3', 'wav', 'ogg', 'm4a', 'opus']
+};
+
+const MEDIA_REGEX = /<attached:\s*(.*?)>|^(.*?)\s+\(file attached\)$|^(.*?)\s+<attached>$/i;
+
+const DATE_FORMATS = [
+  'DD/MM/YY h:mm:ss a',
+  'MM/DD/YY h:mm:ss a',
+  'DD/MM/YYYY h:mm:ss a',
+  'MM/DD/YYYY h:mm:ss a',
+  'DD/MM/YY h:mm a',
+  'MM/DD/YY h:mm a',
+  'DD/MM/YYYY h:mm a',
+  'MM/DD/YYYY h:mm a',
+  'DD/MM/YY HH:mm:ss',
+  'MM/DD/YY HH:mm:ss',
+  'DD/MM/YYYY HH:mm:ss',
+  'MM/DD/YYYY HH:mm:ss',
+  'DD/MM/YY HH:mm',
+  'MM/DD/YY HH:mm',
+  'YYYY/MM/DD HH:mm',
+  'D/M/YY H:mm',
+  'M/D/YY H:mm',
+  'DD.MM.YY HH:mm',
+  'DD.MM.YYYY HH:mm',
+  'YYYY-MM-DD HH:mm',
+  'YYYY-MM-DD h:mm a'
+];
+
 export const normalizeMessages = (rawText: string): Message[] => {
   const lines = rawText.split(/\r?\n/);
   const messages: Message[] = [];
@@ -25,42 +57,25 @@ export const normalizeMessages = (rawText: string): Message[] => {
       // Normalize AM/PM (remove dots, ensure space)
       dateTimeStr = dateTimeStr.replace(/([ap])\.m\./g, '$1m');
       dateTimeStr = dateTimeStr.replace(/(\d)(am|pm)/g, '$1 $2');
-      const timestamp = dayjs(dateTimeStr, [
-        'DD/MM/YY h:mm:ss a',
-        'MM/DD/YY h:mm:ss a',
-        'DD/MM/YYYY h:mm:ss a',
-        'MM/DD/YYYY h:mm:ss a',
-        'DD/MM/YY h:mm a',
-        'MM/DD/YY h:mm a',
-        'DD/MM/YYYY h:mm a',
-        'MM/DD/YYYY h:mm a',
-        'DD/MM/YY HH:mm',
-        'MM/DD/YY HH:mm',
-        'YYYY/MM/DD HH:mm',
-        'D/M/YY H:mm',
-        'M/D/YY H:mm',
-        'DD.MM.YY HH:mm',
-        'DD.MM.YYYY HH:mm'
-      ]).toDate();
+      const timestamp = dayjs(dateTimeStr, DATE_FORMATS).toDate();
 
       let type: Message['type'] = parsed.isSystem ? 'system' : 'text';
       let content = parsed.content;
 
       // Detect media attachments
       // Format: "<attached: FILENAME>" or "FILENAME (file attached)" or "FILENAME <attached>"
-      const mediaRegex = /<attached:\s*(.*?)>|^(.*?)\s+\(file attached\)$|^(.*?)\s+<attached>$/i;
-      const mediaMatch = content?.match(mediaRegex);
+      const mediaMatch = content?.match(MEDIA_REGEX);
 
       if (mediaMatch) {
         const filename = (mediaMatch[1] || mediaMatch[2] || mediaMatch[3]).trim();
         content = filename;
-        const ext = filename.split('.').pop()?.toLowerCase();
+        const ext = filename.split('.').pop()?.toLowerCase() || '';
         
-        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext || '')) {
+        if (MEDIA_EXTENSIONS.image.includes(ext)) {
           type = 'image';
-        } else if (['mp4', 'mov', 'avi'].includes(ext || '')) {
+        } else if (MEDIA_EXTENSIONS.video.includes(ext)) {
           type = 'video';
-        } else if (['mp3', 'wav', 'ogg', 'm4a', 'opus'].includes(ext || '')) {
+        } else if (MEDIA_EXTENSIONS.audio.includes(ext)) {
           type = 'audio';
         } else {
           type = 'document';
@@ -68,7 +83,7 @@ export const normalizeMessages = (rawText: string): Message[] => {
       }
 
       currentMessage = {
-        id: `msg-${index}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `msg-${index}-${Math.random().toString(36).substring(2, 11)}`,
         timestamp,
         sender: parsed.sender,
         content: content,

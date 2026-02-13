@@ -28,12 +28,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
   // Helper to cleanup Blob URLs
   useEffect(() => {
+    const urls = messages
+      .filter(msg => msg.mediaUrl?.startsWith('blob:'))
+      .map(msg => msg.mediaUrl as string);
+
     return () => {
-      messages.forEach(msg => {
-        if (msg.mediaUrl?.startsWith('blob:')) {
-          URL.revokeObjectURL(msg.mediaUrl);
-        }
-      });
+      urls.forEach(url => URL.revokeObjectURL(url));
     };
   }, [messages]);
 
@@ -42,19 +42,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const [savedChats, setSavedChats] = useState<SavedChat[]>([]);
 
-  // Load saved chats from IndexedDB on mount
-  useEffect(() => {
-    refreshSavedChats();
-  }, []);
-
-  const refreshSavedChats = async () => {
+  const refreshSavedChats = useCallback(async () => {
     try {
       const chats = await db.chats.orderBy('lastOpened').reverse().toArray();
       setSavedChats(chats);
     } catch (err) {
       console.error('Failed to load saved chats:', err);
     }
-  };
+  }, []);
+
+  // Load saved chats from IndexedDB on mount
+  useEffect(() => {
+    refreshSavedChats();
+  }, [refreshSavedChats]);
 
   const setChatData = useCallback(async (newMessages: Message[], newMetadata: ChatMetadata, shouldSave = false) => {
     setMessages(newMessages);
@@ -83,7 +83,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         console.error('Failed to auto-save chat:', err);
       }
     }
-  }, []);
+  }, [refreshSavedChats]);
 
   const saveCurrentChat = useCallback(async () => {
     if (!metadata || messages.length === 0) return;
@@ -109,9 +109,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       console.error('Failed to save chat:', err);
       setError('Failed to save chat to database.');
     }
-  }, [metadata, messages]);
+  }, [metadata, messages, refreshSavedChats]);
 
-  const loadChat = async (id: number) => {
+  const loadChat = useCallback(async (id: number) => {
     try {
       const chat = await db.chats.get(id);
       if (chat) {
@@ -134,9 +134,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       console.error('Failed to load chat:', err);
       setError('Failed to load chat from database.');
     }
-  };
+  }, [refreshSavedChats]);
 
-  const deleteChat = async (id: number) => {
+  const deleteChat = useCallback(async (id: number) => {
     try {
       await db.chats.delete(id);
       if (metadata && savedChats.find(c => c.id === id)?.metadata.fileName === metadata.fileName) {
@@ -147,9 +147,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       console.error('Failed to delete chat:', err);
       setError('Failed to delete chat.');
     }
-  };
+  }, [metadata, savedChats, refreshSavedChats]);
 
-  const clearChat = () => {
+  const clearChat = useCallback(() => {
     setMessages([]);
     setMetadata(null);
     setSearchQuery('');
@@ -159,9 +159,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     if ('clearAppBadge' in navigator) {
       (navigator as any).clearAppBadge().catch(() => {});
     }
-  };
+  }, []);
 
-  const clearAllData = async () => {
+  const clearAllData = useCallback(async () => {
     try {
       await db.chats.clear();
       clearChat();
@@ -170,7 +170,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       console.error('Failed to clear all data:', err);
       setError('Failed to clear database.');
     }
-  };
+  }, [clearChat, refreshSavedChats]);
 
   return (
     <ChatContext.Provider value={{ 

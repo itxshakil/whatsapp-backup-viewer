@@ -5,7 +5,7 @@ interface AboutPageProps {
   onClose: () => void;
 }
 
-export const AboutPage: React.FC<AboutPageProps> = ({ onClose }) => {
+export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
   return (
     <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in">
       {/* Header */}
@@ -124,4 +124,4 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onClose }) => {
       </div>
     </div>
   );
-};
+});

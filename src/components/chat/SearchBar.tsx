@@ -1,8 +1,8 @@
 import React from 'react';
 import { Search, X, ChevronUp, ChevronDown } from 'lucide-react';
-import { useChatStore } from '../store/chatStore';
+import { useChatStore } from '../../store/chatStore';
 
-export const SearchBar: React.FC = () => {
+export const SearchBar: React.FC = React.memo(() => {
   const { searchQuery, setSearchQuery, messages, setHighlightedMessageId } = useChatStore();
   const [results, setResults] = React.useState<{id: string, index: number}[]>([]);
   const [currentIndex, setCurrentIndex] = React.useState(-1);
@@ -16,38 +16,38 @@ export const SearchBar: React.FC = () => {
 
     const lowerQuery = searchQuery.toLowerCase();
     const found = messages
-      .map((m, i) => ({ m, i }))
-      .filter(({ m }) => 
+      .map((m: any, i: number) => ({ m, i }))
+      .filter(({ m }: any) => 
         (m.type === 'text' || m.type === 'system' || m.type === 'document') &&
         (m.content.toLowerCase().includes(lowerQuery) || m.sender.toLowerCase().includes(lowerQuery))
       )
-      .map(({ m, i }) => ({ id: m.id, index: i }));
+      .map(({ m, i }: any) => ({ id: m.id, index: i }));
 
     setResults(found);
     setCurrentIndex(found.length > 0 ? 0 : -1);
   }, [searchQuery, messages]);
 
-  const goToNext = () => {
+  const jumpToMessage = React.useCallback((id: string) => {
+    setHighlightedMessageId(id);
+    const element = document.getElementById(`msg-${id}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'auto', block: 'center' });
+    }
+  }, [setHighlightedMessageId]);
+
+  const goToNext = React.useCallback(() => {
     if (results.length === 0) return;
     const nextIdx = (currentIndex + 1) % results.length;
     setCurrentIndex(nextIdx);
     jumpToMessage(results[nextIdx].id);
-  };
+  }, [results, currentIndex, jumpToMessage]);
 
-  const goToPrev = () => {
+  const goToPrev = React.useCallback(() => {
     if (results.length === 0) return;
     const prevIdx = (currentIndex - 1 + results.length) % results.length;
     setCurrentIndex(prevIdx);
     jumpToMessage(results[prevIdx].id);
-  };
-
-  const jumpToMessage = (id: string) => {
-    setHighlightedMessageId(id);
-    const element = document.getElementById(`msg-${id}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
+  }, [results, currentIndex, jumpToMessage]);
 
   return (
     <div className="p-2 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111b21]">
@@ -96,4 +96,4 @@ export const SearchBar: React.FC = () => {
       )}
     </div>
   );
-};
+});
