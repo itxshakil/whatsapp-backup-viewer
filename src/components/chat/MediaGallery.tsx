@@ -1,28 +1,28 @@
 import React from 'react';
-import { useChatStore } from '../store/chatStore';
+import { useChatStore } from '../../store/chatStore';
 import { X, Grid, Layout } from 'lucide-react';
 
 interface MediaGalleryProps {
   onClose: () => void;
 }
 
-export const MediaGallery: React.FC<MediaGalleryProps> = ({ onClose }) => {
+export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }) => {
   const { messages, setHighlightedMessageId } = useChatStore();
   
   const mediaMessages = React.useMemo(() => {
     return messages.filter(m => ['image', 'video', 'audio', 'document'].includes(m.type));
   }, [messages]);
 
-  const jumpToMessage = (id: string) => {
+  const jumpToMessage = React.useCallback((id: string) => {
     setHighlightedMessageId(id);
     onClose();
     setTimeout(() => {
       const element = document.getElementById(`msg-${id}`);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.scrollIntoView({ behavior: 'auto', block: 'center' });
       }
     }, 100);
-  };
+  }, [setHighlightedMessageId, onClose]);
 
   return (
     <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in">
@@ -43,7 +43,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({ onClose }) => {
           </div>
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-            {mediaMessages.map((msg) => (
+            {mediaMessages.map((msg: any) => (
               <div 
                 key={msg.id} 
                 onClick={() => jumpToMessage(msg.id)}
@@ -71,4 +71,4 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({ onClose }) => {
       </div>
     </div>
   );
-};
+});

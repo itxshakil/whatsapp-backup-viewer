@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Message } from '../types/message';
+import { Message } from '../../types/message';
 import { BarChart3, Users, MessageCircle, Clock, Calendar, Image as ImageIcon, MessageSquare } from 'lucide-react';
 import dayjs from 'dayjs';
 
@@ -8,60 +8,60 @@ interface AnalyticsViewProps {
   participants: string[];
 }
 
-export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, participants }) => {
+export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ messages, participants }) => {
   const stats = useMemo(() => {
     const totalMessages = messages.length;
-    const textMessages = messages.filter(m => m.type === 'text').length;
-    const mediaMessages = messages.filter(m => ['image', 'video', 'audio', 'document'].includes(m.type)).length;
+    const textMessages = messages.filter((m: any) => m.type === 'text').length;
+    const mediaMessages = messages.filter((m: any) => ['image', 'video', 'audio', 'document'].includes(m.type)).length;
     
     // Message count per participant
-    const perUser = participants.reduce((acc, user) => {
-      acc[user] = messages.filter(m => m.sender === user).length;
+    const perUser = participants.reduce((acc: any, user: string) => {
+      acc[user] = messages.filter((m: any) => m.sender === user).length;
       return acc;
     }, {} as Record<string, number>);
 
     // Messages by hour
     const byHour = new Array(24).fill(0);
-    messages.forEach(m => {
+    messages.forEach((m: any) => {
       const hour = m.timestamp.getHours();
       byHour[hour]++;
     });
 
     // Message by day of week
     const byDay = new Array(7).fill(0); // 0 = Sunday
-    messages.forEach(m => {
+    messages.forEach((m: any) => {
       const day = m.timestamp.getDay();
       byDay[day]++;
     });
 
     // Busy hours
     const topHours = byHour
-      .map((count, hour) => ({ hour, count }))
+      .map((count: number, hour: number) => ({ hour, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
 
     // Emoji breakdown
     const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
     const emojiFreq: Record<string, number> = {};
-    messages.forEach(m => {
+    messages.forEach((m: any) => {
       const emojis = m.content.match(emojiRegex);
       if (emojis) {
-        emojis.forEach(emoji => {
+        emojis.forEach((emoji: string) => {
           emojiFreq[emoji] = (emojiFreq[emoji] || 0) + 1;
         });
       }
     });
     const topEmojis = Object.entries(emojiFreq)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a]: [string, number], [, b]: [string, number]) => b - a)
       .slice(0, 10);
 
     // Word frequency (excluding short common words)
     const commonWords = new Set(['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up', 'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time', 'no', 'just', 'him', 'know', 'take', 'person', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then', 'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well', 'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'is', 'are', 'was', 'were', 'am', 'been', 'has', 'had']);
     const wordFreq: Record<string, number> = {};
-    messages.filter(m => m.type === 'text').forEach(m => {
+    messages.filter((m: any) => m.type === 'text').forEach((m: any) => {
       const words = m.content.toLowerCase().match(/\b(\w+)\b/g);
       if (words) {
-        words.forEach(word => {
+        words.forEach((word: string) => {
           if (word.length > 2 && !commonWords.has(word)) {
             wordFreq[word] = (wordFreq[word] || 0) + 1;
           }
@@ -69,7 +69,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
       }
     });
     const topWords = Object.entries(wordFreq)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a]: [string, number], [, b]: [string, number]) => b - a)
       .slice(0, 10);
 
     return { totalMessages, textMessages, mediaMessages, perUser, byHour, byDay, topWords, topEmojis, topHours };
@@ -148,8 +148,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
             </h3>
             <div className="space-y-4">
               {Object.entries(stats.perUser)
-                .sort(([, a], [, b]) => b - a)
-                .map(([user, count]) => (
+                .sort(([, a]: [string, any], [, b]: [string, any]) => b - a)
+                .map(([user, count]: [string, any]) => (
                   <div key={user}>
                     <div className="flex justify-between text-sm mb-1 text-gray-700 dark:text-[#e9edef]">
                       <span className="truncate mr-2">{user}</span>
@@ -263,7 +263,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ messages, particip
       </div>
     </div>
   );
-};
+});
 
 const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
   <div className="bg-white dark:bg-[#202c33] p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">

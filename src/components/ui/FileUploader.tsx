@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react';
-import { useChatStore } from '../store/chatStore';
-import { normalizeMessages } from '../utils/normalizeMessages';
-import { Upload, AlertCircle, Save, FileArchive } from 'lucide-react';
-import { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import JSZip from 'jszip';
-import { Message } from '../types/message';
+import { useChatStore } from '../../store/chatStore';
+import { normalizeMessages } from '../../utils/normalizeMessages';
+import { Upload, AlertCircle, Save, FileArchive } from 'lucide-react';
+import { Message } from '../../types/message';
+import { SavedChat } from '../../store/db';
 
-export const FileUploader: React.FC = () => {
+export const FileUploader: React.FC = React.memo(() => {
   const { setChatData, setError, error, saveCurrentChat, savedChats, loadChat, deleteChat } = useChatStore();
   const [shouldSave, setShouldSave] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -167,6 +167,21 @@ export const FileUploader: React.FC = () => {
     }
   }, [setChatData, setError, shouldSave]);
 
+  const handleConfirmDelete = useCallback((e: React.MouseEvent, chat: any) => {
+    e.stopPropagation();
+    if (window.confirm(`Are you sure you want to delete "${chat.metadata.fileName}"?`)) {
+      chat.id && deleteChat(chat.id);
+    }
+  }, [deleteChat]);
+
+  const handleLoadChat = useCallback((id: number) => {
+    loadChat(id);
+  }, [loadChat]);
+
+  const toggleShouldSave = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setShouldSave(e.target.checked);
+  }, []);
+
   return (
     <div className="flex flex-col w-full max-w-2xl gap-6">
       <div className={`flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-300 rounded-lg bg-white/50 hover:bg-white/80 transition-colors ${isProcessing ? 'opacity-50 cursor-wait' : ''}`}>
@@ -196,7 +211,7 @@ export const FileUploader: React.FC = () => {
             <input 
               type="checkbox" 
               checked={shouldSave} 
-              onChange={(e) => setShouldSave(e.target.checked)}
+              onChange={toggleShouldSave}
               className="rounded text-green-600 focus:ring-green-500"
             />
             Save to browser storage (IndexedDB)
@@ -218,21 +233,16 @@ export const FileUploader: React.FC = () => {
             Recent Chats
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {savedChats.map((chat) => (
+            {savedChats.map((chat: any) => (
               <div 
                 key={chat.id} 
                 className="group flex flex-col p-3 bg-white border border-gray-100 rounded-lg hover:border-green-300 hover:shadow-sm transition-all cursor-pointer relative"
-                onClick={() => chat.id && loadChat(chat.id)}
+                onClick={() => chat.id && handleLoadChat(chat.id)}
               >
                 <div className="flex justify-between items-start mb-1">
                   <h5 className="text-sm font-medium text-gray-800 truncate pr-6">{chat.metadata.fileName}</h5>
                   <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (window.confirm(`Are you sure you want to delete "${chat.metadata.fileName}"?`)) {
-                        chat.id && deleteChat(chat.id);
-                      }
-                    }}
+                    onClick={(e) => handleConfirmDelete(e, chat)}
                     className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Delete saved chat"
                   >
@@ -250,4 +260,4 @@ export const FileUploader: React.FC = () => {
       )}
     </div>
   );
-};
+});

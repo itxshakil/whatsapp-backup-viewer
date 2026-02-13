@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SidebarHeader } from './SidebarHeader';
+import { SidebarHeader } from './layout/SidebarHeader';
 import { ChatProvider } from '../store/chatStore';
 
 // Mock matchMedia

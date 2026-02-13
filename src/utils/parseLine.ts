@@ -5,7 +5,7 @@
  * [12/11/23, 9:45:30 pm] John: Hello
  */
 
-const regex = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]?)\s(?:-|:)?\s?([^:]+)(?::\s(.*))?$/i;
+const WHATSAPP_LINE_REGEX = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]?)\s(?:-|:)\s?([^:]+)(?::\s(.*))?$/i;
 
 export interface ParsedLine {
   date: string;
@@ -28,7 +28,7 @@ const isInvisible = (text: string) => {
 };
 
 export const parseLine = (line: string): ParsedLine | null => {
-  const match = line.match(regex);
+  const match = line.match(WHATSAPP_LINE_REGEX);
   if (!match) return null;
 
   let [, date, time, , sender, content] = match;

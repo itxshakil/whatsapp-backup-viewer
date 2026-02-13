@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { User, MoreVertical, Moon, Sun, Download, Share2, DownloadCloud, Info } from 'lucide-react';
-import { useChatStore } from '../store/chatStore';
+import { useChatStore } from '../../store/chatStore';
 
 interface SidebarHeaderProps {
   onShowAbout?: () => void;
 }
 
-export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => {
+export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowAbout }) => {
   const { messages, metadata } = useChatStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isDark, setIsDark] = useState(() => {
@@ -61,7 +61,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => 
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     if (navigator.share) {
       try {
         await navigator.share({
@@ -73,7 +73,26 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => 
         console.error('Error sharing:', err);
       }
     }
-  };
+  }, [metadata?.fileName]);
+
+  const handleExportJSON = useCallback(() => {
+    if (!metadata || messages.length === 0) return;
+    const data = {
+      metadata,
+      messages
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${metadata.fileName.replace('.txt', '')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [metadata, messages]);
+
+  const toggleDarkMode = useCallback(() => {
+    setIsDark(prev => !prev);
+  }, []);
 
   return (
     <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33]">
@@ -90,7 +109,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => 
             <DownloadCloud size={20} />
           </button>
         )}
-        {navigator.share && (
+        {typeof navigator !== 'undefined' && 'share' in navigator && (
           <button 
             onClick={handleShare}
             className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
@@ -107,7 +126,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => 
           <Info size={20} />
         </button>
         <button 
-          onClick={() => setIsDark(!isDark)}
+          onClick={toggleDarkMode}
           className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
@@ -117,24 +136,11 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => 
           className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors disabled:opacity-30"
           title="Export as JSON"
           disabled={!metadata || messages.length === 0}
-          onClick={() => {
-            if (!metadata || messages.length === 0) return;
-            const data = {
-              metadata,
-              messages
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${metadata.fileName.replace('.txt', '')}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-          }}
+          onClick={handleExportJSON}
         >
           <Download size={20} />
         </button>
       </div>
     </div>
   );
-};
+});

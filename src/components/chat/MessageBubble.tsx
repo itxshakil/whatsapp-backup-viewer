@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileIcon, ImageIcon, VideoIcon, MusicIcon, Download, Copy, Check } from 'lucide-react';
-import { Message } from '../types/message';
-import { useChatStore } from '../store/chatStore';
+import { Message } from '../../types/message';
+import { useChatStore } from '../../store/chatStore';
 import { useState } from 'react';
 
 interface MessageBubbleProps {
@@ -10,19 +10,24 @@ interface MessageBubbleProps {
   showTail?: boolean;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({
+export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   message,
   showSender = true,
   showTail = true,
 }) => {
   const { searchQuery, highlightedMessageId, setHighlightedMessageId } = useChatStore();
   const [copied, setCopied] = useState(false);
+  const bubbleRef = React.useRef<HTMLDivElement>(null);
+
   const isSystem = message.type === 'system';
   const isMe = message.isCurrentUser;
   const isHighlighted = highlightedMessageId === message.id;
 
   React.useEffect(() => {
     if (isHighlighted) {
+      if (bubbleRef.current) {
+        bubbleRef.current.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }
       const timer = setTimeout(() => {
         setHighlightedMessageId(null);
       }, 3000);
@@ -30,40 +35,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     }
   }, [isHighlighted, setHighlightedMessageId]);
 
-  const handleCopy = () => {
+  const handleCopy = React.useCallback(() => {
     navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, [message.content]);
 
-  const renderContentWithLinks = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
-
-    return parts.map((part, i) => {
-      if (part.match(urlRegex)) {
-        return (
-          <a
-            key={i}
-            href={part}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 dark:text-blue-400 hover:underline break-all"
-          >
-            {part}
-          </a>
-        );
-      }
-      return highlightText(part, searchQuery);
-    });
-  };
-
-  const highlightText = (text: string, highlight: string) => {
+  const highlightText = React.useCallback((text: string, highlight: string) => {
     if (!highlight.trim()) return text;
     const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
     return (
       <>
-        {parts.map((part, i) => 
+        {parts.map((part: string, i: number) => 
           part.toLowerCase() === highlight.toLowerCase() ? (
             <mark key={i} className="bg-yellow-200 dark:bg-yellow-500/50 text-inherit rounded-sm px-0.5">
               {part}
@@ -72,9 +55,32 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
       </>
     );
-  };
+  }, []);
 
-  const renderMediaContent = () => {
+  const renderContentWithLinks = React.useCallback((text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
+    return parts.map((part: string, i: number) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {highlightText(part, searchQuery)}
+          </a>
+        );
+      }
+      return highlightText(part, searchQuery);
+    });
+  }, [searchQuery, highlightText]);
+
+  const renderMediaContent = React.useCallback(() => {
     const isImage = message.type === 'image';
     const isVideo = message.type === 'video';
     const isAudio = message.type === 'audio';
@@ -160,7 +166,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
       </div>
     );
-  };
+  }, [message]);
 
   if (isSystem) {
     return (
@@ -174,8 +180,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div 
+      ref={bubbleRef}
       id={`msg-${message.id}`}
-      className={`flex w-full mb-1 group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'} ${isHighlighted ? 'animate-pulse-highlight' : ''}`}
+      className={`flex w-full mb-1 group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'} ${isHighlighted ? 'ring-2 ring-teal-400 dark:ring-teal-600 rounded-lg' : ''}`}
     >
       <div
         className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm group/bubble ${
@@ -228,10 +235,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <span className="inline-block w-[60px]"></span>
           </div>
           <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0.5 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1">
-            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase()}
+            {React.useMemo(() => message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(), [message.timestamp])}
           </div>
         </div>
       </div>
     </div>
   );
-};
+});
