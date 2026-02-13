@@ -31,14 +31,14 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
     };
   }, []);
 
-  const handleInstallClick = async () => {
+  const handleInstallClick = useCallback(async () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
     }
-  };
+  }, [deferredPrompt]);
 
   useEffect(() => {
     if (isDark) {

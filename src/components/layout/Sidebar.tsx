@@ -72,6 +72,44 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     }
   }, [deleteChat]);
 
+  const handleJumpToBottom = useCallback(() => {
+    // Scroll to bottom of message list
+    const scrollContainer = document.querySelector('.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: 'auto'
+      });
+    }
+  }, []);
+
+  const participantItems = useMemo(() => {
+    if (!metadata) return [];
+    return metadata.participants.map((participant: string) => (
+      <li key={participant} className="text-sm text-gray-700 dark:text-[#e9edef] flex items-center gap-2">
+        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+        {participant}
+      </li>
+    ));
+  }, [metadata]);
+
+  const sidebarChatInfo = useMemo(() => {
+    if (!metadata) return null;
+    return (
+      <div className="p-4 mt-2 bg-[#f0f2f5] dark:bg-[#111b21]/50">
+        <h4 className="text-xs font-semibold text-teal-600 dark:text-teal-500 uppercase tracking-wider mb-3">Chat Info</h4>
+        <div className="space-y-4">
+          <div>
+            <p className="text-[11px] text-gray-500 uppercase font-bold mb-1">Participants</p>
+            <ul className="space-y-1">
+              {participantItems}
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }, [participantItems, metadata]);
+
   const chatItems = useMemo(() => {
     return savedChats.map((chat: any) => {
       const isActive = metadata?.fileName === chat.metadata.fileName;
@@ -123,63 +161,8 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     ));
   }, [availableDates, handleJumpToDate]);
 
-  const handleJumpToBottom = useCallback(() => {
-    // Scroll to bottom of message list
-    const scrollContainer = document.querySelector('.overflow-y-auto');
-    if (scrollContainer) {
-      scrollContainer.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: 'auto'
-      });
-    }
-  }, []);
-
-  const sidebarRecentChats = useMemo(() => {
-    if (savedChats.length === 0) return null;
-    return (
-      <div className="mt-8 w-full text-left">
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">Recent Chats</h4>
-        <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1">
-          {chatItems}
-        </div>
-      </div>
-    );
-  }, [savedChats, chatItems]);
-
-  const sidebarEmptyState = useMemo(() => {
-    return (
-      <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
-        <SidebarHeader onShowAbout={onShowAbout} />
-        
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#f0f2f5] dark:bg-[#111b21]">
-          <div className="w-16 h-16 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mb-4">
-            <MessageSquare className="text-gray-400 w-8 h-8" />
-          </div>
-          <h3 className="text-gray-600 dark:text-[#e9edef] font-medium">WhatsApp Viewer</h3>
-          <p className="text-sm text-gray-400 mt-2">Upload a chat backup to get started</p>
-          
-          {/* Quick access to saved chats in sidebar when none is open */}
-          {sidebarRecentChats}
-        </div>
-      </div>
-    );
-  }, [onShowAbout, sidebarRecentChats]);
-
-  if (!metadata) {
-    return sidebarEmptyState;
-  }
-
-  const participantItems = useMemo(() => {
-    return metadata.participants.map((participant: string) => (
-      <li key={participant} className="text-sm text-gray-700 dark:text-[#e9edef] flex items-center gap-2">
-        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
-        {participant}
-      </li>
-    ));
-  }, [metadata.participants]);
-
   const dateJumpSection = useMemo(() => {
-    if (availableDates.length <= 1) return null;
+    if (!metadata || availableDates.length <= 1) return null;
     return (
       <div className="p-4 bg-white dark:bg-[#111b21] border-t border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between mb-3">
@@ -241,7 +224,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
         )}
       </div>
     );
-  }, [availableDates, showCalendar, toggleCalendar, handleDaySelect, dateJumpItems]);
+  }, [metadata, availableDates, showCalendar, toggleCalendar, handleDaySelect, dateJumpItems]);
 
   const handleClearAllData = useCallback(async () => {
     if (window.confirm('Are you sure you want to clear ALL saved chats? This cannot be undone.')) {
@@ -250,6 +233,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
   }, [clearAllData]);
 
   const sidebarActions = useMemo(() => {
+    if (!metadata) return null;
     return (
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
         {savedChats.length > 0 && (
@@ -280,23 +264,47 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
         </button>
       </div>
     );
-  }, [savedChats.length, handleClearAllData, handleJumpToBottom, onClose, handleCloseChat]);
+  }, [metadata, savedChats.length, handleClearAllData, handleJumpToBottom, onClose, handleCloseChat]);
 
-  const sidebarChatInfo = useMemo(() => {
+  const sidebarRecentChats = useMemo(() => {
+    if (savedChats.length === 0) return null;
     return (
-      <div className="p-4 mt-2 bg-[#f0f2f5] dark:bg-[#111b21]/50">
-        <h4 className="text-xs font-semibold text-teal-600 dark:text-teal-500 uppercase tracking-wider mb-3">Chat Info</h4>
-        <div className="space-y-4">
-          <div>
-            <p className="text-[11px] text-gray-500 uppercase font-bold mb-1">Participants</p>
-            <ul className="space-y-1">
-              {participantItems}
-            </ul>
-          </div>
+      <div className="mt-2 w-full text-left">
+        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">Recent Chats</h4>
+        <div className="space-y-1">
+          {chatItems}
         </div>
       </div>
     );
-  }, [participantItems]);
+  }, [savedChats, chatItems]);
+
+  const sidebarEmptyState = useMemo(() => {
+    return (
+      <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
+        <SidebarHeader onShowAbout={onShowAbout} />
+        
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#f0f2f5] dark:bg-[#111b21] overflow-y-auto">
+          {savedChats.length === 0 ? (
+            <>
+              <div className="w-16 h-16 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mb-4">
+                <MessageSquare className="text-gray-400 w-8 h-8" />
+              </div>
+              <h3 className="text-gray-600 dark:text-[#e9edef] font-medium">WhatsApp Viewer</h3>
+              <p className="text-sm text-gray-400 mt-2">Upload a chat backup to get started</p>
+            </>
+          ) : (
+            <div className="w-full flex flex-col h-full">
+              {sidebarRecentChats}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }, [onShowAbout, sidebarRecentChats, savedChats.length]);
+
+  if (!metadata) {
+    return sidebarEmptyState;
+  }
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">

@@ -17,16 +17,16 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const handleJumpToBottom = useCallback(() => {
-    scrollToBottom();
-  }, []);
-
   const scrollToBottom = useCallback(() => {
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
       behavior: 'auto'
     });
   }, []);
+
+  const handleJumpToBottom = useCallback(() => {
+    scrollToBottom();
+  }, [scrollToBottom]);
 
   const scrollToTop = useCallback(() => {
     scrollRef.current?.scrollTo({
@@ -43,6 +43,22 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     // Show top button if we are more than 300px away from top
     setShowScrollTop(scrollTop > 300);
   }, []);
+
+  const handleExportJSON = useCallback(() => {
+    if (!metadata || messages.length === 0) return;
+    const data = JSON.stringify({ metadata, messages }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${metadata.fileName.replace('.txt', '')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [metadata, messages]);
+
+  const toggleAnalytics = useCallback(() => setShowAnalytics(prev => !prev), []);
+  const openMediaGallery = useCallback(() => setShowMediaGallery(true), []);
+  const closeMediaGallery = useCallback(() => setShowMediaGallery(false), []);
 
   // Scroll to bottom when a new chat is loaded or search changes
   useEffect(() => {
@@ -70,7 +86,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
 
   if (!metadata) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative bg-[#f0f2f5] dark:bg-[#0b141a]">
         {/* About button for empty state */}
         <div className="absolute top-4 right-4 z-20">
           <button 
@@ -81,26 +97,22 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             About & Help
           </button>
         </div>
+        
+        {/* Landing Page Content */}
+        <div className="text-center mb-8 animate-fade-in">
+          <div className="w-20 h-20 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform -rotate-3">
+            <MessageSquare size={40} className="text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-[#e9edef] mb-2">WhatsApp Viewer</h1>
+          <p className="text-gray-600 dark:text-[#8696a0] max-w-sm mx-auto">
+            Explore your chat backups locally and securely.
+          </p>
+        </div>
+
         <FileUploader />
       </div>
     );
   }
-
-  const handleExportJSON = useCallback(() => {
-    if (!metadata || messages.length === 0) return;
-    const data = JSON.stringify({ metadata, messages }, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${metadata.fileName.replace('.txt', '')}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [metadata, messages]);
-
-  const toggleAnalytics = useCallback(() => setShowAnalytics(prev => !prev), []);
-  const openMediaGallery = useCallback(() => setShowMediaGallery(true), []);
-  const closeMediaGallery = useCallback(() => setShowMediaGallery(false), []);
 
   return (
     <div className="flex flex-col h-full animate-fade-in relative">
