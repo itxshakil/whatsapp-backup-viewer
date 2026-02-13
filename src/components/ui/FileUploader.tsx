@@ -7,14 +7,12 @@ import { Message } from '../../types/message';
 import { SavedChat } from '../../store/db';
 
 export const FileUploader: React.FC = React.memo(() => {
-  const { setChatData, setError, error, saveCurrentChat, savedChats, loadChat, deleteChat } = useChatStore();
+  const { setChatData, setError, error, savedChats, loadChat, deleteChat } = useChatStore();
   const [shouldSave, setShouldSave] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const processFile = useCallback(async (file: File) => {
     setError(null);
     setIsProcessing(true);
 
@@ -167,6 +165,35 @@ export const FileUploader: React.FC = React.memo(() => {
     }
   }, [setChatData, setError, shouldSave]);
 
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    processFile(file);
+  }, [processFile]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  }, [processFile]);
+
   const handleConfirmDelete = useCallback((e: React.MouseEvent, chat: any) => {
     e.stopPropagation();
     if (window.confirm(`Are you sure you want to delete "${chat.metadata.fileName}"?`)) {
@@ -184,19 +211,28 @@ export const FileUploader: React.FC = React.memo(() => {
 
   return (
     <div className="flex flex-col w-full max-w-2xl gap-6">
-      <div className={`flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-300 rounded-lg bg-white/50 hover:bg-white/80 transition-colors ${isProcessing ? 'opacity-50 cursor-wait' : ''}`}>
+      <div 
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg transition-all ${
+          isDragging 
+            ? 'border-green-500 bg-green-50 dark:bg-green-900/10' 
+            : 'border-gray-300 bg-white/50 hover:bg-white/80 dark:bg-[#111b21]/50 dark:hover:bg-[#111b21]/80 dark:border-gray-700'
+        } ${isProcessing ? 'opacity-50 cursor-wait' : ''}`}
+      >
         <div className="flex gap-4 mb-4">
-          <Upload className="w-12 h-12 text-gray-400" />
-          <FileArchive className="w-12 h-12 text-gray-400" />
+          <Upload className={`w-12 h-12 transition-colors ${isDragging ? 'text-green-500' : 'text-gray-400'}`} />
+          <FileArchive className={`w-12 h-12 transition-colors ${isDragging ? 'text-green-500' : 'text-gray-400'}`} />
         </div>
-        <h3 className="text-lg font-medium text-gray-700 mb-2">Upload WhatsApp Chat</h3>
-        <p className="text-sm text-gray-500 mb-6 text-center">
-          Select the exported .txt file or a .zip archive (including media). <br/>
+        <h3 className="text-lg font-medium text-gray-700 dark:text-[#e9edef] mb-2">Upload WhatsApp Chat</h3>
+        <p className="text-sm text-gray-500 dark:text-[#8696a0] mb-6 text-center">
+          Drag & drop or select the exported .txt file or a .zip archive (including media). <br/>
           No data will be uploaded to any server.
         </p>
         
         <div className="flex flex-col items-center gap-4">
-          <label className={`bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full cursor-pointer transition-colors font-medium shadow-sm ${isProcessing ? 'pointer-events-none' : ''}`}>
+          <label className={`bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full cursor-pointer transition-colors font-medium shadow-sm ${isProcessing ? 'pointer-events-none opacity-50' : ''}`}>
             {isProcessing ? 'Processing...' : 'Choose File'}
             <input
               type="file"
@@ -207,19 +243,19 @@ export const FileUploader: React.FC = React.memo(() => {
             />
           </label>
 
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-[#8696a0] cursor-pointer">
             <input 
               type="checkbox" 
               checked={shouldSave} 
               onChange={toggleShouldSave}
-              className="rounded text-green-600 focus:ring-green-500"
+              className="rounded text-green-600 focus:ring-green-500 bg-transparent border-gray-300 dark:border-gray-600"
             />
             Save to browser storage (IndexedDB)
           </label>
         </div>
 
         {error && (
-          <div className="mt-6 flex items-start gap-2 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm max-w-[350px]">
+          <div className="mt-6 flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm max-w-[350px]">
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <p>{error}</p>
           </div>
@@ -227,8 +263,8 @@ export const FileUploader: React.FC = React.memo(() => {
       </div>
 
       {savedChats.length > 0 && (
-        <div className="bg-white/50 rounded-lg p-6 border border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+        <div className="bg-white/50 dark:bg-[#111b21]/50 rounded-lg p-6 border border-gray-200 dark:border-gray-800">
+          <h4 className="text-sm font-semibold text-gray-600 dark:text-[#8696a0] uppercase tracking-wider mb-4 flex items-center gap-2">
             <Save size={16} />
             Recent Chats
           </h4>
@@ -236,11 +272,11 @@ export const FileUploader: React.FC = React.memo(() => {
             {savedChats.map((chat: any) => (
               <div 
                 key={chat.id} 
-                className="group flex flex-col p-3 bg-white border border-gray-100 rounded-lg hover:border-green-300 hover:shadow-sm transition-all cursor-pointer relative"
+                className="group flex flex-col p-3 bg-white dark:bg-[#202c33] border border-gray-100 dark:border-gray-700 rounded-lg hover:border-green-300 dark:hover:border-green-900 transition-all cursor-pointer relative shadow-sm hover:shadow-md"
                 onClick={() => chat.id && handleLoadChat(chat.id)}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <h5 className="text-sm font-medium text-gray-800 truncate pr-6">{chat.metadata.fileName}</h5>
+                  <h5 className="text-sm font-medium text-gray-800 dark:text-[#e9edef] truncate pr-6">{chat.metadata.fileName}</h5>
                   <button 
                     onClick={(e) => handleConfirmDelete(e, chat)}
                     className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -249,8 +285,8 @@ export const FileUploader: React.FC = React.memo(() => {
                     <AlertCircle size={14} />
                   </button>
                 </div>
-                <p className="text-xs text-gray-500">{chat.metadata.messageCount} messages</p>
-                <p className="text-[10px] text-gray-400 mt-2">
+                <p className="text-xs text-gray-500 dark:text-[#8696a0]">{chat.metadata.messageCount} messages</p>
+                <p className="text-[10px] text-gray-400 dark:text-[#8696a0]/60 mt-2">
                   Last opened: {new Date(chat.lastOpened).toLocaleDateString()}
                 </p>
               </div>
