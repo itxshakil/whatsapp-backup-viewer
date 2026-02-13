@@ -86,10 +86,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const saveCurrentChat = useCallback(async () => {
-    // Note: We use the current state here. In a useCallback, we need to be careful about stale closures.
-    // However, since we want to save WHATEVER is currently in state when this is called, 
-    // it's actually better to use functional updates or refs if we want to avoid deps.
-    // But for this simple app, adding messages/metadata to deps is fine.
     if (!metadata || messages.length === 0) return;
 
     try {
