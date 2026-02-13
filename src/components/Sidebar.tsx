@@ -8,7 +8,7 @@ import { SearchBar } from './SearchBar';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
-export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void }> = ({ onClose, onShowAbout }) => {
   const { messages, metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData, setHighlightedMessageId } = useChatStore();
   const [showCalendar, setShowCalendar] = React.useState(false);
 
@@ -95,7 +95,7 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
       {/* Sidebar Header */}
-      <SidebarHeader />
+      <SidebarHeader onShowAbout={onShowAbout} />
 
       {/* Search Bar */}
       <SearchBar />

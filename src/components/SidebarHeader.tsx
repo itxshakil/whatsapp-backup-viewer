@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { User, MoreVertical, Moon, Sun, Download, Share2, DownloadCloud } from 'lucide-react';
+import { User, MoreVertical, Moon, Sun, Download, Share2, DownloadCloud, Info } from 'lucide-react';
 import { useChatStore } from '../store/chatStore';
 
-export const SidebarHeader: React.FC = () => {
+interface SidebarHeaderProps {
+  onShowAbout?: () => void;
+}
+
+export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ onShowAbout }) => {
   const { messages, metadata } = useChatStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isDark, setIsDark] = useState(() => {
@@ -95,6 +99,13 @@ export const SidebarHeader: React.FC = () => {
             <Share2 size={20} />
           </button>
         )}
+        <button 
+          onClick={onShowAbout}
+          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
+          title="About & Help"
+        >
+          <Info size={20} />
+        </button>
         <button 
           onClick={() => setIsDark(!isDark)}
           className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
