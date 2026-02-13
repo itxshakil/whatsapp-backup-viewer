@@ -13,8 +13,8 @@ export class ChatDatabase extends Dexie {
 
   constructor() {
     super('ChatDatabase');
-    this.version(2).stores({
-      chats: '++id, lastOpened, [metadata.fileName]'
+    this.version(3).stores({
+      chats: '++id, lastOpened, metadata.fileName'
     });
   }
 }

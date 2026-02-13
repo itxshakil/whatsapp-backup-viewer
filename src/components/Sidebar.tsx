@@ -2,6 +2,9 @@ import React, { useMemo } from 'react';
 import { useChatStore } from '../store/chatStore';
 import { User, MessageSquare, MoreVertical, Search, LogOut, Trash2, Calendar } from 'lucide-react';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 import { SidebarHeader } from './SidebarHeader';
 import { SearchBar } from './SearchBar';
@@ -14,7 +17,6 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
 
   const handleCloseChat = () => {
     clearChat();
-    if (onClose) onClose();
   };
 
   const availableDates = useMemo(() => {
@@ -51,43 +53,54 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     if (onClose) onClose();
   };
 
+  const handleLoadChat = (id: number) => {
+    loadChat(id);
+    if (onClose) onClose();
+  };
+
   if (!metadata) {
     return (
-      <div className="flex flex-col h-full items-center justify-center p-8 text-center bg-[#f0f2f5] dark:bg-[#111b21]">
-        <div className="w-16 h-16 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mb-4">
-          <MessageSquare className="text-gray-400 w-8 h-8" />
-        </div>
-        <h3 className="text-gray-600 dark:text-[#e9edef] font-medium">WhatsApp Viewer</h3>
-        <p className="text-sm text-gray-400 mt-2">Upload a chat backup to get started</p>
+      <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
+        <SidebarHeader onShowAbout={onShowAbout} />
         
-        {/* Quick access to saved chats in sidebar when none is open */}
-        {savedChats.length > 0 && (
-          <div className="mt-8 w-full text-left">
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">Recent</h4>
-            <div className="space-y-1 max-h-[300px] overflow-y-auto">
-              {savedChats.slice(0, 5).map(chat => (
-                <div 
-                  key={chat.id}
-                  onClick={() => chat.id && loadChat(chat.id)}
-                  className="group relative p-3 hover:bg-gray-300/50 dark:hover:bg-[#2a3942] rounded-lg cursor-pointer transition-colors"
-                >
-                  <p className="text-sm text-gray-700 dark:text-[#e9edef] truncate font-medium pr-6">{chat.metadata.fileName}</p>
-                  <p className="text-[10px] text-gray-500">{chat.metadata.messageCount} messages</p>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      chat.id && deleteChat(chat.id);
-                    }}
-                    className="absolute top-3 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Delete saved chat"
-                  >
-                    <LogOut size={12} className="rotate-180" />
-                  </button>
-                </div>
-              ))}
-            </div>
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#f0f2f5] dark:bg-[#111b21]">
+          <div className="w-16 h-16 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mb-4">
+            <MessageSquare className="text-gray-400 w-8 h-8" />
           </div>
-        )}
+          <h3 className="text-gray-600 dark:text-[#e9edef] font-medium">WhatsApp Viewer</h3>
+          <p className="text-sm text-gray-400 mt-2">Upload a chat backup to get started</p>
+          
+          {/* Quick access to saved chats in sidebar when none is open */}
+          {savedChats.length > 0 && (
+            <div className="mt-8 w-full text-left">
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">Recent Chats</h4>
+              <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1">
+                {savedChats.map(chat => (
+                  <div 
+                    key={chat.id}
+                    onClick={() => chat.id && handleLoadChat(chat.id)}
+                    className="group relative p-3 hover:bg-gray-300/50 dark:hover:bg-[#2a3942] rounded-lg cursor-pointer transition-colors"
+                  >
+                    <p className="text-sm text-gray-700 dark:text-[#e9edef] truncate font-medium pr-8">{chat.metadata.fileName}</p>
+                    <p className="text-[10px] text-gray-500">{chat.metadata.messageCount} messages • {dayjs(chat.lastOpened).format('MMM D')}</p>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm(`Are you sure you want to delete "${chat.metadata.fileName}"?`)) {
+                          chat.id && deleteChat(chat.id);
+                        }
+                      }}
+                      className="absolute top-1/2 -translate-y-1/2 right-2 p-1.5 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Delete saved chat"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -105,7 +118,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
         {savedChats.map((chat) => (
           <div 
             key={chat.id}
-            onClick={() => chat.id && loadChat(chat.id)}
+            onClick={() => chat.id && handleLoadChat(chat.id)}
             className={`group flex items-center p-3 hover:bg-[#f5f6f6] dark:hover:bg-[#2a3942] cursor-pointer transition-colors border-b border-gray-100 dark:border-gray-800 relative ${
               metadata.fileName === chat.metadata.fileName ? 'bg-[#ebebeb] dark:bg-[#2a3942]' : ''
             }`}
@@ -123,7 +136,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
                 {chat.metadata.messageCount} messages
               </p>
               <p className="text-[10px] text-gray-400 dark:text-[#8696a0]/60">
-                Last opened: {dayjs(chat.lastOpened).format('MMM D, HH:mm')}
+                Last opened: {dayjs(chat.lastOpened).fromNow()}
               </p>
             </div>
             <button 
@@ -136,7 +149,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity z-10"
               title="Delete saved chat"
             >
-              <LogOut size={14} className="rotate-180" />
+              <Trash2 size={16} />
             </button>
           </div>
         ))}
