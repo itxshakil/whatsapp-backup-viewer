@@ -56,3 +56,12 @@ body {
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+@keyframes pulse {
+  0%, 100% { background-color: transparent; }
+  50% { @apply bg-teal-500/20 dark:bg-teal-500/30; }
+}
+
+.animate-pulse-highlight {
+  animation: pulse 1.5s ease-in-out infinite;
+}

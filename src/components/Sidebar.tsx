@@ -9,7 +9,7 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
 export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
-  const { messages, metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData } = useChatStore();
+  const { messages, metadata, clearChat, savedChats, loadChat, deleteChat, clearAllData, setHighlightedMessageId } = useChatStore();
   const [showCalendar, setShowCalendar] = React.useState(false);
 
   const handleCloseChat = () => {
@@ -27,11 +27,28 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   }, [messages]);
 
   const jumpToDate = (date: string) => {
-    const element = document.getElementById(`date-${date}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      if (onClose) onClose();
+    // Scroll to the date header
+    const dateElement = document.getElementById(`date-${date}`);
+    if (dateElement) {
+      dateElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      console.warn(`Date element not found: date-${date}`);
     }
+    
+    // Also try to find the first message of that day and highlight it
+    const dayStart = dayjs(date).startOf('day').toDate();
+    const dayEnd = dayjs(date).endOf('day').toDate();
+    
+    const firstMessageOfDay = messages.find(m => {
+      const msgDate = new Date(m.timestamp);
+      return msgDate >= dayStart && msgDate <= dayEnd;
+    });
+
+    if (firstMessageOfDay) {
+      setHighlightedMessageId(firstMessageOfDay.id);
+    }
+
+    if (onClose) onClose();
   };
 
   if (!metadata) {
@@ -159,7 +176,7 @@ export const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
 
             {showCalendar ? (
-              <div className="flex justify-center bg-gray-50 dark:bg-[#202c33] rounded-lg p-1 scale-90 origin-top">
+              <div className="flex justify-center bg-gray-50 dark:bg-[#202c33] rounded-lg p-1 scale-90 origin-top overflow-hidden">
                 <DayPicker 
                   mode="single"
                   onSelect={(date) => date && jumpToDate(dayjs(date).format('YYYY-MM-DD'))}
