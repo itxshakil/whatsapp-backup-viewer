@@ -52,17 +52,45 @@ export default defineConfig({
         theme_color: '#075e54',
         background_color: '#ffffff',
         display: 'standalone',
+        display_override: ['window-controls-overlay', 'standalone'],
+        orientation: 'portrait',
+        categories: ['productivity', 'utilities'],
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: 'icon-192.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
+          },
+          {
+            src: 'icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
           },
           {
             src: 'icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
+          }
+        ],
+        screenshots: [
+          {
+            src: 'screenshots/mobile-chat.png',
+            sizes: '750x1334',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'WhatsApp-style Chat Interface'
+          },
+          {
+            src: 'screenshots/desktop-analytics.png',
+            sizes: '1920x1080',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'Detailed Chat Analytics'
           }
         ],
         shortcuts: [
