@@ -1,13 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import { useChatStore } from '../../store/chatStore';
-import { User, MessageSquare, MoreVertical, Search, LogOut, Trash2, Calendar, ChevronDown } from 'lucide-react';
+import { User, MessageSquare, Search, LogOut, Trash2, Calendar, ChevronDown } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
 import { SidebarHeader } from './SidebarHeader';
-import { SearchBar } from '../chat/SearchBar';
 import { DayPicker } from 'react-day-picker';
 import { SavedChat } from '../../store/db';
 import 'react-day-picker/dist/style.css';
@@ -310,9 +309,6 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
       {/* Sidebar Header */}
       <SidebarHeader onShowAbout={onShowAbout} />
-
-      {/* Search Bar */}
-      <SearchBar />
 
       {/* Chat List - Display saved chats */}
       <div className="flex-1 overflow-y-auto">

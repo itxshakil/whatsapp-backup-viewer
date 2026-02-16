@@ -4,15 +4,17 @@ import { ChatLayout } from './components/layout/ChatLayout';
 import { FileUploader } from './components/ui/FileUploader';
 import { Sidebar } from './components/layout/Sidebar';
 import { MessageList } from './components/chat/MessageList';
-import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, MoreVertical, Phone, Search, Video, ImageIcon } from 'lucide-react';
+import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, Phone, Search, Video, ImageIcon } from 'lucide-react';
 import { AnalyticsView } from './components/analytics/AnalyticsView';
 import { MediaGallery } from './components/chat/MediaGallery';
+import { SearchBar } from './components/chat/SearchBar';
 import { AboutPage } from './components/ui/AboutPage';
 
 const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
-  const { messages, metadata, searchQuery, savedChats, loadChat } = useChatStore();
+  const { messages, metadata, searchQuery, savedChats, loadChat, setSearchQuery, setHighlightedMessageId } = useChatStore();
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showMediaGallery, setShowMediaGallery] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -57,17 +59,26 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   }, [metadata, messages]);
 
   const toggleAnalytics = useCallback(() => setShowAnalytics(prev => !prev), []);
+  const toggleSearch = useCallback(() => {
+    setShowSearch(prev => {
+      if (prev) {
+        setSearchQuery('');
+        setHighlightedMessageId(null);
+      }
+      return !prev;
+    });
+  }, [setSearchQuery, setHighlightedMessageId]);
   const openMediaGallery = useCallback(() => setShowMediaGallery(true), []);
   const closeMediaGallery = useCallback(() => setShowMediaGallery(false), []);
 
   // Scroll to bottom when a new chat is loaded or search changes
   useEffect(() => {
-    if (metadata && !showAnalytics) {
+    if (metadata && !showAnalytics && !showSearch) {
       // Small timeout to ensure DOM is rendered
       const timer = setTimeout(scrollToBottom, 100);
       return () => clearTimeout(timer);
     }
-  }, [metadata?.fileName, searchQuery, showAnalytics, scrollToBottom]);
+  }, [metadata?.fileName, searchQuery, showAnalytics, showSearch, scrollToBottom]);
 
   // Handle URL actions (PWA Shortcuts)
   const hasHandledAction = useRef(false);
@@ -93,7 +104,6 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             onClick={onShowAbout}
             className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#202c33] hover:bg-gray-50 dark:hover:bg-[#2a3942] text-gray-600 dark:text-gray-300 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-all text-xs font-medium"
           >
-            <MoreVertical size={14} className="rotate-90" />
             About & Help
           </button>
         </div>
@@ -181,7 +191,11 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             <ImageIcon size={20} />
           </button>
           <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block"></div>
-          <Search size={18} className="cursor-pointer" />
+          <Search 
+            size={18} 
+            className={`cursor-pointer transition-colors ${showSearch ? 'text-green-600 dark:text-green-500' : 'hover:text-gray-700 dark:hover:text-[#e9edef]'}`}
+            onClick={toggleSearch}
+          />
           <button 
             onClick={handleJumpToBottom}
             className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors sm:hidden"
@@ -189,12 +203,16 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
           >
             <ChevronDown size={18} />
           </button>
-          <MoreVertical size={18} className="cursor-pointer" />
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 relative flex flex-col min-h-0">
+        {showSearch && !showAnalytics && (
+          <div className="absolute top-0 left-0 right-0 z-30 animate-fade-in shadow-md">
+            <SearchBar />
+          </div>
+        )}
         {showMediaGallery && <MediaGallery onClose={closeMediaGallery} />}
         {showAnalytics ? (
           <AnalyticsView messages={messages} participants={metadata.participants} />
@@ -210,10 +228,10 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             {showScrollTop && (
               <button
                 onClick={scrollToTop}
-                className="fixed bottom-20 right-6 w-10 h-10 bg-white dark:bg-[#202c33] shadow-md rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-20"
+                className="fixed bottom-20 right-6 w-12 h-12 bg-white dark:bg-[#202c33] shadow-lg rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-30 border border-gray-100 dark:border-gray-700"
                 title="Scroll to top"
               >
-                <ChevronUp size={24} />
+                <ChevronUp size={28} />
               </button>
             )}
 

@@ -50,8 +50,8 @@ export const SearchBar: React.FC = React.memo(() => {
   }, [results, currentIndex, jumpToMessage]);
 
   return (
-    <div className="p-2 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111b21]">
-      <div className="relative flex items-center bg-[#f0f2f5] dark:bg-[#202c33] rounded-lg px-3 py-1.5 transition-all mb-1">
+    <div className="p-2 border-b border-gray-100 dark:border-gray-800 bg-[#f0f2f5] dark:bg-[#202c33]">
+      <div className="relative flex items-center bg-white dark:bg-[#111b21] rounded-lg px-3 py-2 shadow-sm">
         <Search className="text-gray-500 w-4 h-4 mr-3" />
         <input
           type="text"

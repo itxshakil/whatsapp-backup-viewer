@@ -64,9 +64,29 @@ export const normalizeMessages = (rawText: string): Message[] => {
       let content = parsed.content;
       let isEdited = false;
 
+      // Detect calls
+      const MISSED_VOICE_CALL = /Missed voice call/i;
+      const MISSED_VIDEO_CALL = /Missed video call/i;
+      const VOICE_CALL = /Voice call/i;
+      const VIDEO_CALL = /Video call/i;
+
+      if (MISSED_VOICE_CALL.test(content)) {
+        content = 'Missed voice call';
+        type = 'call';
+      } else if (MISSED_VIDEO_CALL.test(content)) {
+        content = 'Missed video call';
+        type = 'call';
+      } else if (VOICE_CALL.test(content)) {
+        content = 'Voice call';
+        type = 'call';
+      } else if (VIDEO_CALL.test(content)) {
+        content = 'Video call';
+        type = 'call';
+      }
+
       // Handle empty content (often represents a call)
-      if (!parsed.isSystem && (!content || content.trim() === '')) {
-        content = 'CALL';
+      if (!parsed.isSystem && type === 'text' && (!content || content.trim() === '')) {
+        content = 'Voice call';
         type = 'call';
       }
 
