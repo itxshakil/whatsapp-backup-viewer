@@ -4,6 +4,8 @@
   "description": "Private and secure WhatsApp chat backup viewer and analyzer",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "categories": ["productivity", "utilities"],
   "background_color": "#ffffff",
   "theme_color": "#075e54",
   "icons": [
