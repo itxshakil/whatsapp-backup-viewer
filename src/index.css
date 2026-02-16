@@ -65,3 +65,12 @@ body {
 .animate-pulse-highlight {
   animation: pulse 1.5s ease-in-out infinite;
 }
+
+/* WhatsApp Bubble Tails */
+.clip-path-bubble-right {
+  clip-path: polygon(0 0, 0 100%, 100% 0);
+}
+
+.clip-path-bubble-left {
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}

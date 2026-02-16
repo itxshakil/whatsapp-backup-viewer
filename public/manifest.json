@@ -1,7 +1,7 @@
 {
-  "name": "WhatsApp Viewer",
+  "name": "WhatsApp Backup Viewer",
   "short_name": "WA Viewer",
-  "description": "Local-first WhatsApp backup viewer and analyzer",
+  "description": "Private and secure WhatsApp chat backup viewer and analyzer",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

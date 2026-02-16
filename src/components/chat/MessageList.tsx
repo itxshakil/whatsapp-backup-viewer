@@ -28,8 +28,14 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
       // Only show sender if it's the first message in a group from that sender or date changed
       const showSender = !isSameSenderAsPrev || showDateHeader;
       
-      // Only show tail if it's the first message in a group from that sender or date changed
+      // WhatsApp: show tail on the FIRST message of a group (top-aligned)
       const showTail = !isSameSenderAsPrev || showDateHeader;
+
+      // Check if next message is from same sender to add some spacing if it's not
+      const nextMessage = index < filteredMessages.length - 1 ? filteredMessages[index + 1] : null;
+      const isLastInGroup = !nextMessage || nextMessage.sender !== message.sender || nextMessage.type === 'system' || message.type === 'system';
+      
+      const marginBottom = isLastInGroup ? 'mb-4' : 'mb-0.5';
 
       let dateLabel = currentDate.format('MMMM D, YYYY');
       const today = dayjs().startOf('day');
@@ -57,6 +63,7 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
             message={message} 
             showSender={showSender}
             showTail={showTail}
+            className={marginBottom}
           />
         </React.Fragment>
       );

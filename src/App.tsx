@@ -86,7 +86,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
 
   if (!metadata) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative bg-[#f0f2f5] dark:bg-[#0b141a]">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative bg-[#f0f2f5] dark:bg-[#0b141a] overflow-y-auto">
         {/* About button for empty state */}
         <div className="absolute top-4 right-4 z-20">
           <button 
@@ -99,17 +99,41 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
         </div>
         
         {/* Landing Page Content */}
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="w-20 h-20 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform -rotate-3">
+        <div className="text-center mb-8 animate-fade-in max-w-2xl px-4 py-12 md:py-0">
+          <div className="w-20 h-20 bg-[#25d366] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-3 transition-transform hover:rotate-0 cursor-default">
             <MessageSquare size={40} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-[#e9edef] mb-2">WhatsApp Viewer</h1>
-          <p className="text-gray-600 dark:text-[#8696a0] max-w-sm mx-auto">
-            Explore your chat backups locally and securely.
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-[#e9edef] mb-4">WhatsApp Backup Viewer & Analyzer</h1>
+          <p className="text-gray-600 dark:text-[#8696a0] text-lg mb-8">
+            The most private and secure way to explore your chat memories locally. No data ever leaves your device.
           </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 text-left">
+            <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mb-3">
+                <Search size={18} />
+              </div>
+              <h3 className="font-bold text-sm mb-1 dark:text-[#e9edef]">Smart Search</h3>
+              <p className="text-xs text-gray-500 dark:text-[#8696a0]">Find any message instantly across thousands of entries.</p>
+            </div>
+            <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center mb-3">
+                <ImageIcon size={18} />
+              </div>
+              <h3 className="font-bold text-sm mb-1 dark:text-[#e9edef]">Media Gallery</h3>
+              <p className="text-xs text-gray-500 dark:text-[#8696a0]">Browse all your shared photos and videos in one place.</p>
+            </div>
+            <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg flex items-center justify-center mb-3">
+                <BarChart3 size={18} />
+              </div>
+              <h3 className="font-bold text-sm mb-1 dark:text-[#e9edef]">Chat Analytics</h3>
+              <p className="text-xs text-gray-500 dark:text-[#8696a0]">Discover patterns, top words, and busiest times.</p>
+            </div>
+          </div>
+          
+          <FileUploader />
         </div>
-
-        <FileUploader />
       </div>
     );
   }

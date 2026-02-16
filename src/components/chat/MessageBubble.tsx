@@ -8,12 +8,14 @@ interface MessageBubbleProps {
   message: Message;
   showSender?: boolean;
   showTail?: boolean;
+  className?: string;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   message,
   showSender = true,
   showTail = true,
+  className = '',
 }) => {
   const { searchQuery, highlightedMessageId, setHighlightedMessageId } = useChatStore();
   const [copied, setCopied] = useState(false);
@@ -22,6 +24,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   const isSystem = message.type === 'system';
   const isMe = message.isCurrentUser;
   const isHighlighted = highlightedMessageId === message.id;
+
+  const tailClasses = ""; // Not used anymore as we use SVG tails
 
   React.useEffect(() => {
     if (isHighlighted) {
@@ -58,26 +62,34 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   }, []);
 
   const renderContentWithLinks = React.useCallback((text: string) => {
+    // Basic emoji detection to render large emojis if message is just emojis
+    const emojiRegex = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])+$/g;
+    const isOnlyEmojis = text.length <= 10 && emojiRegex.test(text.trim());
+
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const parts = text.split(urlRegex);
 
-    return parts.map((part: string, i: number) => {
-      if (part.match(urlRegex)) {
-        return (
-          <a
-            key={i}
-            href={part}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 dark:text-blue-400 hover:underline break-all"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {highlightText(part, searchQuery)}
-          </a>
-        );
-      }
-      return highlightText(part, searchQuery);
-    });
+    return (
+      <div className={isOnlyEmojis ? 'text-3xl py-1' : ''}>
+        {parts.map((part: string, i: number) => {
+          if (part.match(urlRegex)) {
+            return (
+              <a
+                key={i}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {highlightText(part, searchQuery)}
+              </a>
+            );
+          }
+          return highlightText(part, searchQuery);
+        })}
+      </div>
+    );
   }, [searchQuery, highlightText]);
 
   const renderMediaContent = React.useCallback(() => {
@@ -186,7 +198,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   if (isSystem) {
     return (
       <div className="flex justify-center my-2 px-4">
-        <div className="bg-amber-50 dark:bg-[#182229] text-amber-800 dark:text-amber-200/70 text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm border border-amber-100 dark:border-none text-center max-w-[90%] uppercase tracking-wide">
+        <div className="bg-[#f0f2f5]/80 dark:bg-[#182229]/80 backdrop-blur-sm text-[#54656f] dark:text-[#8696a0] text-xs px-3 py-1.5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800/50 uppercase tracking-widest font-medium text-center max-w-[85%]">
           {highlightText(message.content, searchQuery)}
         </div>
       </div>
@@ -197,7 +209,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
     <div 
       ref={bubbleRef}
       id={`msg-${message.id}`}
-      className={`flex w-full mb-1 group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'} ${isHighlighted ? 'ring-2 ring-teal-400 dark:ring-teal-600 rounded-lg' : ''}`}
+      className={`flex w-full group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'} ${className} ${isHighlighted ? 'animate-pulse-highlight' : ''}`}
     >
       <div
         className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm group/bubble ${
@@ -229,8 +241,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           <div
             className={`absolute top-0 w-2 h-2.5 ${
               isMe
-                ? 'right-[-6px] text-[#dcf8c6] dark:text-[#005c4b]'
-                : 'left-[-6px] text-white dark:text-[#202c33]'
+                ? 'right-[-8px] text-[#dcf8c6] dark:text-[#005c4b]'
+                : 'left-[-8px] text-white dark:text-[#202c33]'
             }`}
           >
             <svg viewBox="0 0 8 13" width="8" height="13">
