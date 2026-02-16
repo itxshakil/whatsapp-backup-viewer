@@ -37,6 +37,11 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        try {
+          navigator.vibrate([10, 30, 10]);
+        } catch (e) {}
+      }
     }
   }, [deferredPrompt]);
 
