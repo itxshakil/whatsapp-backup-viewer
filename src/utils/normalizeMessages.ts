@@ -43,13 +43,14 @@ export const normalizeMessages = (rawText: string): Message[] => {
   let currentMessage: Message | null = null;
 
   lines.forEach((line, index) => {
-    // Check for empty lines but preserve them if they are part of a multiline message
-    if (!line.trim() && !currentMessage) return;
-
     // Detect and remove RTL/LTR marks and other zero-width characters
     const cleanLine = line.replace(/[\u200e\u200f\u200b-\u200d\ufeff]/g, '');
 
-    const parsed = parseLine(cleanLine.trim());
+    const parsed = parseLine(cleanLine);
+
+    if (!parsed && !currentMessage) {
+      if (!line.trim()) return;
+    }
 
     if (parsed) {
       // New message starts
@@ -62,6 +63,12 @@ export const normalizeMessages = (rawText: string): Message[] => {
       let type: Message['type'] = parsed.isSystem ? 'system' : 'text';
       let content = parsed.content;
       let isEdited = false;
+
+      // Handle empty content (often represents a call)
+      if (!parsed.isSystem && (!content || content.trim() === '')) {
+        content = 'CALL';
+        type = 'call';
+      }
 
       // Detect "edited" indicator
       const EDITED_INDICATOR = '<This message was edited>';
