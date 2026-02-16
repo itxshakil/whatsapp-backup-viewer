@@ -196,13 +196,6 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             className={`cursor-pointer transition-colors ${showSearch ? 'text-green-600 dark:text-green-500' : 'hover:text-gray-700 dark:hover:text-[#e9edef]'}`}
             onClick={toggleSearch}
           />
-          <button 
-            onClick={handleJumpToBottom}
-            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors sm:hidden"
-            title="Jump to Bottom"
-          >
-            <ChevronDown size={18} />
-          </button>
         </div>
       </div>
 
