@@ -46,12 +46,15 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
   }, [deferredPrompt]);
 
   useEffect(() => {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (isDark) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
+      if (themeColorMeta) themeColorMeta.setAttribute('content', '#111b21');
     } else {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
+      if (themeColorMeta) themeColorMeta.setAttribute('content', '#075e54');
     }
   }, [isDark]);
 
@@ -69,6 +72,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
   const handleShare = useCallback(async () => {
     if (navigator.share) {
       try {
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
         await navigator.share({
           title: 'WhatsApp Viewer',
           text: `Checking out this WhatsApp backup of ${metadata?.fileName || 'a chat'}`,
@@ -82,6 +86,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
 
   const handleExportJSON = useCallback(() => {
     if (!metadata || messages.length === 0) return;
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
     const data = {
       metadata,
       messages
@@ -120,14 +125,17 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
           </button>
         )}
         <button 
-          onClick={onShowAbout}
-          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
+          onClick={() => {
+            onShowAbout?.();
+            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
+          }}
+          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors active:scale-90"
           title="About & Help"
         >
           <Info size={20} />
         </button>
         <button 
-          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors disabled:opacity-30"
+          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors disabled:opacity-30 active:scale-90"
           title="Export as JSON"
           disabled={!metadata || messages.length === 0}
           onClick={handleExportJSON}
