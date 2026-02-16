@@ -191,6 +191,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
             : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')
         }`}
       >
+        {/* Edited Label */}
+        {message.isEdited && (
+          <div className="absolute top-1.5 right-2 text-[9px] font-bold text-gray-400 dark:text-[#8696a0] select-none pointer-events-none tracking-wider opacity-80 uppercase">
+            EDITED
+          </div>
+        )}
+
         {/* Copy Button */}
         {!isSystem && (
           <button
@@ -223,14 +230,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
         )}
 
         {showSender && !isMe && (
-          <div className="text-[12.5px] font-semibold text-teal-600 dark:text-teal-500 leading-tight mb-1 px-0.5">
+          <div className="text-[12.5px] font-semibold text-teal-600 dark:text-teal-500 leading-tight mb-1 px-0.5 pr-8">
             {highlightText(message.sender, searchQuery)}
           </div>
         )}
 
         <div className="relative min-w-[80px]">
           {renderMediaContent()}
-          <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-3">
+          <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-3 pr-8">
             {message.type === 'text' ? renderContentWithLinks(message.content) : null}
             <span className="inline-block w-[60px]"></span>
           </div>

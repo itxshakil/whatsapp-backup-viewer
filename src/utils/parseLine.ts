@@ -6,6 +6,7 @@
  */
 
 const WHATSAPP_LINE_REGEX = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]?)\s(?:-|:)\s?([^:]+)(?::\s(.*))?$/i;
+const WHATSAPP_SQUARE_REGEX = /^\[(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]\s([^:]+)(?::\s(.*))?$/i;
 
 export interface ParsedLine {
   date: string;
@@ -28,7 +29,10 @@ const isInvisible = (text: string) => {
 };
 
 export const parseLine = (line: string): ParsedLine | null => {
-  const match = line.match(WHATSAPP_LINE_REGEX);
+  let match = line.match(WHATSAPP_LINE_REGEX);
+  if (!match) {
+    match = line.match(WHATSAPP_SQUARE_REGEX);
+  }
   if (!match) return null;
 
   let [, date, time, , sender, content] = match;
@@ -49,6 +53,11 @@ export const parseLine = (line: string): ParsedLine | null => {
   // Map invisible-character senders to 'You'
   if (isInvisible(sender)) {
     sender = 'Hidden';
+  }
+
+  // Handle empty content
+  if (!content || isInvisible(content)) {
+    content = '';
   }
 
   return {

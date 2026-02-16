@@ -7,6 +7,7 @@ export interface Message {
   content: string;
   type: MessageType;
   isCurrentUser: boolean;
+  isEdited?: boolean;
   mediaUrl?: string;
   mediaBlob?: Blob;
 }

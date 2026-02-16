@@ -61,6 +61,14 @@ export const normalizeMessages = (rawText: string): Message[] => {
 
       let type: Message['type'] = parsed.isSystem ? 'system' : 'text';
       let content = parsed.content;
+      let isEdited = false;
+
+      // Detect "edited" indicator
+      const EDITED_INDICATOR = '<This message was edited>';
+      if (content?.includes(EDITED_INDICATOR)) {
+        isEdited = true;
+        content = content.replace(EDITED_INDICATOR, '').trim();
+      }
 
       // Detect media attachments
       // Format: "<attached: FILENAME>" or "FILENAME (file attached)" or "FILENAME <attached>"
@@ -88,14 +96,22 @@ export const normalizeMessages = (rawText: string): Message[] => {
         sender: parsed.sender,
         content: content,
         type: type,
-        isCurrentUser: parsed.sender.toLowerCase() === 'you' || parsed.sender === 'Hidden'
+        isCurrentUser: parsed.sender.toLowerCase() === 'you' || parsed.sender === 'Hidden',
+        isEdited: isEdited
       };
       messages.push(currentMessage);
     } else if (currentMessage) {
       // Continuation of previous message (multiline)
       // Only append if it's not an empty line at the very end of the file
       if (line.trim() || index < lines.length - 1) {
-        currentMessage.content += '\n' + cleanLine;
+        // Check for "edited" indicator in continuation lines
+        const EDITED_INDICATOR = '<This message was edited>';
+        if (cleanLine.includes(EDITED_INDICATOR)) {
+          currentMessage.isEdited = true;
+          currentMessage.content += '\n' + cleanLine.replace(EDITED_INDICATOR, '').trim();
+        } else {
+          currentMessage.content += '\n' + cleanLine;
+        }
       }
     }
   });
