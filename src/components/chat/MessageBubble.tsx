@@ -40,10 +40,41 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   }, [isHighlighted, setHighlightedMessageId]);
 
   const handleCopy = React.useCallback(() => {
+    if (message.type !== 'text' && !message.content) return;
     navigator.clipboard.writeText(message.content);
     setCopied(true);
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(20);
+      } catch (e) {}
+    }
     setTimeout(() => setCopied(false), 2000);
-  }, [message.content]);
+  }, [message.content, message.type]);
+
+  const handleLongPress = React.useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    // We can use the existing copy logic as a long-press action
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([30, 10, 30]);
+      } catch (e) {}
+    }
+    handleCopy();
+  }, [handleCopy]);
+
+  const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleTouchStart = React.useCallback(() => {
+    longPressTimer.current = setTimeout(() => {
+      handleLongPress({} as any);
+    }, 600);
+  }, [handleLongPress]);
+
+  const handleTouchEnd = React.useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
 
   const highlightText = React.useCallback((text: string, highlight: string) => {
     if (!highlight.trim()) return text;
