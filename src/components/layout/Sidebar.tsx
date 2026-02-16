@@ -62,6 +62,11 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
 
   const handleLoadChat = useCallback((id: number) => {
     loadChat(id);
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(10);
+      } catch (e) {}
+    }
     onClose?.();
   }, [loadChat, onClose]);
 
