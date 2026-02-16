@@ -104,14 +104,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
     const mediaUrl = message.mediaUrl;
 
     if (isCall) {
+      const isVideo = message.content.toLowerCase().includes('video');
+      const isMissed = message.content.toLowerCase().includes('missed');
+      
       return (
-        <div className="flex items-center gap-3 p-2 bg-black/5 dark:bg-white/5 rounded-lg mb-2">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isMe ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
-            <Phone size={20} />
+        <div className="flex items-center gap-3 p-2 bg-black/5 dark:bg-white/5 rounded-lg mb-1">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isMissed ? 'bg-red-500 text-white' : (isMe ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300')}`}>
+            {isVideo ? <Video size={20} /> : <Phone size={20} />}
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold uppercase tracking-tight">Voice Call</p>
-            <p className="text-[10px] opacity-70">No answer</p>
+          <div className="flex-1 min-w-0 pr-14">
+            <p className="text-sm font-semibold tracking-tight">{isVideo ? 'Video Call' : 'Voice Call'}</p>
+            <p className="text-[10px] opacity-70">{isMissed ? 'Missed' : 'Answered'}</p>
           </div>
         </div>
       );
@@ -197,8 +200,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
 
   if (isSystem) {
     return (
-      <div className="flex justify-center my-2 px-4">
-        <div className="bg-[#f0f2f5]/80 dark:bg-[#182229]/80 backdrop-blur-sm text-[#54656f] dark:text-[#8696a0] text-xs px-3 py-1.5 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800/50 uppercase tracking-widest font-medium text-center max-w-[85%]">
+      <div className="flex justify-center my-3 px-4">
+        <div className="bg-[#e1f3fb] dark:bg-[#182229] text-[#54656f] dark:text-[#8696a0] text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm border border-transparent dark:border-gray-800/50 uppercase tracking-tight font-normal text-center max-w-[85%]">
           {highlightText(message.content, searchQuery)}
         </div>
       </div>
@@ -218,12 +221,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
             : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')
         }`}
       >
-        {/* Edited Label */}
-        {message.isEdited && (
-          <div className="absolute top-1.5 right-2 text-[9px] font-bold text-gray-400 dark:text-[#8696a0] select-none pointer-events-none tracking-wider opacity-80 uppercase">
-            EDITED
-          </div>
-        )}
 
         {/* Copy Button */}
         {!isSystem && (
@@ -262,19 +259,20 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           </div>
         )}
 
-        <div className="relative min-w-[80px]">
+        <div className="relative min-w-[80px] pr-14">
           {renderMediaContent()}
-          <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-3 pr-8">
-            {message.type === 'text' ? renderContentWithLinks(message.content) : null}
-            {message.type === 'call' ? (
-              <span className="text-gray-500 dark:text-gray-400 font-medium italic">
-                {message.content}
-              </span>
-            ) : null}
-            <span className="inline-block w-[60px]"></span>
-          </div>
-          <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0.5 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1">
-            {React.useMemo(() => message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(), [message.timestamp])}
+          {message.type !== 'call' && (
+            <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-1">
+              {message.type === 'text' ? renderContentWithLinks(message.content) : null}
+            </div>
+          )}
+          <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0.5 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1.5 bg-inherit pl-1 rounded-tl-md">
+            {message.isEdited && (
+              <span className="text-[9px] font-medium opacity-70 uppercase tracking-tight">edited</span>
+            )}
+            <span>
+              {React.useMemo(() => message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(), [message.timestamp])}
+            </span>
           </div>
         </div>
       </div>
