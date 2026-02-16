@@ -107,19 +107,19 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
 
             <div className="flex flex-wrap justify-center gap-6">
               <a 
-                href="https://github.com" 
+                href="https://github.com/itxshakil"
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 px-8 py-3 bg-[#24292e] text-white rounded-xl hover:bg-black transition-all text-sm font-semibold shadow-sm hover:shadow-lg active:scale-95 group"
+                className="flex items-center gap-3 px-8 py-3 bg-[#24292e] text-white rounded-xl hover:bg-black active:scale-95 transition-all text-sm font-semibold shadow-sm hover:shadow-lg group"
               >
                 <Github size={20} className="group-hover:rotate-12 transition-transform" />
                 GitHub
               </a>
               <a 
-                href="https://buymeacoffee.com" 
+                href="buymeacoffee.com/itxshakil"
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 px-8 py-3 bg-[#FFDD00] text-black rounded-xl hover:bg-[#FFCC00] transition-all text-sm font-semibold shadow-sm hover:shadow-lg active:scale-95 group"
+                className="flex items-center gap-3 px-8 py-3 bg-[#FFDD00] text-black rounded-xl hover:bg-[#FFCC00] active:scale-95 transition-all text-sm font-semibold shadow-sm hover:shadow-lg group"
               >
                 <Coffee size={20} className="group-hover:bounce transition-transform" />
                 Buy Me a Coffee
