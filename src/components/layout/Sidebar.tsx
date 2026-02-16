@@ -43,6 +43,11 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
         setHighlightedMessageId(firstMessageOfDay.id);
       }
 
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        try {
+          navigator.vibrate(10);
+        } catch (e) {}
+      }
       onClose?.();
     } else {
       console.warn(`Date element not found: date-${date}`);
