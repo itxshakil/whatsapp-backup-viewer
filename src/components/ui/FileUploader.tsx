@@ -232,7 +232,7 @@ export const FileUploader: React.FC = React.memo(() => {
         </p>
         
         <div className="flex flex-col items-center gap-4">
-          <label className={`bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full cursor-pointer transition-colors font-medium shadow-sm ${isProcessing ? 'pointer-events-none opacity-50' : ''}`}>
+          <label className={`bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95 text-white px-8 py-3 rounded-full cursor-pointer transition-all font-medium shadow-sm ${isProcessing ? 'pointer-events-none opacity-50' : ''}`}>
             {isProcessing ? 'Processing...' : 'Choose File'}
             <input
               type="file"
