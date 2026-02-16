@@ -154,12 +154,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
     return (
       <div className="mb-2 overflow-hidden rounded-lg bg-black/5 dark:bg-black/20">
         {isImage && (
-          <div className="relative group">
+          <div className="relative group min-h-[100px] min-w-[100px]">
             {mediaUrl ? (
               <img 
                 src={mediaUrl} 
                 alt="Chat attachment" 
-                className="max-w-full h-auto max-h-[300px] object-contain mx-auto block cursor-pointer"
+                className="max-w-full h-auto max-h-[300px] object-contain mx-auto block cursor-pointer p-1"
                 onClick={() => window.open(mediaUrl, '_blank')}
               />
             ) : (
@@ -173,12 +173,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           </div>
         )}
         {isVideo && (
-          <div className="relative group flex items-center justify-center bg-gray-200 dark:bg-gray-800">
+          <div className="relative group flex items-center justify-center bg-gray-200 dark:bg-gray-800 min-h-[100px]">
             {mediaUrl ? (
               <video 
                 src={mediaUrl} 
                 controls 
-                className="max-w-full max-h-[300px]"
+                className="max-w-full max-h-[300px] p-1"
               />
             ) : (
               <div className="aspect-video flex items-center justify-center w-full">
@@ -191,16 +191,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           </div>
         )}
         {isAudio && (
-          <div className="p-3">
+          <div className="p-4">
             {mediaUrl ? (
-              <audio src={mediaUrl} controls className="w-full h-8" />
+              <audio src={mediaUrl} controls className="w-full h-10" />
             ) : (
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-                  <MusicIcon size={20} />
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white shrink-0">
+                  <MusicIcon size={24} />
                 </div>
                 <div className="flex-1">
-                  <div className="h-1 w-full bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div className="h-full w-1/3 bg-green-500"></div>
                   </div>
                   <p className="text-[10px] mt-1 text-gray-500 dark:text-gray-400">Audio Message (not loaded)</p>
@@ -210,18 +210,20 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           </div>
         )}
         {isDoc && (
-          <div className="p-3 flex items-center gap-3 bg-black/5 dark:bg-white/5">
-            <FileIcon className="text-gray-500 dark:text-gray-400" />
+          <div className="p-4 flex items-center gap-3 bg-black/5 dark:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-colors">
+            <FileIcon className="text-gray-500 dark:text-gray-400 shrink-0" size={24} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{message.content}</p>
               <p className="text-[10px] text-gray-500 uppercase">Document</p>
             </div>
             {mediaUrl ? (
-              <a href={mediaUrl} download={message.content} className="text-teal-600 dark:text-teal-500 hover:text-teal-700">
-                <Download size={18} />
+              <a href={mediaUrl} download={message.content} className="text-teal-600 dark:text-teal-500 hover:text-teal-700 p-2">
+                <Download size={20} />
               </a>
             ) : (
-              <Download size={18} className="text-teal-600 dark:text-teal-500 cursor-not-allowed opacity-50" />
+              <div className="p-2 opacity-50">
+                <Download size={20} className="text-teal-600 dark:text-teal-500 cursor-not-allowed" />
+              </div>
             )}
           </div>
         )}
@@ -244,6 +246,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
       ref={bubbleRef}
       id={`msg-${message.id}`}
       className={`flex w-full group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-2' : 'mt-0'} ${className} ${isHighlighted ? 'animate-pulse-highlight' : ''}`}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchEnd}
     >
       <div
         className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2.5 py-1.5 shadow-sm group/bubble ${
