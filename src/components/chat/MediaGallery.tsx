@@ -16,6 +16,11 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
   const jumpToMessage = React.useCallback((id: string) => {
     setHighlightedMessageId(id);
     onClose();
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(10);
+      } catch (e) {}
+    }
     setTimeout(() => {
       const element = document.getElementById(`msg-${id}`);
       if (element) {
