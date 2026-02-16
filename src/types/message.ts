@@ -1,4 +1,4 @@
-export type MessageType = "text" | "system" | "image" | "video" | "audio" | "document";
+export type MessageType = "text" | "system" | "image" | "video" | "audio" | "document" | "call";
 
 export interface Message {
   id: string;

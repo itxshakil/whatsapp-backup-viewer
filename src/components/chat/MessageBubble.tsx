@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileIcon, ImageIcon, VideoIcon, MusicIcon, Download, Copy, Check } from 'lucide-react';
+import { FileIcon, ImageIcon, VideoIcon, MusicIcon, Download, Copy, Check, Phone, Video } from 'lucide-react';
 import { Message } from '../../types/message';
 import { useChatStore } from '../../store/chatStore';
 import { useState } from 'react';
@@ -85,10 +85,25 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
     const isVideo = message.type === 'video';
     const isAudio = message.type === 'audio';
     const isDoc = message.type === 'document';
+    const isCall = message.type === 'call';
 
-    if (!isImage && !isVideo && !isAudio && !isDoc) return null;
+    if (!isImage && !isVideo && !isAudio && !isDoc && !isCall) return null;
 
     const mediaUrl = message.mediaUrl;
+
+    if (isCall) {
+      return (
+        <div className="flex items-center gap-3 p-2 bg-black/5 dark:bg-white/5 rounded-lg mb-2">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isMe ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+            <Phone size={20} />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold uppercase tracking-tight">Voice Call</p>
+            <p className="text-[10px] opacity-70">No answer</p>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="mb-2 overflow-hidden rounded-lg bg-black/5 dark:bg-black/20">
@@ -239,6 +254,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           {renderMediaContent()}
           <div className="text-[14.2px] leading-relaxed whitespace-pre-wrap break-words px-0.5 pb-3 pr-8">
             {message.type === 'text' ? renderContentWithLinks(message.content) : null}
+            {message.type === 'call' ? (
+              <span className="text-gray-500 dark:text-gray-400 font-medium italic">
+                {message.content}
+              </span>
+            ) : null}
             <span className="inline-block w-[60px]"></span>
           </div>
           <div className="text-[11px] text-gray-500 dark:text-[#8696a0] absolute right-0.5 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1">
