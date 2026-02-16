@@ -7,12 +7,48 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true
+      },
+      registerType: 'prompt',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,png}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gstatic-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'wa-bg.png'],
       manifest: {
-        name: 'WhatsApp Viewer',
+        name: 'WhatsApp Backup Viewer',
         short_name: 'WA Viewer',
-        description: 'Local-first WhatsApp backup viewer and analyzer',
+        description: 'Private and secure WhatsApp chat backup viewer and analyzer',
         theme_color: '#075e54',
         background_color: '#ffffff',
         display: 'standalone',
