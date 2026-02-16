@@ -68,6 +68,19 @@ Line 3`;
     expect(messages).toHaveLength(1);
     expect(messages[0].sender).toBe('John');
     expect(messages[0].content).toBe('Hello');
-    expect(messages[0].timestamp.getSeconds()).toBe(30);
+    expect(messages[0].timestamp.getUTCSeconds()).toBe(30);
+  });
+
+  it('should detect edited messages', () => {
+    const rawText = `12/11/23, 9:45 pm - John: Hello <This message was edited>
+12/11/23, 9:46 pm - You: How are you?
+Fine <This message was edited>`;
+    const messages = normalizeMessages(rawText);
+
+    expect(messages).toHaveLength(2);
+    expect(messages[0].isEdited).toBe(true);
+    expect(messages[0].content).toBe('Hello');
+    expect(messages[1].isEdited).toBe(true);
+    expect(messages[1].content).toBe('How are you?\nFine');
   });
 });
