@@ -61,7 +61,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
     handleCopy();
   }, [handleCopy]);
 
-  const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+  const longPressTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTouchStart = React.useCallback(() => {
     longPressTimer.current = setTimeout(() => {
