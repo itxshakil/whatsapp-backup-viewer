@@ -81,15 +81,21 @@ export const SearchBar: React.FC = React.memo(() => {
           </span>
           <div className="flex items-center gap-1">
             <button 
-              onClick={goToPrev}
-              className="p-1 hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] rounded text-gray-500"
+              onClick={() => {
+                goToPrev();
+                if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
+              }}
+              className="p-1 hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] rounded text-gray-500 active:scale-90"
               title="Previous match"
             >
               <ChevronUp size={16} />
             </button>
             <button 
-              onClick={goToNext}
-              className="p-1 hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] rounded text-gray-500"
+              onClick={() => {
+                goToNext();
+                if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
+              }}
+              className="p-1 hover:bg-[#f0f2f5] dark:hover:bg-[#202c33] rounded text-gray-500 active:scale-90"
               title="Next match"
             >
               <ChevronDown size={16} />
