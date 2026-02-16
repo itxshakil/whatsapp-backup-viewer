@@ -30,17 +30,23 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
   }, [setHighlightedMessageId, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in">
-      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in overscroll-none">
+      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-200 dark:border-gray-700 shrink-0">
         <div className="flex items-center gap-4">
-          <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
+          <button 
+            onClick={() => {
+              onClose();
+              if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
+            }} 
+            className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors active:scale-90"
+          >
             <X className="text-gray-500 dark:text-[#8696a0]" />
           </button>
           <h2 className="text-lg font-medium text-[#111b21] dark:text-[#e9edef]">Media, Links and Docs</h2>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-8">
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 touch-pan-y">
         {mediaMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-[#8696a0]">
             <Grid size={48} className="mb-4 opacity-20" />
@@ -52,7 +58,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
               <div 
                 key={msg.id} 
                 onClick={() => jumpToMessage(msg.id)}
-                className="aspect-square bg-gray-200 dark:bg-[#202c33] rounded-sm overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group"
+                className="aspect-square bg-gray-200 dark:bg-[#202c33] rounded-sm overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group active:scale-95 transition-transform"
               >
                 {msg.type === 'image' && msg.mediaUrl ? (
                   <img src={msg.mediaUrl} alt="" className="w-full h-full object-cover" />
