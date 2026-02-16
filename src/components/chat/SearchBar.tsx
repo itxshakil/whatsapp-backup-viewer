@@ -63,8 +63,11 @@ export const SearchBar: React.FC = React.memo(() => {
         {searchQuery && (
           <div className="flex items-center gap-1">
             <button 
-              onClick={() => setSearchQuery('')}
-              className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-1"
+              onClick={() => {
+                setSearchQuery('');
+                if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
+              }}
+              className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-1 active:scale-90"
             >
               <X size={16} />
             </button>
