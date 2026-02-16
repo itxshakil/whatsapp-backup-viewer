@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, MoreVertical, Moon, Sun, Download, Share2, DownloadCloud, Info } from 'lucide-react';
+import { User, Download, Share2, DownloadCloud, Info } from 'lucide-react';
 import { useChatStore } from '../../store/chatStore';
 
 interface SidebarHeaderProps {
@@ -90,10 +90,6 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
     URL.revokeObjectURL(url);
   }, [metadata, messages]);
 
-  const toggleDarkMode = useCallback(() => {
-    setIsDark(prev => !prev);
-  }, []);
-
   return (
     <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33]">
       <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
@@ -124,13 +120,6 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
           title="About & Help"
         >
           <Info size={20} />
-        </button>
-        <button 
-          onClick={toggleDarkMode}
-          className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
-          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-        >
-          {isDark ? <Sun size={20} /> : <Moon size={20} />}
         </button>
         <button 
           className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors disabled:opacity-30"
