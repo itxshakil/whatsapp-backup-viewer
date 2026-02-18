@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Message } from '../../types/message';
+import { Message, ChatStats } from '../../types/message';
 import { BarChart3, Users, MessageCircle, Clock, Calendar, Image as ImageIcon, MessageSquare } from 'lucide-react';
 import dayjs from 'dayjs';
 
@@ -9,41 +9,36 @@ interface AnalyticsViewProps {
 }
 
 export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ messages, participants }) => {
-  const stats = useMemo(() => {
+  const stats = useMemo<ChatStats>(() => {
     const totalMessages = messages.length;
-    const textMessages = messages.filter((m: any) => m.type === 'text').length;
-    const mediaMessages = messages.filter((m: any) => ['image', 'video', 'audio', 'document'].includes(m.type)).length;
+    const textMessages = messages.filter((m) => m.type === 'text').length;
+    const mediaMessages = messages.filter((m) => ['image', 'video', 'audio', 'document'].includes(m.type)).length;
     
-    // Message count per participant
-    const perUser = participants.reduce((acc: any, user: string) => {
-      acc[user] = messages.filter((m: any) => m.sender === user).length;
+    const perUser = participants.reduce((acc, user) => {
+      acc[user] = messages.filter((m) => m.sender === user).length;
       return acc;
     }, {} as Record<string, number>);
 
-    // Messages by hour
     const byHour = new Array(24).fill(0);
-    messages.forEach((m: any) => {
+    messages.forEach((m) => {
       const hour = m.timestamp.getHours();
       byHour[hour]++;
     });
 
-    // Message by day of week
-    const byDay = new Array(7).fill(0); // 0 = Sunday
-    messages.forEach((m: any) => {
+    const byDay = new Array(7).fill(0);
+    messages.forEach((m) => {
       const day = m.timestamp.getDay();
       byDay[day]++;
     });
 
-    // Busy hours
     const topHours = byHour
       .map((count: number, hour: number) => ({ hour, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
 
-    // Emoji breakdown
     const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
     const emojiFreq: Record<string, number> = {};
-    messages.forEach((m: any) => {
+    messages.forEach((m) => {
       const emojis = m.content.match(emojiRegex);
       if (emojis) {
         emojis.forEach((emoji: string) => {
@@ -52,13 +47,12 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
       }
     });
     const topEmojis = Object.entries(emojiFreq)
-      .sort(([, a]: [string, number], [, b]: [string, number]) => b - a)
-      .slice(0, 10);
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10) as [string, number][];
 
-    // Word frequency (excluding short common words)
     const commonWords = new Set(['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up', 'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time', 'no', 'just', 'him', 'know', 'take', 'person', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then', 'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well', 'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'is', 'are', 'was', 'were', 'am', 'been', 'has', 'had']);
     const wordFreq: Record<string, number> = {};
-    messages.filter((m: any) => m.type === 'text').forEach((m: any) => {
+    messages.filter((m) => m.type === 'text').forEach((m) => {
       const words = m.content.toLowerCase().match(/\b(\w+)\b/g);
       if (words) {
         words.forEach((word: string) => {
@@ -69,8 +63,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
       }
     });
     const topWords = Object.entries(wordFreq)
-      .sort(([, a]: [string, number], [, b]: [string, number]) => b - a)
-      .slice(0, 10);
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10) as [string, number][];
 
     return { totalMessages, textMessages, mediaMessages, perUser, byHour, byDay, topWords, topEmojis, topHours };
   }, [messages, participants]);
@@ -86,7 +80,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
           Chat Analytics
         </h2>
 
-        {/* Top Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard 
             icon={<MessageCircle className="text-blue-500" />} 
@@ -105,7 +98,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
           />
         </div>
 
-        {/* Highlight Stats */}
         <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
             <BarChart3 size={16} />
@@ -140,7 +132,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Messages per User */}
           <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
               <Users size={16} />
@@ -148,8 +139,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
             </h3>
             <div className="space-y-4">
               {Object.entries(stats.perUser)
-                .sort(([, a]: [string, any], [, b]: [string, any]) => b - a)
-                .map(([user, count]: [string, any]) => (
+                .sort(([, a], [, b]) => b - a)
+                .map(([user, count]) => (
                   <div key={user}>
                     <div className="flex justify-between text-sm mb-1 text-gray-700 dark:text-[#e9edef]">
                       <span className="truncate mr-2">{user}</span>
@@ -166,7 +157,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
             </div>
           </div>
 
-          {/* Activity by Hour */}
           <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
               <Clock size={16} />
@@ -192,7 +182,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
             <p className="text-[10px] text-gray-400 mt-4 text-center italic">Hover over bars to see message counts</p>
           </div>
 
-          {/* Activity by Day */}
           <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
               <Calendar size={16} />
@@ -214,7 +203,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
             </div>
           </div>
 
-          {/* Top Words */}
           <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
               <MessageCircle size={16} />
@@ -237,7 +225,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
             </div>
           </div>
 
-          {/* Top Emojis */}
           <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
               <span className="text-lg">😀</span>

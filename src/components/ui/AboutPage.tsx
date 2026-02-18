@@ -8,7 +8,6 @@ interface AboutPageProps {
 export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
   return (
     <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in">
-      {/* Header */}
       <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-4">
           <button 
@@ -22,11 +21,9 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto p-6 md:p-12 space-y-16">
           
-          {/* Hero Section */}
           <section className="text-center space-y-4">
             <div className="w-20 h-20 bg-teal-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg transform rotate-3">
               <Info size={40} className="text-white" />
@@ -37,7 +34,6 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
             </p>
           </section>
 
-          {/* How to Use Section - Modern Visual Guide */}
           <section className="space-y-10">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-bold text-[#111b21] dark:text-[#e9edef] flex items-center justify-center gap-3">
@@ -48,7 +44,6 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
             </div>
             
             <div className="grid gap-8 md:grid-cols-2 relative">
-              {/* Connector lines for desktop */}
               <div className="hidden md:block absolute left-1/2 top-12 bottom-12 w-px bg-teal-100 dark:bg-teal-900/30 -translate-x-1/2 z-0"></div>
               <div className="hidden md:block absolute top-1/2 left-12 right-12 h-px bg-teal-100 dark:bg-teal-900/30 -translate-y-1/2 z-0"></div>
 
@@ -96,7 +91,6 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
             </div>
           </section>
 
-          {/* Creator Section */}
           <section className="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/10 dark:to-emerald-900/10 p-10 rounded-3xl border border-teal-100 dark:border-teal-900/30 text-center space-y-8 shadow-sm">
             <div className="space-y-3">
               <h2 className="text-2xl font-bold text-[#111b21] dark:text-[#e9edef]">Made with ❤️ by Shakil</h2>
@@ -127,7 +121,6 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
             </div>
           </section>
 
-          {/* Privacy Note */}
           <section className="text-center space-y-4 pt-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-bold uppercase tracking-wider">
               <Heart size={14} className="fill-current" />
@@ -138,7 +131,6 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
             </p>
           </section>
 
-          {/* Footer */}
           <footer className="text-center text-[11px] text-gray-400 dark:text-[#8696a0]/40 pb-8">
             WhatsApp Backup Viewer &copy; {new Date().getFullYear()} • Not affiliated with WhatsApp or Meta.
           </footer>

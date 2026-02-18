@@ -1,20 +1,7 @@
-/**
- * WhatsApp export format example:
- * 12/11/23, 9:45 pm - John: Hello
- * 12/11/23, 9:46 pm - Messages are end-to-end encrypted
- * [12/11/23, 9:45:30 pm] John: Hello
- */
+import { ParsedLine } from '../types/message';
 
 const WHATSAPP_LINE_REGEX = /^(?:\[?(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]?)\s(?:-|:)\s?([^:]+)(?::\s(.*))?$/i;
 const WHATSAPP_SQUARE_REGEX = /^\[(\d{1,4}[-./]\d{1,2}[-./]\d{1,4}),?\s(\d{1,2}:\d{2}(?::\d{2})?(\s?(?:[ap]\.?m\.?|AM|PM))?)\]\s([^:]+)(?::\s(.*))?$/i;
-
-export interface ParsedLine {
-  date: string;
-  time: string;
-  sender: string;
-  content: string;
-  isSystem: boolean;
-}
 
 const isInvisible = (text: string) => {
   // Check if string consists only of zero-width or non-breaking spaces

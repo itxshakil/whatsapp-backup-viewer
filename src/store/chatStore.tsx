@@ -1,24 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import { Message, ChatMetadata } from '../types/message';
+import { Message, ChatMetadata, ChatContextType } from '../types/message';
 import { db, SavedChat } from './db';
-
-interface ChatContextType {
-  messages: Message[];
-  metadata: ChatMetadata | null;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  error: string | null;
-  setError: (error: string | null) => void;
-  setChatData: (messages: Message[], metadata: ChatMetadata, shouldSave?: boolean) => Promise<void>;
-  clearChat: () => void;
-  clearAllData: () => Promise<void>;
-  savedChats: SavedChat[];
-  loadChat: (id: number) => Promise<void>;
-  deleteChat: (id: number) => Promise<void>;
-  saveCurrentChat: () => Promise<void>;
-  highlightedMessageId: string | null;
-  setHighlightedMessageId: (id: string | null) => void;
-}
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -51,7 +33,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Load saved chats from IndexedDB on mount
   useEffect(() => {
     refreshSavedChats();
   }, [refreshSavedChats]);
@@ -59,7 +40,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const setChatData = useCallback(async (newMessages: Message[], newMetadata: ChatMetadata, shouldSave = false) => {
     setMessages(newMessages);
     setMetadata(newMetadata);
-    setSearchQuery(''); // Reset search on new upload
+    setSearchQuery('');
     setError(null);
 
     if (shouldSave) {
@@ -120,10 +101,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setSearchQuery('');
         setError(null);
         
-        // Update last opened
         await db.chats.update(id, { lastOpened: Date.now() });
         
-        // Update App Badge (PWA feature)
         if ('setAppBadge' in navigator) {
           (navigator as any).setAppBadge(1).catch(() => {});
         }
@@ -155,7 +134,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     setSearchQuery('');
     setError(null);
     
-    // Clear App Badge
     if ('clearAppBadge' in navigator) {
       (navigator as any).clearAppBadge().catch(() => {});
     }
