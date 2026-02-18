@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MessageBubble } from './MessageBubble';
-import { ChatProvider } from '../../store/chatStore';
-import { Message } from '../../types/message';
+import { MessageBubble } from '../components/chat/MessageBubble';
+import { ChatProvider } from '../store/chatStore';
+import { Message } from '../types/message';
 
 const mockMessage: Message = {
   id: '1',

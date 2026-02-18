@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SearchBar } from './chat/SearchBar';
+import { SearchBar } from '../components/chat/SearchBar';
 import { ChatProvider, useChatStore } from '../store/chatStore';
 
 const TestComponent = () => {

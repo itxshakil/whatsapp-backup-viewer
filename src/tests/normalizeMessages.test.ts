@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normalizeMessages } from './normalizeMessages';
+import { normalizeMessages } from '../utils/normalizeMessages';
 
 describe('normalizeMessages', () => {
   it('should normalize multiple lines into messages', () => {

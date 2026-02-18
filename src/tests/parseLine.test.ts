@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseLine } from './parseLine';
+import { parseLine } from '../utils/parseLine';
 
 describe('parseLine', () => {
   it('should parse a standard message', () => {

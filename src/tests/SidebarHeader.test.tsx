@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SidebarHeader } from './layout/SidebarHeader';
+import { SidebarHeader } from '../components/layout/SidebarHeader';
 import { ChatProvider } from '../store/chatStore';
 
 // Mock matchMedia
@@ -34,8 +34,8 @@ describe('SidebarHeader', () => {
 
   it('renders correctly', () => {
     renderWithProvider(<SidebarHeader />);
-    expect(screen.getByTitle(/Mode/i)).toBeInTheDocument();
-    expect(screen.getByTitle(/Export/i)).toBeInTheDocument();
+    expect(screen.getByTitle(/About & Help/i)).toBeInTheDocument();
+    expect(screen.getByTitle(/Export as JSON/i)).toBeInTheDocument();
   });
 
   it('toggles theme when button is clicked', () => {
