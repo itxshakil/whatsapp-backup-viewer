@@ -22,12 +22,6 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
         navigator.vibrate(10);
       } catch (e) {}
     }
-    setTimeout(() => {
-      const element = document.getElementById(`msg-${id}`);
-      if (element) {
-        element.scrollIntoView({ behavior: 'auto', block: 'center' });
-      }
-    }, 100);
   }, [setHighlightedMessageId, onClose]);
 
   return (

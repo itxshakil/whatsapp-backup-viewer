@@ -29,29 +29,24 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
   }, [messages]);
 
   const handleJumpToDate = useCallback((date: string) => {
-    // Scroll to the date header
-    const dateElement = document.getElementById(`date-${date}`);
-    if (dateElement) {
-      dateElement.scrollIntoView({ behavior: 'auto', block: 'start' });
-      
-      // Also try to find the first message of that day and highlight it
-      const firstMessageOfDay = messages.find((m: any) => {
-        return dayjs(m.timestamp).format('YYYY-MM-DD') === date;
-      });
+    // Find the index of the date header in the MessageList's data
+    // We need to match how MessageList generates its data
+    // However, Sidebar doesn't have access to MessageList's internal data
+    // So we'll try to find the message ID and then use a new store function to trigger scroll
+    const firstMessageOfDay = messages.find((m: any) => {
+      return dayjs(m.timestamp).format('YYYY-MM-DD') === date;
+    });
 
-      if (firstMessageOfDay) {
-        setHighlightedMessageId(firstMessageOfDay.id);
-      }
-
-      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-        try {
-          navigator.vibrate(10);
-        } catch (e) {}
-      }
-      onClose?.();
-    } else {
-      console.warn(`Date element not found: date-${date}`);
+    if (firstMessageOfDay) {
+      setHighlightedMessageId(firstMessageOfDay.id);
     }
+
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(10);
+      } catch (e) {}
+    }
+    onClose?.();
   }, [messages, setHighlightedMessageId, onClose]);
 
   const handleDaySelect = useCallback((date: any) => {
@@ -292,7 +287,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
       <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
         <SidebarHeader onShowAbout={onShowAbout} />
         
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#f0f2f5] dark:bg-[#111b21] overflow-y-auto">
+        <div className="flex-1 flex flex-col items-center justify-center md:p-8 text-center bg-[#f0f2f5] dark:bg-[#111b21] overflow-y-auto">
           {savedChats.length === 0 ? (
             <>
               <div className="w-16 h-16 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mb-4">

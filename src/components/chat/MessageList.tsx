@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Virtuoso } from 'react-virtuoso';
+import React, { useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import { MessageBubble } from './MessageBubble';
 import { Message } from '../../types/message';
 import dayjs from 'dayjs';
@@ -8,11 +8,15 @@ import { useSearch } from '../../hooks/useSearch';
 
 interface MessageListProps {
   messages: Message[];
+  onScroll?: (e: any) => void;
 }
 
-export const MessageList: React.FC<MessageListProps> = React.memo(({ messages }) => {
+export const MessageList: React.FC<MessageListProps & { ref?: React.Ref<VirtuosoHandle> }> = React.memo(forwardRef(({ messages, onScroll }, ref) => {
   const { searchQuery } = useChatStore();
   const filteredMessages = useSearch(messages, searchQuery);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
+
+  useImperativeHandle(ref, () => virtuosoRef.current!);
 
   const data = useMemo(() => {
     const result: any[] = [];
@@ -39,7 +43,8 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
           type: 'date-header',
           id: `date-${currentDate.format('YYYY-MM-DD')}`,
           label: dateLabel,
-          dateKey: currentDate.format('YYYY-MM-DD')
+          dateKey: currentDate.format('YYYY-MM-DD'),
+          virtuosoIndex: result.length
         });
       }
 
@@ -64,7 +69,8 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
         message,
         showSender,
         showTail,
-        marginBottom
+        marginBottom,
+        virtuosoIndex: result.length
       });
     });
     return result;
@@ -80,10 +86,12 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
 
   return (
     <Virtuoso
+      ref={virtuosoRef}
       style={{ height: '100%' }}
       data={data}
       initialTopMostItemIndex={data.length - 1}
       followOutput="smooth"
+      onScroll={onScroll}
       itemContent={(index, item) => {
         if (item.type === 'date-header') {
           return (
@@ -98,7 +106,7 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
           );
         }
         return (
-          <div className="px-2 md:px-16 lg:px-24 max-w-full">
+          <div id={item.id} className="px-2 md:px-16 lg:px-24 max-w-full">
             <MessageBubble 
               message={item.message} 
               showSender={item.showSender}
@@ -110,4 +118,4 @@ export const MessageList: React.FC<MessageListProps> = React.memo(({ messages })
       }}
     />
   );
-});
+}));

@@ -29,10 +29,7 @@ export const SearchBar: React.FC = React.memo(() => {
 
   const jumpToMessage = React.useCallback((id: string) => {
     setHighlightedMessageId(id);
-    const element = document.getElementById(`msg-${id}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'auto', block: 'center' });
-    }
+    // The scrolling is now handled by the useEffect in App.tsx that watches highlightedMessageId
   }, [setHighlightedMessageId]);
 
   const goToNext = React.useCallback(() => {

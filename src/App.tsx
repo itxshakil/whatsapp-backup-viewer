@@ -9,37 +9,58 @@ import { AnalyticsView } from './components/analytics/AnalyticsView';
 import { MediaGallery } from './components/chat/MediaGallery';
 import { SearchBar } from './components/chat/SearchBar';
 import { AboutPage } from './components/ui/AboutPage';
+import dayjs from 'dayjs';
+import { VirtuosoHandle } from 'react-virtuoso';
 
 const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
-  const { messages, metadata, searchQuery, savedChats, loadChat, setSearchQuery, setHighlightedMessageId } = useChatStore();
+  const { messages, metadata, searchQuery, savedChats, loadChat, setSearchQuery, setHighlightedMessageId, highlightedMessageId } = useChatStore();
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showMediaGallery, setShowMediaGallery] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const scrollToBottom = useCallback(() => {
-    scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: 'auto'
-    });
-  }, []);
+    if (virtuosoRef.current) {
+      virtuosoRef.current.scrollToIndex({
+        index: messages.length - 1,
+        behavior: 'auto',
+        align: 'end'
+      });
+    } else {
+      scrollRef.current?.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'auto'
+      });
+    }
+  }, [messages.length]);
 
   const handleJumpToBottom = useCallback(() => {
     scrollToBottom();
   }, [scrollToBottom]);
 
   const scrollToTop = useCallback(() => {
-    scrollRef.current?.scrollTo({
-      top: 0,
-      behavior: 'auto'
-    });
+    if (virtuosoRef.current) {
+      virtuosoRef.current.scrollToIndex({
+        index: 0,
+        behavior: 'auto',
+        align: 'start'
+      });
+    } else {
+      scrollRef.current?.scrollTo({
+        top: 0,
+        behavior: 'auto'
+      });
+    }
   }, []);
 
-  const handleScroll = useCallback(() => {
-    if (!scrollRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+  const handleScroll = useCallback((e: any) => {
+    // If e is from Virtuoso, it's the scroll event from the scroller element
+    const target = e.target;
+    if (!target) return;
+    const { scrollTop, scrollHeight, clientHeight } = target;
     // Show button if we are more than 300px away from bottom
     setShowScrollBottom(scrollHeight - scrollTop - clientHeight > 300);
     // Show top button if we are more than 300px away from top
@@ -88,6 +109,61 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     setShowAnalytics(false);
     setShowSearch(false);
   }, []);
+
+  // Scroll to highlighted message when it changes
+  useEffect(() => {
+    if (highlightedMessageId && virtuosoRef.current) {
+      // Small delay to ensure the list is rendered if we just switched views
+      const timer = setTimeout(() => {
+        // Since MessageList includes date headers, searching just messages is not enough 
+        // to get the correct index in Virtuoso.
+        
+        // We can get the index directly from the MessageList data if we expose it,
+        // but for now, we'll re-calculate it to match MessageList's logic exactly.
+        const filteredMessages = messages.filter(m => 
+          !searchQuery.trim() || 
+          (m.type === 'text' || m.type === 'system' || m.type === 'document') &&
+          (m.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           m.sender.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+
+        let virtuosoIndex = -1;
+        let lastDateKey = '';
+        let found = false;
+
+        for (const msg of filteredMessages) {
+          const currentDate = dayjs(msg.timestamp).startOf('day');
+          const dateKey = currentDate.format('YYYY-MM-DD');
+          
+          if (dateKey !== lastDateKey) {
+            virtuosoIndex++;
+            lastDateKey = dateKey;
+          }
+          
+          virtuosoIndex++;
+          if (msg.id === highlightedMessageId) {
+            found = true;
+            break;
+          }
+        }
+
+        if (found && virtuosoIndex !== -1) {
+          virtuosoRef.current?.scrollToIndex({
+            index: virtuosoIndex,
+            behavior: 'smooth',
+            align: 'center'
+          });
+        } else {
+          // Fallback: search for the DOM element since MessageList items have id={`msg-${id}`}
+          const element = document.getElementById(`msg-${highlightedMessageId}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightedMessageId, messages, searchQuery]);
 
   // Scroll to bottom when a new chat is loaded or search changes
   useEffect(() => {
@@ -238,10 +314,13 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
           !showMediaGallery && (
             <div 
               ref={scrollRef}
-              onScroll={handleScroll}
-              className="flex-1 overflow-y-auto relative"
+              className="flex-1 relative"
             >
-              <MessageList messages={messages} />
+              <MessageList 
+                ref={virtuosoRef} 
+                messages={messages} 
+                onScroll={handleScroll}
+              />
               
               {/* Scroll to Top Button */}
               {showScrollTop && (

@@ -29,9 +29,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
 
   React.useEffect(() => {
     if (isHighlighted) {
-      if (bubbleRef.current) {
-        bubbleRef.current.scrollIntoView({ behavior: 'auto', block: 'center' });
-      }
       const timer = setTimeout(() => {
         setHighlightedMessageId(null);
       }, 3000);
@@ -259,7 +256,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
       >
 
         {/* Copy Button */}
-        {!isSystem && (
+        {message.type === 'text' && (
           <button
             onClick={handleCopy}
             className={`absolute top-1 ${isMe ? 'left-[-30px]' : 'right-[-30px]'} p-1.5 rounded-full bg-white/50 dark:bg-black/20 text-gray-500 dark:text-gray-400 opacity-0 group-hover/bubble:opacity-100 transition-opacity hover:bg-white dark:hover:bg-black/40`}
