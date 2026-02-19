@@ -1,4 +1,5 @@
 import React from 'react';
+import { VirtuosoGrid } from 'react-virtuoso';
 import { useChatStore } from '../../store/chatStore';
 import { X, Grid, Layout } from 'lucide-react';
 
@@ -30,54 +31,52 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
   }, [setHighlightedMessageId, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in overscroll-none">
-      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-200 dark:border-gray-700 shrink-0">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => {
-              onClose();
-              if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
-            }} 
-            className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors active:scale-90"
-          >
-            <X className="text-gray-500 dark:text-[#8696a0]" />
-          </button>
-          <h2 className="text-lg font-medium text-[#111b21] dark:text-[#e9edef]">Media, Links and Docs</h2>
-        </div>
+    <div className="flex-1 flex flex-col bg-white dark:bg-[#111b21] animate-fade-in overscroll-none h-full min-h-0">
+      <div className="h-[59px] flex items-center px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-200 dark:border-gray-700 shrink-0 md:hidden">
+        <h2 className="text-base sm:text-lg font-bold text-gray-800 dark:text-[#e9edef] flex items-center gap-2">
+          <Grid className="text-green-600" size={20} />
+          Media Gallery
+        </h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-8 touch-pan-y">
+      <div className="flex-1 min-h-0 touch-pan-y">
         {mediaMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-[#8696a0]">
             <Grid size={48} className="mb-4 opacity-20" />
             <p>No media found in this chat</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-            {mediaMessages.map((msg: any) => (
-              <div 
-                key={msg.id} 
-                onClick={() => jumpToMessage(msg.id)}
-                className="aspect-square bg-gray-200 dark:bg-[#202c33] rounded-sm overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group active:scale-95 transition-transform"
-              >
-                {msg.type === 'image' && msg.mediaUrl ? (
-                  <img src={msg.mediaUrl} alt="" className="w-full h-full object-cover" />
-                ) : msg.type === 'video' ? (
-                   <div className="w-full h-full flex items-center justify-center bg-black/10">
-                     <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center">
-                       <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1"></div>
+          <VirtuosoGrid
+            style={{ height: '100%' }}
+            totalCount={mediaMessages.length}
+            listClassName="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 p-4 md:p-8"
+            itemContent={(index) => {
+              const msg = mediaMessages[index];
+              return (
+                <div 
+                  key={msg.id} 
+                  onClick={() => jumpToMessage(msg.id)}
+                  className="aspect-square bg-gray-200 dark:bg-[#202c33] rounded-sm overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group active:scale-95 transition-transform"
+                >
+                  {msg.type === 'image' && msg.mediaUrl ? (
+                    <img src={msg.mediaUrl} alt="" className="w-full h-full object-cover" />
+                  ) : msg.type === 'video' ? (
+                     <div className="w-full h-full flex items-center justify-center bg-black/10">
+                       <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center">
+                         <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1"></div>
+                       </div>
                      </div>
-                   </div>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
-                    <Layout className="text-gray-400 mb-1" size={20} />
-                    <span className="text-[8px] truncate w-full uppercase">{msg.type}</span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
-              </div>
-            ))}
-          </div>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
+                      <Layout className="text-gray-400 mb-1" size={20} />
+                      <span className="text-[8px] truncate w-full uppercase">{msg.type}</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+              );
+            }}
+          />
         )}
       </div>
     </div>

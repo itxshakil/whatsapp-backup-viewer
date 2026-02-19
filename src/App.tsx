@@ -58,18 +58,36 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     URL.revokeObjectURL(url);
   }, [metadata, messages]);
 
-  const toggleAnalytics = useCallback(() => setShowAnalytics(prev => !prev), []);
+  const closeMediaGallery = useCallback(() => setShowMediaGallery(false), []);
+
+  const toggleAnalytics = useCallback(() => {
+    setShowAnalytics(prev => {
+      if (!prev) {
+        setShowMediaGallery(false);
+        setShowSearch(false);
+      }
+      return !prev;
+    });
+  }, []);
+
   const toggleSearch = useCallback(() => {
     setShowSearch(prev => {
       if (prev) {
         setSearchQuery('');
         setHighlightedMessageId(null);
+      } else {
+        setShowAnalytics(false);
+        setShowMediaGallery(false);
       }
       return !prev;
     });
   }, [setSearchQuery, setHighlightedMessageId]);
-  const openMediaGallery = useCallback(() => setShowMediaGallery(true), []);
-  const closeMediaGallery = useCallback(() => setShowMediaGallery(false), []);
+
+  const openMediaGallery = useCallback(() => {
+    setShowMediaGallery(true);
+    setShowAnalytics(false);
+    setShowSearch(false);
+  }, []);
 
   // Scroll to bottom when a new chat is loaded or search changes
   useEffect(() => {
@@ -97,7 +115,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
 
   if (!metadata) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative bg-[#f0f2f5] dark:bg-[#0b141a] overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in relative bg-[#f0f2f5] dark:bg-[#0b141a] overflow-y-auto h-full">
         {/* About button for empty state */}
         <div className="absolute top-4 right-4 z-20">
           <button 
@@ -149,26 +167,29 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   }
 
   return (
-    <div className="flex flex-col h-full animate-fade-in relative">
+    <div className="flex flex-col h-full h-[100dvh] animate-fade-in relative">
       {/* Chat Header */}
-      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700 z-20">
-        <div className="flex items-center min-w-0">
+      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700 z-20 flex-shrink-0">
+        <div className="flex items-center min-w-0 flex-1">
           {/* Mobile Spacer for Toggle Button */}
-          <div className="w-10 md:hidden flex-shrink-0"></div>
+          <div className="w-12 md:hidden flex-shrink-0"></div>
           
           <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
             <span className="text-gray-600 dark:text-gray-300 font-bold">{metadata.fileName.charAt(0).toUpperCase()}</span>
           </div>
-          <div className="flex flex-col min-w-0 cursor-pointer" onClick={toggleAnalytics}>
+          <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => {
+            if (showAnalytics) toggleAnalytics();
+            else if (showMediaGallery) closeMediaGallery();
+          }}>
             <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate">
               {metadata.fileName}
             </h3>
             <p className="text-[11px] text-gray-500 dark:text-[#8696a0] truncate">
-              {showAnalytics ? 'Back to chat' : `${metadata.participants.length} participants`}
+              {showAnalytics ? 'Back to chat' : showMediaGallery ? 'Back to chat' : `${metadata.participants.length} participants`}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 md:gap-5 text-gray-500 dark:text-[#8696a0] flex-shrink-0">
+        <div className={`flex items-center gap-3 md:gap-5 text-gray-500 dark:text-[#8696a0] flex-shrink-0 ${(showAnalytics || showMediaGallery) ? 'hidden md:flex' : 'flex'}`}>
           <button 
             onClick={handleExportJSON}
             className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
@@ -185,7 +206,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
           </button>
           <button 
             onClick={openMediaGallery}
-            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+            className={`p-1.5 rounded-full transition-colors ${showMediaGallery ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
             title="Media Gallery"
           >
             <ImageIcon size={20} />
@@ -206,39 +227,45 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             <SearchBar />
           </div>
         )}
-        {showMediaGallery && <MediaGallery onClose={closeMediaGallery} />}
+        {showMediaGallery && (
+          <div className="absolute inset-0 z-[40] md:z-auto md:relative">
+            <MediaGallery onClose={closeMediaGallery} />
+          </div>
+        )}
         {showAnalytics ? (
           <AnalyticsView messages={messages} participants={metadata.participants} />
         ) : (
-          <div 
-            ref={scrollRef}
-            onScroll={handleScroll}
-            className="flex-1 overflow-y-auto relative"
-          >
-            <MessageList messages={messages} />
-            
-            {/* Scroll to Top Button */}
-            {showScrollTop && (
-              <button
-                onClick={scrollToTop}
-                className="fixed bottom-20 right-6 w-12 h-12 bg-white dark:bg-[#202c33] shadow-lg rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-30 border border-gray-100 dark:border-gray-700"
-                title="Scroll to top"
-              >
-                <ChevronUp size={28} />
-              </button>
-            )}
+          !showMediaGallery && (
+            <div 
+              ref={scrollRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto relative"
+            >
+              <MessageList messages={messages} />
+              
+              {/* Scroll to Top Button */}
+              {showScrollTop && (
+                <button
+                  onClick={scrollToTop}
+                  className="fixed bottom-20 right-6 w-12 h-12 bg-white dark:bg-[#202c33] shadow-lg rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-30 border border-gray-100 dark:border-gray-700"
+                  title="Scroll to top"
+                >
+                  <ChevronUp size={28} />
+                </button>
+              )}
 
-            {/* Scroll to Bottom Button */}
-            {showScrollBottom && (
-              <button
-                onClick={scrollToBottom}
-                className="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-[#202c33] shadow-lg rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-30 border border-gray-100 dark:border-gray-700"
-                title="Scroll to bottom"
-              >
-                <ChevronDown size={28} />
-              </button>
-            )}
-          </div>
+              {/* Scroll to Bottom Button */}
+              {showScrollBottom && (
+                <button
+                  onClick={scrollToBottom}
+                  className="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-[#202c33] shadow-lg rounded-full flex items-center justify-center text-gray-500 dark:text-[#8696a0] hover:bg-gray-50 dark:hover:bg-[#2a3942] transition-all z-30 border border-gray-100 dark:border-gray-700"
+                  title="Scroll to bottom"
+                >
+                  <ChevronDown size={28} />
+                </button>
+              )}
+            </div>
+          )
         )}
       </div>
     </div>

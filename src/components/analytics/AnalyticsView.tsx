@@ -11,22 +11,22 @@ interface AnalyticsViewProps {
 export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ messages, participants }) => {
   const stats = useMemo<ChatStats>(() => {
     const totalMessages = messages.length;
-    const textMessages = messages.filter((m) => m.type === 'text').length;
-    const mediaMessages = messages.filter((m) => ['image', 'video', 'audio', 'document'].includes(m.type)).length;
+    const textMessages = messages.filter((m: Message) => m.type === 'text').length;
+    const mediaMessages = messages.filter((m: Message) => ['image', 'video', 'audio', 'document'].includes(m.type)).length;
     
     const perUser = participants.reduce((acc, user) => {
-      acc[user] = messages.filter((m) => m.sender === user).length;
+      acc[user] = messages.filter((m: Message) => m.sender === user).length;
       return acc;
     }, {} as Record<string, number>);
 
     const byHour = new Array(24).fill(0);
-    messages.forEach((m) => {
+    messages.forEach((m: Message) => {
       const hour = m.timestamp.getHours();
       byHour[hour]++;
     });
 
     const byDay = new Array(7).fill(0);
-    messages.forEach((m) => {
+    messages.forEach((m: Message) => {
       const day = m.timestamp.getDay();
       byDay[day]++;
     });
@@ -73,7 +73,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#efeae2] dark:bg-[#0b141a] p-4 md:p-8">
+    <div className="flex-1 overflow-y-auto bg-[#efeae2] dark:bg-[#0b141a] p-4 md:p-8 pb-12 md:pb-20">
       <div className="max-w-4xl mx-auto space-y-6">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-[#e9edef] mb-6 flex items-center gap-2">
           <BarChart3 className="text-green-600" />
@@ -225,7 +225,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
               <span className="text-lg">😀</span>
               Top Emojis
