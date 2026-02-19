@@ -1,6 +1,8 @@
 import Dexie, { Table } from 'dexie';
 import { SavedChat } from '../types/message';
 
+export type { SavedChat };
+
 export class ChatDatabase extends Dexie {
   chats!: Table<SavedChat>;
 

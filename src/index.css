@@ -13,15 +13,17 @@
   --wa-teal: #008069;
 }
 
-.dark {
-  --wa-bg: #0b141a;
-  --wa-my-bubble: #005c4b;
-  --wa-other-bubble: #202c33;
-  --wa-sidebar-bg: #111b21;
-  --wa-header-bg: #202c33;
-  --wa-text-primary: #e9edef;
-  --wa-text-secondary: #8696a0;
-  --wa-teal: #00a884;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --wa-bg: #0b141a;
+    --wa-my-bubble: #005c4b;
+    --wa-other-bubble: #202c33;
+    --wa-sidebar-bg: #111b21;
+    --wa-header-bg: #202c33;
+    --wa-text-primary: #e9edef;
+    --wa-text-secondary: #8696a0;
+    --wa-teal: #00a884;
+  }
 }
 
 body {
@@ -49,16 +51,20 @@ body {
   border-radius: 3px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+  }
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
 }
 
 /* Animations */
@@ -73,7 +79,14 @@ body {
 
 @keyframes pulse {
   0%, 100% { background-color: transparent; }
-  50% { @apply bg-teal-500/20 dark:bg-teal-500/30; }
+  50% { @apply bg-teal-500/20; }
+}
+
+@media (prefers-color-scheme: dark) {
+  @keyframes pulse {
+    0%, 100% { background-color: transparent; }
+    50% { @apply bg-teal-500/30; }
+  }
 }
 
 .animate-pulse-highlight {

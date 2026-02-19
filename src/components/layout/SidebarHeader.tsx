@@ -9,14 +9,6 @@ interface SidebarHeaderProps {
 export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowAbout }) => {
   const { messages, metadata } = useChatStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) return savedTheme === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -47,26 +39,17 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
 
   useEffect(() => {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      if (themeColorMeta) themeColorMeta.setAttribute('content', '#111b21');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      if (themeColorMeta) themeColorMeta.setAttribute('content', '#075e54');
-    }
-  }, [isDark]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem('theme')) {
-        setIsDark(e.matches);
+    const updateThemeColor = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', e.matches ? '#111b21' : '#075e54');
       }
     };
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    updateThemeColor(mediaQuery);
+    
+    mediaQuery.addEventListener('change', updateThemeColor);
+    return () => mediaQuery.removeEventListener('change', updateThemeColor);
   }, []);
 
   const handleShare = useCallback(async () => {
