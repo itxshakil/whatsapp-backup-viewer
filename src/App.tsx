@@ -109,8 +109,8 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
         </div>
         
         {/* Landing Page Content */}
-        <div className="text-center mb-8 animate-fade-in max-w-2xl px-4 py-12 md:py-0">
-          <div className="w-20 h-20 bg-[#25d366] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-3 transition-transform hover:rotate-0 cursor-default">
+        <div className="text-center my-auto animate-fade-in max-w-2xl px-4 py-20 md:py-0 absolute inset-0">
+          <div className="w-20 h-20 bg-[#25d366] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-3 transition-transform hover:rotate-0 cursor-default flex-shrink-0 relative z-10">
             <MessageSquare size={40} className="text-white" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-[#e9edef] mb-4">WhatsApp Backup Viewer & Analyzer</h1>
