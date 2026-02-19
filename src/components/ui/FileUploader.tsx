@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import JSZip from 'jszip';
 import { useChatStore } from '../../store/chatStore';
 import { normalizeMessages } from '../../utils/normalizeMessages';
-import { Upload, AlertCircle, Save, FileArchive } from 'lucide-react';
+import { Upload, AlertCircle, Save, FileArchive, Trash2 } from 'lucide-react';
 import { Message } from '../../types/message';
 import { SavedChat } from '../../store/db';
 
@@ -232,7 +232,7 @@ export const FileUploader: React.FC = React.memo(() => {
         </p>
         
         <div className="flex flex-col items-center gap-4">
-          <label className={`bg-green-600 hover:bg-green-700 active:bg-green-800 active:scale-95 text-white px-8 py-3 rounded-full cursor-pointer transition-all font-medium shadow-sm ${isProcessing ? 'pointer-events-none opacity-50' : ''}`}>
+          <label className={`bg-[#008069] dark:bg-[#00a884] hover:opacity-90 active:scale-95 text-white px-8 py-2.5 rounded-full cursor-pointer transition-all font-medium shadow-sm ${isProcessing ? 'pointer-events-none opacity-50' : ''}`}>
             {isProcessing ? 'Processing...' : 'Choose File'}
             <input
               type="file"
@@ -243,14 +243,14 @@ export const FileUploader: React.FC = React.memo(() => {
             />
           </label>
 
-          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-[#8696a0] cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-[#667781] dark:text-[#8696a0] cursor-pointer">
             <input 
               type="checkbox" 
               checked={shouldSave} 
               onChange={toggleShouldSave}
-              className="rounded text-green-600 focus:ring-green-500 bg-transparent border-gray-300 dark:border-gray-600"
+              className="rounded text-[#008069] focus:ring-[#008069] bg-transparent border-gray-300 dark:border-gray-600"
             />
-            Save to browser storage (IndexedDB)
+            Save to browser storage
           </label>
         </div>
 
@@ -263,7 +263,7 @@ export const FileUploader: React.FC = React.memo(() => {
       </div>
 
       {savedChats.length > 0 && (
-        <div className="bg-white/50 dark:bg-[#111b21]/50 rounded-lg p-6 border border-gray-200 dark:border-gray-800">
+        <div className="bg-white/50 dark:bg-[#111b21]/50 rounded-lg p-6 border border-gray-200 dark:border-gray-800 mt-8">
           <h4 className="text-sm font-semibold text-gray-600 dark:text-[#8696a0] uppercase tracking-wider mb-4 flex items-center gap-2">
             <Save size={16} />
             Recent Chats
@@ -272,21 +272,21 @@ export const FileUploader: React.FC = React.memo(() => {
             {savedChats.map((chat: any) => (
               <div 
                 key={chat.id} 
-                className="group flex flex-col p-3 bg-white dark:bg-[#202c33] border border-gray-100 dark:border-gray-700 rounded-lg hover:border-green-300 dark:hover:border-green-900 transition-all cursor-pointer relative shadow-sm hover:shadow-md"
+                className="group flex flex-col p-3 bg-white dark:bg-[#202c33] border border-gray-100 dark:border-gray-800 rounded-lg hover:border-teal-300 dark:hover:border-teal-900 transition-all cursor-pointer relative shadow-sm hover:shadow-md"
                 onClick={() => chat.id && handleLoadChat(chat.id)}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <h5 className="text-sm font-medium text-gray-800 dark:text-[#e9edef] truncate pr-6">{chat.metadata.fileName}</h5>
+                  <h5 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] truncate pr-6">{chat.metadata.fileName}</h5>
                   <button 
                     onClick={(e) => handleConfirmDelete(e, chat)}
-                    className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2.5 right-2.5 p-1 text-[#667781] dark:text-[#8696a0] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Delete saved chat"
                   >
-                    <AlertCircle size={14} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-[#8696a0]">{chat.metadata.messageCount} messages</p>
-                <p className="text-[10px] text-gray-400 dark:text-[#8696a0]/60 mt-2">
+                <p className="text-xs text-[#667781] dark:text-[#8696a0]">{chat.metadata.messageCount} messages</p>
+                <p className="text-[10px] text-[#667781]/60 dark:text-[#8696a0]/60 mt-2">
                   Last opened: {new Date(chat.lastOpened).toLocaleDateString()}
                 </p>
               </div>

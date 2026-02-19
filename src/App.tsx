@@ -203,12 +203,12 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
         </div>
         
         {/* Landing Page Content */}
-        <div className="text-center my-auto animate-fade-in max-w-2xl px-4 py-20 md:py-0 absolute inset-0">
-          <div className="w-20 h-20 bg-[#25d366] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-3 transition-transform hover:rotate-0 cursor-default flex-shrink-0 relative z-10">
+        <div className="text-center my-auto animate-fade-in max-w-2xl px-4 py-20 md:py-0 relative z-10">
+          <div className="w-20 h-20 bg-[#00a884] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-3 transition-transform hover:rotate-0 cursor-default flex-shrink-0 relative z-10">
             <MessageSquare size={40} className="text-white" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-[#e9edef] mb-4">WhatsApp Backup Viewer & Analyzer</h1>
-          <p className="text-gray-600 dark:text-[#8696a0] text-lg mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#111b21] dark:text-[#e9edef] mb-4">WhatsApp Backup Viewer</h1>
+          <p className="text-[#667781] dark:text-[#8696a0] text-lg mb-8">
             The most private and secure way to explore your chat memories locally. No data ever leaves your device.
           </p>
           
@@ -217,22 +217,22 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
               <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mb-3">
                 <Search size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1 dark:text-[#e9edef]">Smart Search</h3>
-              <p className="text-xs text-gray-500 dark:text-[#8696a0]">Find any message instantly across thousands of entries.</p>
+              <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Smart Search</h3>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Find any message instantly across thousands of entries.</p>
             </div>
             <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center mb-3">
                 <ImageIcon size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1 dark:text-[#e9edef]">Media Gallery</h3>
-              <p className="text-xs text-gray-500 dark:text-[#8696a0]">Browse all your shared photos and videos in one place.</p>
+              <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Media Gallery</h3>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Browse all your shared photos and videos in one place.</p>
             </div>
             <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg flex items-center justify-center mb-3">
                 <BarChart3 size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1 dark:text-[#e9edef]">Chat Analytics</h3>
-              <p className="text-xs text-gray-500 dark:text-[#8696a0]">Discover patterns, top words, and busiest times.</p>
+              <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Chat Analytics</h3>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Discover patterns, top words, and busiest times.</p>
             </div>
           </div>
           
@@ -243,56 +243,58 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   }
 
   return (
-    <div className="flex flex-col h-full h-[100dvh] animate-fade-in relative">
+    <div className="flex flex-col h-full animate-fade-in relative overflow-hidden">
       {/* Chat Header */}
-      <div className="h-[59px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-200 dark:border-gray-700 z-20 flex-shrink-0">
+      <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-300 dark:border-gray-700/50 z-20 flex-shrink-0">
         <div className="flex items-center min-w-0 flex-1">
-          {/* Mobile Spacer for Toggle Button */}
-          <div className="w-12 md:hidden flex-shrink-0"></div>
+          {/* Mobile Toggle Button Spacer */}
+          <div className="md:hidden w-12 flex-shrink-0"></div>
           
-          <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-            <span className="text-gray-600 dark:text-gray-300 font-bold">{metadata.fileName.charAt(0).toUpperCase()}</span>
+          <div className="w-10 h-10 bg-[#dfe5e7] dark:bg-[#111b21] rounded-full flex items-center justify-center mr-3 flex-shrink-0 text-[#54656f] dark:text-[#aebac1]">
+            <span className="font-semibold">{metadata.fileName.charAt(0).toUpperCase()}</span>
           </div>
           <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => {
             if (showAnalytics) toggleAnalytics();
             else if (showMediaGallery) closeMediaGallery();
           }}>
-            <h3 className="text-sm font-medium text-[#111b21] dark:text-[#e9edef] leading-tight truncate">
+            <h3 className="text-[15px] font-semibold text-[#111b21] dark:text-[#e9edef] leading-tight truncate">
               {metadata.fileName}
             </h3>
-            <p className="text-[11px] text-gray-500 dark:text-[#8696a0] truncate">
+            <p className="text-[12px] text-[#667781] dark:text-[#8696a0] truncate">
               {showAnalytics ? 'Back to chat' : showMediaGallery ? 'Back to chat' : `${metadata.participants.length} participants`}
             </p>
           </div>
         </div>
-        <div className={`flex items-center gap-3 md:gap-5 text-gray-500 dark:text-[#8696a0] flex-shrink-0 ${(showAnalytics || showMediaGallery) ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`flex items-center gap-3 md:gap-4 text-[#54656f] dark:text-[#aebac1] flex-shrink-0 ${(showAnalytics || showMediaGallery) ? 'hidden md:flex' : 'flex'}`}>
           <button 
             onClick={handleExportJSON}
-            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+            className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
             title="Export as JSON"
           >
-            <Download size={18} />
+            <Download size={20} />
           </button>
           <button 
             onClick={toggleAnalytics}
-            className={`p-1.5 rounded-full transition-colors ${showAnalytics ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+            className={`p-2 rounded-full transition-colors ${showAnalytics ? 'text-[#008069] dark:text-[#00a884] bg-white/50 dark:bg-white/5' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}
             title="Chat Analytics"
           >
             <BarChart3 size={20} />
           </button>
           <button 
             onClick={openMediaGallery}
-            className={`p-1.5 rounded-full transition-colors ${showMediaGallery ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+            className={`p-2 rounded-full transition-colors ${showMediaGallery ? 'text-[#008069] dark:text-[#00a884] bg-white/50 dark:bg-white/5' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}
             title="Media Gallery"
           >
             <ImageIcon size={20} />
           </button>
           <div className="w-[1px] h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block"></div>
-          <Search 
-            size={18} 
-            className={`cursor-pointer transition-colors ${showSearch ? 'text-green-600 dark:text-green-500' : 'hover:text-gray-700 dark:hover:text-[#e9edef]'}`}
+          <button 
             onClick={toggleSearch}
-          />
+            className={`p-2 rounded-full transition-colors ${showSearch ? 'text-[#008069] dark:text-[#00a884]' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}
+            title="Search"
+          >
+            <Search size={20} />
+          </button>
         </div>
       </div>
 

@@ -61,7 +61,7 @@ export const MessageList: React.FC<MessageListProps & { ref?: React.Ref<Virtuoso
       const nextMessage = index < filteredMessages.length - 1 ? filteredMessages[index + 1] : null;
       const isLastInGroup = !nextMessage || nextMessage.sender !== message.sender || nextMessage.type === 'system' || message.type === 'system';
       
-      const marginBottom = isLastInGroup ? 'mb-4' : 'mb-0.5';
+      const marginBottom = isLastInGroup ? 'mb-2' : 'mb-0';
 
       result.push({
         type: 'message',

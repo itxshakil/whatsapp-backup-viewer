@@ -11,7 +11,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
   const { messages, setHighlightedMessageId } = useChatStore();
   
   const mediaMessages = React.useMemo(() => {
-    return messages.filter(m => ['image', 'video', 'audio', 'document'].includes(m.type));
+    return messages.filter(m => m.mediaUrl || ['image', 'video', 'audio', 'document'].includes(m.type));
   }, [messages]);
 
   const jumpToMessage = React.useCallback((id: string) => {
