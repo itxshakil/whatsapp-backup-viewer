@@ -287,7 +287,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
       <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
         <SidebarHeader onShowAbout={onShowAbout} />
         
-        <div className="flex-1 flex flex-col items-center justify-center md:p-8 text-center bg-white dark:bg-[#111b21] overflow-y-auto">
+        <div className="flex-1 flex flex-col items-center justify-center md:p-2 text-center bg-white dark:bg-[#111b21] overflow-y-auto">
           {savedChats.length === 0 ? (
             <div className="px-6">
               <div className="w-16 h-16 bg-[#f0f2f5] dark:bg-[#202c33] rounded-full flex items-center justify-center mb-6 mx-auto">
