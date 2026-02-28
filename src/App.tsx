@@ -248,9 +248,9 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
       <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-gray-300 dark:border-gray-700/50 z-20 flex-shrink-0">
         <div className="flex items-center min-w-0 flex-1">
           {/* Mobile Toggle Button Spacer */}
-          <div className="md:hidden w-12 flex-shrink-0"></div>
+          <div className="md:hidden w-10 flex-shrink-0"></div>
           
-          <div className="w-10 h-10 bg-[#dfe5e7] dark:bg-[#111b21] rounded-full flex items-center justify-center mr-3 flex-shrink-0 text-[#54656f] dark:text-[#aebac1]">
+          <div className="w-10 h-10 bg-[#dfe5e7] dark:bg-[#111b21] rounded-full flex items-center justify-center mr-2 flex-shrink-0 text-[#54656f] dark:text-[#aebac1]">
             <span className="font-semibold">{metadata.fileName.charAt(0).toUpperCase()}</span>
           </div>
           <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => {
@@ -265,7 +265,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             </p>
           </div>
         </div>
-        <div className={`flex items-center gap-3 md:gap-4 text-[#54656f] dark:text-[#aebac1] flex-shrink-0 ${(showAnalytics || showMediaGallery) ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`flex items-center gap-2 md:gap-4 text-[#54656f] dark:text-[#aebac1] flex-shrink-0 ${(showAnalytics || showMediaGallery) ? 'hidden md:flex' : 'flex'}`}>
           <button 
             onClick={handleExportJSON}
             className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
