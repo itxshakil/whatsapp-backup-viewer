@@ -36,7 +36,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
 
-    const emojiRegex = /([\u1F600-\u1F64F]|[\u1F300-\u1F5FF]|[\u1F680-\u1F6FF]|[\u1F1E6-\u1F1FF]|[\u2600-\u26FF]|[\u2700-\u27BF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF]|\uD83D[\uDE00-\uDE4F]|\uD83D[\uDE80-\uDEFF]|\uD83E[\uDD00-\uDDFF])/g;
+    const emojiRegex = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu;
     const emojiFreq: Record<string, number> = {};
     const excludedSymbols = new Set(['©', '®', '™', ' ', "'", '"', '!', '?', '#', '*', '+', '.', ',', ':', ';', '-', '_', '(', ')', '[', ']', '{', '}', '@', '&', '^', '%', '$', '|', '\\', '/', '<', '>', '~', '=', '`', '°', '•', '·', '…', '–', '—', '✓', '✔', '✕', '✖', '✗', '✘', '★', '☆', '✡', '✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮', '✯', '✰', '✱', '✲', '✳', '✴', '✵', '✶', '✷', '✸', '✹', '✺', '✻', '✼', '✽', '✾', '✿', '❀', '❁', '❂', '❃', '❄', '❅', '❆', '❇', '❈', '❉', '❊', '❋', '❍', '❏', '❐', '❑', '❒', '❖', '❘', '❙', '❚', '❛', '❜', '❝', '❞']);
     
