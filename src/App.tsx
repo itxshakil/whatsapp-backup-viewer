@@ -4,7 +4,7 @@ import { ChatLayout } from './components/layout/ChatLayout';
 import { FileUploader } from './components/ui/FileUploader';
 import { Sidebar } from './components/layout/Sidebar';
 import { MessageList } from './components/chat/MessageList';
-import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, Phone, Search, Video, ImageIcon } from 'lucide-react';
+import { BarChart3, ChevronDown, ChevronUp, Download, MessageSquare, Phone, Search, Video, ImageIcon, ShieldCheck } from 'lucide-react';
 import { AnalyticsView } from './components/analytics/AnalyticsView';
 import { MediaGallery } from './components/chat/MediaGallery';
 import { SearchBar } from './components/chat/SearchBar';
@@ -208,31 +208,46 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
             <MessageSquare size={40} className="text-white" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-[#111b21] dark:text-[#e9edef] mb-4">WhatsApp Backup Viewer</h1>
-          <p className="text-[#667781] dark:text-[#8696a0] text-lg mb-8">
-            The most private and secure way to explore your chat memories locally. No data ever leaves your device.
+          <p className="text-[#667781] dark:text-[#8696a0] text-lg mb-2">
+            Open & Analyze Your WhatsApp Chat Export — 100% Offline & Private
+          </p>
+          <p className="text-[#667781] dark:text-[#8696a0] mb-8">
+            Upload your exported chat file to instantly explore your messages, media, and insights.<br/>
+            No servers. No tracking. No data uploads.
           </p>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 text-left">
+          <h2 className="text-xl font-bold text-[#111b21] dark:text-[#e9edef] mb-6 flex items-center justify-center gap-2">
+            Why Use This WhatsApp Chat Viewer?
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12 text-left max-w-xl mx-auto">
+            <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center mb-3">
+                <ShieldCheck size={18} />
+              </div>
+              <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Privacy First — Always</h3>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Your chat backup is processed entirely inside your browser. Nothing is sent to any server.</p>
+            </div>
             <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mb-3">
                 <Search size={18} />
               </div>
               <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Smart Search</h3>
-              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Find any message instantly across thousands of entries.</p>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Instantly find any message across thousands of lines. Jump between results in milliseconds.</p>
             </div>
             <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center mb-3">
                 <ImageIcon size={18} />
               </div>
               <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Media Gallery</h3>
-              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Browse all your shared photos and videos in one place.</p>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">View all shared photos, videos, and voice notes in one organized gallery.</p>
             </div>
             <div className="bg-white dark:bg-[#202c33] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg flex items-center justify-center mb-3">
                 <BarChart3 size={18} />
               </div>
               <h3 className="font-bold text-sm mb-1 text-[#111b21] dark:text-[#e9edef]">Chat Analytics</h3>
-              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Discover patterns, top words, and busiest times.</p>
+              <p className="text-xs text-[#667781] dark:text-[#8696a0]">Discover patterns: Most active days & hours, most used words & emojis.</p>
             </div>
           </div>
           

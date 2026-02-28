@@ -106,7 +106,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
         <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
             <BarChart3 size={16} />
-            Quick Insights
+            Discover patterns in your conversations
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
              <div className="flex items-center gap-3">
@@ -164,8 +164,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
 
           <div className="bg-white dark:bg-[#202c33] p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-[#8696a0] uppercase mb-4 flex items-center gap-2">
-              <Clock size={16} />
-              Activity by Hour
+              <BarChart3 size={16} />
+              Message frequency trends
             </h3>
             <div className="flex items-end justify-between h-40 gap-1 pt-6 relative group/container">
               {stats.byHour.map((count, hour) => (

@@ -86,11 +86,11 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
   return (
     <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-300 dark:border-gray-700/50 flex-shrink-0">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-[#dfe5e7] dark:bg-[#111b21] rounded-full flex items-center justify-center text-[#54656f] dark:text-[#aebac1] overflow-hidden">
-          <User className="w-6 h-6" />
-        </div>
+        {/*<div className="w-10 h-10 bg-[#dfe5e7] dark:bg-[#111b21] rounded-full flex items-center justify-center text-[#54656f] dark:text-[#aebac1] overflow-hidden">*/}
+        {/*  <User className="w-6 h-6" />*/}
+        {/*</div>*/}
         <div className="hidden sm:block">
-          <h2 className="text-sm font-semibold text-[#111b21] dark:text-[#e9edef] leading-tight">WhatsApp Viewer</h2>
+          <h2 className="text-sm font-semibold text-[#111b21] dark:text-[#e9edef] leading-tight">WhatsApp Backup Viewer</h2>
           <p className="text-[11px] text-[#667781] dark:text-[#8696a0]">Archive Tool</p>
         </div>
       </div>

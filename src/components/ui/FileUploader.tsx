@@ -225,10 +225,14 @@ export const FileUploader: React.FC = React.memo(() => {
           <Upload className={`w-12 h-12 transition-colors ${isDragging ? 'text-green-500' : 'text-gray-400'}`} />
           <FileArchive className={`w-12 h-12 transition-colors ${isDragging ? 'text-green-500' : 'text-gray-400'}`} />
         </div>
-        <h3 className="text-lg font-medium text-gray-700 dark:text-[#e9edef] mb-2">Upload WhatsApp Chat</h3>
+        <h3 className="text-lg font-medium text-gray-700 dark:text-[#e9edef] mb-2">📂 Upload Your WhatsApp Chat Export</h3>
         <p className="text-sm text-gray-500 dark:text-[#8696a0] mb-6 text-center">
-          Drag & drop or select the exported .txt file or a .zip archive (including media). <br/>
-          No data will be uploaded to any server.
+          Drag & drop your exported file or choose manually: <br/>
+          <span className="text-xs mt-2 block">
+            ✅ .zip file (recommended, includes media) <br/>
+            ✅ _chat.txt file (text only)
+          </span>
+          <span className="mt-4 block text-[11px] opacity-70">All processing happens locally in your browser.</span>
         </p>
         
         <div className="flex flex-col items-center gap-4">

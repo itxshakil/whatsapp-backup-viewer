@@ -51,10 +51,9 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-4 ring-8 ring-white dark:ring-[#111b21] group-hover:scale-110 transition-transform shadow-sm">
                   <Smartphone size={24} />
                 </div>
-                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">1. Export your chat</h3>
+                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">Export your chat</h3>
                 <p className="text-sm text-[#667781] dark:text-[#8696a0] leading-relaxed">
-                  Open a WhatsApp chat, tap the contact name, and select <strong>Export Chat</strong>. 
-                  Choose <strong>Attach Media</strong> for photos and videos.
+                  Open a chat in WhatsApp → Tap contact name → Select <strong>Export Chat</strong> → Choose <strong>Attach Media</strong> (recommended).
                 </p>
               </div>
 
@@ -62,10 +61,10 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center mb-4 ring-8 ring-white dark:ring-[#111b21] group-hover:scale-110 transition-transform shadow-sm">
                   <FileArchive size={24} />
                 </div>
-                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">2. Upload the file</h3>
+                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">Upload the File</h3>
                 <p className="text-sm text-[#667781] dark:text-[#8696a0] leading-relaxed">
-                  Upload the <strong>.zip</strong> file (recommended) or the <strong>_chat.txt</strong> file. 
-                  All processing happens <strong>locally</strong> in your browser.
+                  Upload the exported <strong>.zip</strong> or <strong>_chat.txt</strong> file. 
+                  Your data is parsed <strong>locally</strong> in your browser.
                 </p>
               </div>
 
@@ -73,19 +72,23 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
                 <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center mb-4 ring-8 ring-white dark:ring-[#111b21] group-hover:scale-110 transition-transform shadow-sm">
                   <Search size={24} />
                 </div>
-                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">3. Explore & Analyze</h3>
-                <p className="text-sm text-[#667781] dark:text-[#8696a0] leading-relaxed">
-                  Browse messages, view media in the gallery, search keywords, or check the <strong>Analytics</strong> tab for insights.
-                </p>
+                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">Explore & Analyze</h3>
+                <ul className="text-sm text-[#667781] dark:text-[#8696a0] leading-relaxed text-left space-y-1">
+                  <li>• Browse messages in a WhatsApp-style layout</li>
+                  <li>• View all media in the gallery</li>
+                  <li>• Search for keywords instantly</li>
+                  <li>• Analyze chat statistics</li>
+                </ul>
               </div>
 
               <div className="relative z-10 bg-white dark:bg-[#202c33] p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col items-center text-center group hover:border-[#008069]/30 transition-all hover:shadow-md hover:-translate-y-1">
                 <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-4 ring-8 ring-white dark:ring-[#111b21] group-hover:scale-110 transition-transform shadow-sm">
                   <ShieldCheck size={24} />
                 </div>
-                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">4. Private & Secure</h3>
+                <h3 className="text-lg font-bold text-[#111b21] dark:text-[#e9edef] mb-2">Stay Private</h3>
                 <p className="text-sm text-[#667781] dark:text-[#8696a0] leading-relaxed">
-                  Chats are saved securely in your browser's local storage. Your data <strong>never</strong> leaves your device.
+                  Chats are saved securely in your browser’s local storage (optional).
+                  Your conversations <strong>never</strong> leave your device.
                 </p>
               </div>
             </div>
@@ -93,9 +96,10 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
 
           <section className="bg-gradient-to-br from-[#f0f2f5] to-teal-50 dark:from-[#111b21] dark:to-teal-900/10 p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center space-y-8 shadow-sm">
             <div className="space-y-3">
-              <h2 className="text-2xl font-bold text-[#111b21] dark:text-[#e9edef]">Made with ❤️ by Shakil</h2>
+              <h2 className="text-2xl font-bold text-[#111b21] dark:text-[#e9edef]">❤️ Built With Care</h2>
               <p className="text-[#667781] dark:text-[#8696a0] max-w-lg mx-auto leading-relaxed">
-                I built this tool to help people preserve their memories in a more accessible format. If you find it useful, consider supporting the project!
+                Made by <a href={"https://shakiltech.com"} className={"underline"}><strong>Shakil</strong></a> to help people preserve and revisit their chat memories in a better format.
+                If you find this useful, consider supporting the project:
               </p>
             </div>
 
@@ -123,16 +127,16 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
 
           <section className="text-center space-y-4 pt-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-full text-xs font-bold uppercase tracking-wider">
-              <Heart size={14} className="fill-current text-red-500" />
-              Privacy First
+              <ShieldCheck size={14} className="text-[#008069] dark:text-[#00a884]" />
+              Privacy Guarantee
             </div>
             <p className="text-sm text-[#667781] dark:text-[#8696a0] italic">
               All processing happens locally in your browser. Your chat data never leaves your computer.
             </p>
           </section>
 
-          <footer className="text-center text-[11px] text-gray-400 dark:text-[#8696a0]/40 pb-8">
-            WhatsApp Backup Viewer &copy; {new Date().getFullYear()} • Not affiliated with WhatsApp or Meta.
+          <footer className="text-center text-[11px] text-gray-400 dark:text-[#8696a0] pb-8">
+            &copy; 2026 WhatsApp Backup Viewer • Not affiliated with WhatsApp or Meta Platforms, Inc.
           </footer>
         </div>
       </div>
