@@ -14,7 +14,7 @@ WhatsApp Backup Viewer is a secure, local-first web application designed to help
 Most "chat viewers" require you to upload your personal data to their servers. **We don't.**
 - **100% Local Processing**: Your chats are parsed and rendered entirely within your browser.
 - **No Data Collection**: We don't track you, we don't save your messages, and we never see your data.
-- **Secure Storage**: If you choose to save a chat for later, it stays in your browser's secure local database.
+- **Secure Storage**: If you choose to save a chat for later, it stays in your browser's secure local database (IndexedDB).
 
 ---
 
@@ -33,7 +33,7 @@ Stop hunting through folders. Browse every photo, video, and voice note from you
 Find exactly what you're looking for. Our smart search highlights keywords and lets you jump through thousands of messages in milliseconds.
 
 #### 🌙 Dark Mode & PWA
-Fully responsive and theme-aware. Install it on your phone or desktop as a Progressive Web App (PWA) for a native experience.
+Fully responsive and theme-aware with native dark mode support. Install it on your phone or desktop as a Progressive Web App (PWA) for a seamless experience.
 
 ---
 
@@ -47,13 +47,15 @@ Fully responsive and theme-aware. Install it on your phone or desktop as a Progr
 
 ---
 
-### 🛠️ Built for Performance
-This isn't just a simple script. It's a modern web application built with:
-- **React 18** for a smooth, reactive interface.
-- **TypeScript** for rock-solid reliability.
-- **Tailwind CSS** for beautiful, responsive design.
-- **Dexie.js** for secure, high-performance local storage.
-- **JSZip** for lightning-fast archive processing.
+### 🛠️ Built with Modern Tech
+This application is built using the latest web technologies for maximum performance and reliability:
+- **React 19** for state-of-the-art UI rendering.
+- **Tailwind CSS v4** for a powerful, semantic design system.
+- **Vite 7** & **Terser** for lightning-fast builds and optimized delivery.
+- **TypeScript** for rock-solid type safety.
+- **Dexie.js** for high-performance IndexedDB management.
+- **JSZip** for instant archive processing.
+- **Vitest 4** for comprehensive unit and integration testing.
 
 ---
 

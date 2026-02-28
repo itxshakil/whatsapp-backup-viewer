@@ -2,11 +2,12 @@ import JSZip from 'jszip';
 import { normalizeMessages } from './normalizeMessages';
 import { linkMediaToMessages, MEDIA_EXTENSIONS } from './mediaLinker';
 import { resolveParticipantIdentities } from './identityResolver';
+import { Message, ChatMetadata } from '@/types/message';
 
 export const processWhatsAppFile = async (
   file: File, 
   setError: (error: string | null) => void,
-  setChatData: (messages: any[], metadata: any, shouldSave: boolean) => Promise<void>,
+  setChatData: (messages: Message[], metadata: ChatMetadata, shouldSave: boolean) => Promise<void>,
   shouldSave: boolean = true
 ) => {
   setError(null);
