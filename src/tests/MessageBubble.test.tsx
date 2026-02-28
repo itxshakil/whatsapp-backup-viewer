@@ -49,6 +49,6 @@ describe('MessageBubble', () => {
     const myMsg: Message = { ...mockMessage, isCurrentUser: true };
     const { container } = renderWithProvider(<MessageBubble message={myMsg} />);
     const bubbleWrapper = container.firstChild?.firstChild;
-    expect(bubbleWrapper).toHaveClass('bg-[#dcf8c6]');
+    expect(bubbleWrapper).toHaveClass('bg-wa-my-bubble');
   });
 });

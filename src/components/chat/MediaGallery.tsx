@@ -25,17 +25,17 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
   }, [setHighlightedMessageId, onClose]);
 
   return (
-    <div className="flex-1 flex flex-col bg-white dark:bg-[#111b21] animate-fade-in overscroll-none h-full min-h-0">
-      <div className="h-[59px] flex items-center px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-200 dark:border-gray-700 shrink-0 md:hidden">
-        <h2 className="text-base sm:text-lg font-bold text-gray-800 dark:text-[#e9edef] flex items-center gap-2">
-          <Grid className="text-green-600" size={20} />
+    <div className="flex-1 flex flex-col bg-wa-sidebar-bg animate-fade-in overscroll-none h-full min-h-0">
+      <div className="h-[59px] flex items-center px-4 bg-wa-header-bg border-b border-wa-divider shrink-0 md:hidden">
+        <h2 className="text-base sm:text-lg font-bold text-wa-text-primary flex items-center gap-2">
+          <Grid className="text-wa-teal" size={20} />
           Media Gallery
         </h2>
       </div>
 
       <div className="flex-1 min-h-0 touch-pan-y">
         {mediaMessages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-[#8696a0]">
+          <div className="flex flex-col items-center justify-center h-full text-wa-text-secondary">
             <Grid size={48} className="mb-4 opacity-20" />
             <p>No media found in this chat</p>
           </div>
@@ -50,7 +50,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = React.memo(({ onClose }
                 <div 
                   key={msg.id} 
                   onClick={() => jumpToMessage(msg.id)}
-                  className="aspect-square bg-gray-200 dark:bg-[#202c33] rounded-sm overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group active:scale-95 transition-transform"
+                  className="aspect-square bg-gray-200 dark:bg-wa-search-input-bg rounded-sm overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group active:scale-95 transition-transform"
                 >
                   {msg.type === 'image' && msg.mediaUrl ? (
                     <img src={msg.mediaUrl} alt="" className="w-full h-full object-cover" />

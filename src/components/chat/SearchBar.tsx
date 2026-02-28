@@ -47,15 +47,15 @@ export const SearchBar: React.FC = React.memo(() => {
   }, [results, currentIndex, jumpToMessage, setCurrentIndex]);
 
   return (
-    <div className="p-2 border-b border-gray-300 dark:border-gray-700/50 bg-[#f0f2f5] dark:bg-[#202c33]">
-      <div className="relative flex items-center bg-white dark:bg-[#111b21] rounded-lg px-3 py-1.5 shadow-sm">
-        <Search className="text-[#667781] dark:text-[#8696a0] w-4 h-4 mr-3" />
+    <div className="p-2 border-b border-wa-divider bg-wa-header-bg">
+      <div className="relative flex items-center bg-wa-search-input-bg rounded-lg px-3 py-1.5 shadow-sm">
+        <Search className="text-wa-text-secondary w-4 h-4 mr-3" />
         <input
           type="text"
           placeholder="Search messages"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="bg-transparent text-sm w-full focus:outline-none text-[#111b21] dark:text-[#e9edef] placeholder-[#667781] dark:placeholder-[#8696a0]"
+          className="bg-transparent text-sm w-full focus:outline-none text-wa-text-primary placeholder-wa-text-secondary"
         />
         {searchQuery && (
           <div className="flex items-center gap-1">
@@ -64,7 +64,7 @@ export const SearchBar: React.FC = React.memo(() => {
                 setSearchQuery('');
                 if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
               }}
-              className="text-[#667781] dark:text-[#8696a0] hover:text-[#111b21] dark:hover:text-[#e9edef] p-1 active:scale-90"
+              className="text-wa-text-secondary hover:text-wa-text-primary p-1 active:scale-90"
             >
               <X size={16} />
             </button>
@@ -73,7 +73,7 @@ export const SearchBar: React.FC = React.memo(() => {
       </div>
       {results.length > 0 && (
         <div className="flex items-center justify-between px-1 py-1">
-          <span className="text-[11px] text-[#667781] dark:text-[#8696a0] font-medium">
+          <span className="text-[11px] text-wa-text-secondary font-medium">
             {currentIndex + 1} of {results.length}
           </span>
           <div className="flex items-center gap-1">
@@ -82,7 +82,7 @@ export const SearchBar: React.FC = React.memo(() => {
                 goToPrev();
                 if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
               }}
-              className="p-1 hover:bg-[#dfe5e7] dark:hover:bg-white/5 rounded text-[#54656f] dark:text-[#aebac1] active:scale-90"
+              className="p-1 hover:bg-wa-search-bg dark:hover:bg-white/5 rounded text-wa-icon active:scale-90"
               title="Previous match"
             >
               <ChevronUp size={16} />
@@ -92,7 +92,7 @@ export const SearchBar: React.FC = React.memo(() => {
                 goToNext();
                 if (typeof navigator !== 'undefined' && 'vibrate' in navigator) { try { navigator.vibrate(5); } catch (e) {} }
               }}
-              className="p-1 hover:bg-[#dfe5e7] dark:hover:bg-white/5 rounded text-[#54656f] dark:text-[#aebac1] active:scale-90"
+              className="p-1 hover:bg-wa-search-bg dark:hover:bg-white/5 rounded text-wa-icon active:scale-90"
               title="Next match"
             >
               <ChevronDown size={16} />

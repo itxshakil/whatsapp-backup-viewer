@@ -12,7 +12,7 @@ interface MessageBubbleProps {
 
 const SystemMessage: React.FC<{ content: string; highlightText: (text: string) => React.ReactNode }> = React.memo(({ content, highlightText }) => (
   <div className="flex justify-center my-3 px-4">
-    <div className="bg-[#e1f3fb] dark:bg-[#182229] text-[#54656f] dark:text-[#8696a0] text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm border border-transparent dark:border-gray-800/50 uppercase tracking-tight font-normal text-center max-w-[85%]">
+    <div className="bg-wa-search-bg dark:bg-wa-incoming-chat-bg text-wa-text-secondary text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm border border-transparent dark:border-wa-divider uppercase tracking-tight font-normal text-center max-w-[85%]">
       {highlightText(content)}
     </div>
   </div>
@@ -22,16 +22,16 @@ const MessageTail: React.FC<{ isMe: boolean }> = React.memo(({ isMe }) => (
   <div
     className={`absolute top-0 w-[12px] h-[19px] ${
       isMe
-        ? 'right-[-12px] text-[#dcf8c6] dark:text-[#005c4b]'
-        : 'left-[-12px] text-white dark:text-[#202c33]'
+        ? 'right-[-12px] text-wa-my-bubble'
+        : 'left-[-12px] text-wa-other-bubble'
     }`}
   >
     <svg viewBox="0 0 12 19" width="12" height="19">
       <path
         fill="currentColor"
         d={isMe 
-          ? "M0,0 C3,0 12,0 12,0 L12,19 C12,19 3,8 0,0" 
-          : "M12,0 C9,0 0,0 0,0 L0,19 C0,19 9,8 12,0"}
+          ? "M12,0 C9,0 0,0 0,0 L0,19 C0,19 9,8 12,0"
+          : "M0,0 C3,0 12,0 12,0 L12,19 C12,19 3,8 0,0"}
       ></path>
     </svg>
   </div>
@@ -242,17 +242,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
       onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchEnd}
     >
-      <div
+      <div 
         className={`relative max-w-[90%] sm:max-w-[75%] md:max-w-[65%] px-2 py-1.5 shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] group/bubble ${
           isMe
-            ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-l-lg rounded-br-lg rounded-tr-none' : 'rounded-lg')
-            : 'bg-white dark:bg-[#202c33] text-[#111b21] dark:text-[#e9edef] ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')
+            ? 'bg-wa-my-bubble text-wa-text-primary ' + (showTail ? 'rounded-l-lg rounded-br-lg rounded-tr-none' : 'rounded-lg')
+            : 'bg-wa-other-bubble text-wa-text-primary ' + (showTail ? 'rounded-r-lg rounded-bl-lg rounded-tl-none' : 'rounded-lg')
         }`}
       >
         {message.type === 'text' && (
           <button
             onClick={handleCopy}
-            className={`absolute top-1 ${isMe ? 'left-[-36px]' : 'right-[-36px]'} p-2 rounded-full bg-white/80 dark:bg-[#202c33]/80 text-gray-500 dark:text-gray-400 opacity-0 group-hover/bubble:opacity-100 transition-opacity hover:bg-white dark:hover:bg-black/40 shadow-sm z-10`}
+            className={`absolute top-1 ${isMe ? 'left-[-36px]' : 'right-[-36px]'} p-2 rounded-full bg-wa-other-bubble/80 dark:bg-wa-active-chat-bg/80 text-wa-text-secondary opacity-0 group-hover/bubble:opacity-100 transition-opacity hover:bg-wa-other-bubble dark:hover:bg-black/40 shadow-sm z-10`}
             title="Copy message"
           >
             {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
@@ -262,7 +262,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
         {showTail && <MessageTail isMe={isMe} />}
 
         {showSender && !isMe && (
-          <div className="text-[12.5px] font-semibold text-teal-700 dark:text-[#53bdeb] leading-tight mb-1 px-1 pr-8">
+          <div className="text-[12.5px] font-semibold text-teal-700 dark:text-sky-400 leading-tight mb-1 px-1 pr-8">
             {highlightText(message.sender)}
           </div>
         )}
@@ -274,7 +274,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
               {message.type === 'text' ? renderContentWithLinks(message.content) : null}
             </div>
           )}
-          <div className="text-[11px] text-[#667781] dark:text-[#8696a0] absolute right-0 bottom-0.5 shrink-0 select-none flex items-center gap-1 bg-inherit pl-1 rounded-tl-md">
+          <div className="text-[11px] text-wa-text-secondary absolute right-0 bottom-0.5 shrink-0 select-none flex items-center gap-1 bg-inherit pl-1 rounded-tl-md">
             {message.isEdited && (
               <span className="text-[9px] font-medium opacity-70 uppercase tracking-tight">edited</span>
             )}

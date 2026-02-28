@@ -9,6 +9,14 @@
   --color-wa-text-primary: var(--wa-text-primary);
   --color-wa-text-secondary: var(--wa-text-secondary);
   --color-wa-teal: var(--wa-teal);
+  --color-wa-panel-bg: var(--wa-panel-bg);
+  --color-wa-divider: var(--wa-divider);
+  --color-wa-icon: var(--wa-icon);
+  --color-wa-icon-lighter: var(--wa-icon-lighter);
+  --color-wa-search-bg: var(--wa-search-bg);
+  --color-wa-search-input-bg: var(--wa-search-input-bg);
+  --color-wa-incoming-chat-bg: var(--wa-incoming-chat-bg);
+  --color-wa-active-chat-bg: var(--wa-active-chat-bg);
 }
 
 @custom-variant dark (@media (prefers-color-scheme: dark));
@@ -40,6 +48,14 @@
   --wa-text-primary: #111b21;
   --wa-text-secondary: #667781;
   --wa-teal: #008069;
+  --wa-panel-bg: #ffffff;
+  --wa-divider: #e9edef;
+  --wa-icon: #54656f;
+  --wa-icon-lighter: #aebac1;
+  --wa-search-bg: #f0f2f5;
+  --wa-search-input-bg: #ffffff;
+  --wa-incoming-chat-bg: #f5f6f6;
+  --wa-active-chat-bg: #ebebeb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,6 +68,14 @@
     --wa-text-primary: #e9edef;
     --wa-text-secondary: #8696a0;
     --wa-teal: #00a884;
+    --wa-panel-bg: #111b21;
+    --wa-divider: #2a3942;
+    --wa-icon: #aebac1;
+    --wa-icon-lighter: #667781;
+    --wa-search-bg: #111b21;
+    --wa-search-input-bg: #202c33;
+    --wa-incoming-chat-bg: #182229;
+    --wa-active-chat-bg: #2a3942;
   }
 }
 

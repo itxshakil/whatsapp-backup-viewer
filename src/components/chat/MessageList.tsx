@@ -13,7 +13,7 @@ interface MessageListProps {
 
 const DateHeader: React.FC<{ label: string; id: string }> = React.memo(({ label, id }) => (
   <div id={id} className="flex justify-center my-4 sticky top-2 z-10 pointer-events-none">
-    <div className="bg-white/90 dark:bg-[#182229]/90 backdrop-blur-sm dark:text-[#8696a0] text-gray-600 text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm uppercase pointer-events-auto">
+    <div className="bg-wa-other-bubble/90 backdrop-blur-sm text-wa-text-secondary text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm uppercase pointer-events-auto">
       {label}
     </div>
   </div>
@@ -30,7 +30,7 @@ export const MessageList: React.FC<MessageListProps & { ref?: React.Ref<Virtuoso
 
   if (filteredMessages.length === 0 && searchQuery) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-gray-500 dark:text-[#8696a0]">
+      <div className="flex flex-col items-center justify-center p-12 text-wa-text-secondary">
         <p>No messages found matching "{searchQuery}"</p>
       </div>
     );
