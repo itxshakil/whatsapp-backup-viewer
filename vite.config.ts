@@ -214,4 +214,15 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    minify: 'terser',
+    cssMinify: true,
+    sourcemap: false,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
 })
