@@ -9,6 +9,7 @@ import { AnalyticsView } from './components/analytics/AnalyticsView';
 import { MediaGallery } from './components/chat/MediaGallery';
 import { SearchBar } from './components/chat/SearchBar';
 import { AboutPage } from './components/ui/AboutPage';
+import { trackEvent } from './utils/analytics';
 import dayjs from 'dayjs';
 import { VirtuosoHandle } from 'react-virtuoso';
 
@@ -86,6 +87,9 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
       if (!prev) {
         setShowMediaGallery(false);
         setShowSearch(false);
+        trackEvent('toggle_analytics', { action: 'open' });
+      } else {
+        trackEvent('toggle_analytics', { action: 'close' });
       }
       return !prev;
     });
@@ -96,9 +100,11 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
       if (prev) {
         setSearchQuery('');
         setHighlightedMessageId(null);
+        trackEvent('toggle_search', { action: 'close' });
       } else {
         setShowAnalytics(false);
         setShowMediaGallery(false);
+        trackEvent('toggle_search', { action: 'open' });
       }
       return !prev;
     });
@@ -108,6 +114,7 @@ const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     setShowMediaGallery(true);
     setShowAnalytics(false);
     setShowSearch(false);
+    trackEvent('open_media_gallery');
   }, []);
 
   // Scroll to highlighted message when it changes

@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Message, ChatStats } from '../../types/message';
 import { BarChart3, Users, MessageCircle, Clock, Calendar, Image as ImageIcon, MessageSquare } from 'lucide-react';
+import { trackEvent } from '../../utils/analytics';
 import dayjs from 'dayjs';
 
 interface AnalyticsViewProps {
@@ -9,6 +10,13 @@ interface AnalyticsViewProps {
 }
 
 export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ messages, participants }) => {
+  useEffect(() => {
+    trackEvent('analytics_view_open', {
+      message_count: messages.length,
+      participant_count: participants.length
+    });
+  }, []);
+
   const stats = useMemo<ChatStats>(() => {
     const totalMessages = messages.length;
     const textMessages = messages.filter((m: Message) => m.type === 'text').length;

@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import JSZip from 'jszip';
 import { useChatStore } from '../../store/chatStore';
 import { normalizeMessages } from '../../utils/normalizeMessages';
+import { trackEvent } from '../../utils/analytics';
 import { Upload, AlertCircle, Save, FileArchive, Trash2 } from 'lucide-react';
 import { Message } from '../../types/message';
 import { SavedChat } from '../../store/db';
@@ -156,9 +157,18 @@ export const FileUploader: React.FC = React.memo(() => {
         messageCount: messages.length
       };
 
+      trackEvent('file_upload_success', {
+        file_type: file.name.endsWith('.zip') ? 'zip' : 'txt',
+        message_count: messages.length,
+        participant_count: finalParticipants.length
+      });
+
       await setChatData(messages, metadata, shouldSave);
     } catch (err) {
       console.error('File processing error:', err);
+      trackEvent('file_upload_error', {
+        error: err instanceof Error ? err.message : String(err)
+      });
       setError('An error occurred while processing the file. It might be corrupted or in an unsupported format.');
     } finally {
       setIsProcessing(false);
