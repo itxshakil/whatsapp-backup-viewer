@@ -36,18 +36,23 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
 
-    const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+    const emojiRegex = /([\u1F600-\u1F64F]|[\u1F300-\u1F5FF]|[\u1F680-\u1F6FF]|[\u1F1E6-\u1F1FF]|[\u2600-\u26FF]|[\u2700-\u27BF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF]|\uD83D[\uDE00-\uDE4F]|\uD83D[\uDE80-\uDEFF]|\uD83E[\uDD00-\uDDFF])/g;
     const emojiFreq: Record<string, number> = {};
+    const excludedSymbols = new Set(['©', '®', '™', ' ', "'", '"', '!', '?', '#', '*', '+', '.', ',', ':', ';', '-', '_', '(', ')', '[', ']', '{', '}', '@', '&', '^', '%', '$', '|', '\\', '/', '<', '>', '~', '=', '`', '°', '•', '·', '…', '–', '—', '✓', '✔', '✕', '✖', '✗', '✘', '★', '☆', '✡', '✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮', '✯', '✰', '✱', '✲', '✳', '✴', '✵', '✶', '✷', '✸', '✹', '✺', '✻', '✼', '✽', '✾', '✿', '❀', '❁', '❂', '❃', '❄', '❅', '❆', '❇', '❈', '❉', '❊', '❋', '❍', '❏', '❐', '❑', '❒', '❖', '❘', '❙', '❚', '❛', '❜', '❝', '❞']);
+    
     messages.forEach((m) => {
       const emojis = m.content.match(emojiRegex);
       if (emojis) {
         emojis.forEach((emoji: string) => {
-          emojiFreq[emoji] = (emojiFreq[emoji] || 0) + 1;
+          if (!excludedSymbols.has(emoji)) {
+            emojiFreq[emoji] = (emojiFreq[emoji] || 0) + 1;
+          }
         });
       }
     });
     const topEmojis = Object.entries(emojiFreq)
       .sort(([, a], [, b]) => b - a)
+      .filter(([emoji]) => !excludedSymbols.has(emoji) && emoji.trim().length > 0)
       .slice(0, 10) as [string, number][];
 
     const commonWords = new Set(['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up', 'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time', 'no', 'just', 'him', 'know', 'take', 'person', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then', 'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well', 'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'is', 'are', 'was', 'were', 'am', 'been', 'has', 'had', 'media', 'omitted', 'https', 'com']);

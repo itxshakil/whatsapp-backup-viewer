@@ -91,7 +91,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
 
   const renderContentWithLinks = React.useCallback((text: string) => {
     // Basic emoji detection to render large emojis if message is just emojis
-    const emojiRegex = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])+$/g;
+    const emojiRegex = /^([\u1F600-\u1F64F]|[\u1F300-\u1F5FF]|[\u1F680-\u1F6FF]|[\u1F1E6-\u1F1FF]|[\u2600-\u26FF]|[\u2700-\u27BF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF]|\uD83D[\uDE00-\uDE4F]|\uD83D[\uDE80-\uDEFF]|\uD83E[\uDD00-\uDDFF])+$/g;
     const isOnlyEmojis = text.length <= 10 && emojiRegex.test(text.trim());
 
     const urlRegex = /(https?:\/\/[^\s]+)/g;
