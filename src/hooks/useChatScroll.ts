@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { VirtuosoHandle } from 'react-virtuoso';
 
-export const useChatScroll = (messagesLength: number, virtuosoRef: React.RefObject<VirtuosoHandle>, scrollRef: React.RefObject<HTMLDivElement>) => {
+export const useChatScroll = (messagesLength: number, virtuosoRef: React.RefObject<VirtuosoHandle | null>, scrollRef: React.RefObject<HTMLDivElement | null>) => {
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 

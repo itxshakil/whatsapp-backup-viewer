@@ -23,7 +23,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = React.memo(({ sidebar, cont
         ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'}
         border-r border-gray-300 dark:border-gray-700/50 flex flex-col
       `}>
-        {React.cloneElement(sidebar as React.ReactElement, { onClose: () => setIsSidebarOpen(false) })}
+        {React.cloneElement(sidebar as React.ReactElement<any>, { onClose: () => setIsSidebarOpen(false) })}
       </div>
 
       <div className="flex-1 relative flex flex-col bg-[#efeae2] dark:bg-[#0b141a] min-w-0">
