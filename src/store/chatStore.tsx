@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import { Message, ChatMetadata, ChatContextType } from '../types/message';
+import { Message, ChatMetadata, ChatContextType } from '@/types/message';
 import { db, SavedChat } from './db';
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);

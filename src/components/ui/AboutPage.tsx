@@ -7,7 +7,7 @@ interface AboutPageProps {
 
 export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in h-screen h-[100dvh] overflow-hidden">
+    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in h-[100dvh] overflow-hidden">
       <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-300 dark:border-gray-700/50 flex-shrink-0">
         <div className="flex items-center gap-4">
           <button 

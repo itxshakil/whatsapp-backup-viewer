@@ -1,8 +1,9 @@
 import React, { useMemo, useEffect } from 'react';
-import { Message, ChatStats } from '../../types/message';
-import { BarChart3, Users, MessageCircle, Clock, Calendar, Image as ImageIcon, MessageSquare } from 'lucide-react';
-import { trackEvent } from '../../utils/analytics';
-import dayjs from 'dayjs';
+import { Message, ChatStats } from '@/types/message';
+import { BarChart3, Users, MessageCircle, Clock, Calendar } from 'lucide-react';
+import { trackEvent } from '@/utils/analytics';
+import { EMOJI_REGEX, EXCLUDED_SYMBOLS, COMMON_STOP_WORDS } from '@/utils/constants';
+import { StatCard } from './StatCard';
 
 interface AnalyticsViewProps {
   messages: Message[];
@@ -44,15 +45,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
 
-    const emojiRegex = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu;
     const emojiFreq: Record<string, number> = {};
-    const excludedSymbols = new Set(['©', '®', '™', ' ', "'", '"', '!', '?', '#', '*', '+', '.', ',', ':', ';', '-', '_', '(', ')', '[', ']', '{', '}', '@', '&', '^', '%', '$', '|', '\\', '/', '<', '>', '~', '=', '`', '°', '•', '·', '…', '–', '—', '✓', '✔', '✕', '✖', '✗', '✘', '★', '☆', '✡', '✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮', '✯', '✰', '✱', '✲', '✳', '✴', '✵', '✶', '✷', '✸', '✹', '✺', '✻', '✼', '✽', '✾', '✿', '❀', '❁', '❂', '❃', '❄', '❅', '❆', '❇', '❈', '❉', '❊', '❋', '❍', '❏', '❐', '❑', '❒', '❖', '❘', '❙', '❚', '❛', '❜', '❝', '❞']);
     
     messages.forEach((m) => {
-      const emojis = m.content.match(emojiRegex);
+      const emojis = m.content.match(EMOJI_REGEX);
       if (emojis) {
         emojis.forEach((emoji: string) => {
-          if (!excludedSymbols.has(emoji)) {
+          if (!EXCLUDED_SYMBOLS.has(emoji)) {
             emojiFreq[emoji] = (emojiFreq[emoji] || 0) + 1;
           }
         });
@@ -60,16 +59,15 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
     });
     const topEmojis = Object.entries(emojiFreq)
       .sort(([, a], [, b]) => b - a)
-      .filter(([emoji]) => !excludedSymbols.has(emoji) && emoji.trim().length > 0)
+      .filter(([emoji]) => !EXCLUDED_SYMBOLS.has(emoji) && emoji.trim().length > 0)
       .slice(0, 10) as [string, number][];
 
-    const commonWords = new Set(['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up', 'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time', 'no', 'just', 'him', 'know', 'take', 'person', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then', 'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well', 'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'is', 'are', 'was', 'were', 'am', 'been', 'has', 'had', 'media', 'omitted', 'https', 'com']);
     const wordFreq: Record<string, number> = {};
     messages.filter((m) => m.type === 'text').forEach((m) => {
       const words = m.content.toLowerCase().match(/\b(\w+)\b/g);
       if (words) {
         words.forEach((word: string) => {
-          if (word.length > 2 && !commonWords.has(word)) {
+          if (word.length > 2 && !COMMON_STOP_WORDS.has(word)) {
             wordFreq[word] = (wordFreq[word] || 0) + 1;
           }
         });
@@ -264,15 +262,3 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
     </div>
   );
 });
-
-const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
-  <div className="bg-white dark:bg-[#202c33] p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-4">
-    <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-      {icon}
-    </div>
-    <div>
-      <p className="text-xs text-gray-500 dark:text-[#8696a0] uppercase font-bold tracking-wider">{label}</p>
-      <p className="text-xl font-bold text-gray-800 dark:text-[#e9edef]">{value}</p>
-    </div>
-  </div>
-);

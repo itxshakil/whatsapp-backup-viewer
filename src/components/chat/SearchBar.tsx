@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, X, ChevronUp, ChevronDown } from 'lucide-react';
-import { useChatStore } from '../../store/chatStore';
+import { useChatStore } from '@/store/chatStore';
 
 export const SearchBar: React.FC = React.memo(() => {
   const { searchQuery, setSearchQuery, messages, setHighlightedMessageId } = useChatStore();
@@ -37,14 +37,14 @@ export const SearchBar: React.FC = React.memo(() => {
     const nextIdx = (currentIndex + 1) % results.length;
     setCurrentIndex(nextIdx);
     jumpToMessage(results[nextIdx].id);
-  }, [results, currentIndex, jumpToMessage]);
+  }, [results, currentIndex, jumpToMessage, setCurrentIndex]);
 
   const goToPrev = React.useCallback(() => {
     if (results.length === 0) return;
     const prevIdx = (currentIndex - 1 + results.length) % results.length;
     setCurrentIndex(prevIdx);
     jumpToMessage(results[prevIdx].id);
-  }, [results, currentIndex, jumpToMessage]);
+  }, [results, currentIndex, jumpToMessage, setCurrentIndex]);
 
   return (
     <div className="p-2 border-b border-gray-300 dark:border-gray-700/50 bg-[#f0f2f5] dark:bg-[#202c33]">

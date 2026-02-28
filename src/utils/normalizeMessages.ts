@@ -1,15 +1,10 @@
-import { Message } from '../types/message';
+import { Message } from '@/types/message';
 import { parseLine } from './parseLine';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { MEDIA_EXTENSIONS } from './mediaLinker';
 
 dayjs.extend(customParseFormat);
-
-const MEDIA_EXTENSIONS = {
-  image: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-  video: ['mp4', 'mov', 'avi'],
-  audio: ['mp3', 'wav', 'ogg', 'm4a', 'opus']
-};
 
 const MEDIA_REGEX = /<attached:\s*(.*?)>|^(.*?)\s+\(file attached\)$|^(.*?)\s+<attached>$/i;
 

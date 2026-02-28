@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import { useChatStore } from '../../store/chatStore';
-import { User, MessageSquare, Search, LogOut, Trash2, Calendar, ChevronDown } from 'lucide-react';
+import { useChatStore } from '@/store/chatStore';
+import { MessageSquare, LogOut, Trash2, Calendar, ChevronDown } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -8,7 +8,6 @@ dayjs.extend(relativeTime);
 
 import { SidebarHeader } from './SidebarHeader';
 import { DayPicker } from 'react-day-picker';
-import { SavedChat } from '../../store/db';
 import 'react-day-picker/dist/style.css';
 
 export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void }> = React.memo(({ onClose, onShowAbout }) => {
@@ -67,7 +66,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
 
   const toggleCalendar = useCallback(() => {
     setShowCalendar(prev => !prev);
-  }, []);
+  }, [setShowCalendar]);
 
   const handleConfirmDelete = useCallback((e: React.MouseEvent, chat: any) => {
     e.stopPropagation();
@@ -77,7 +76,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
   }, [deleteChat]);
 
   const handleJumpToBottom = useCallback(() => {
-    // Scroll to bottom of message list
+    // Scroll to the bottom of a message list
     const scrollContainer = document.querySelector('.overflow-y-auto');
     if (scrollContainer) {
       scrollContainer.scrollTo({
@@ -280,7 +279,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
         </div>
       </div>
     );
-  }, [savedChats, chatItems]);
+  }, [chatItems, savedChats.length]);
 
   const sidebarEmptyState = useMemo(() => {
     return (
@@ -312,21 +311,16 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#111b21]">
-      {/* Sidebar Header */}
       <SidebarHeader onShowAbout={onShowAbout} />
 
-      {/* Chat List - Display saved chats */}
       <div className="flex-1 overflow-y-auto">
         {chatItems}
 
-        {/* Info Section for current chat */}
         {sidebarChatInfo}
 
-        {/* Date Jump Section */}
         {dateJumpSection}
       </div>
 
-      {/* Footer / Actions */}
       {sidebarActions}
     </div>
   );

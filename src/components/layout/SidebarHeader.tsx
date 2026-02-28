@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Download, Share2, DownloadCloud, Info } from 'lucide-react';
-import { useChatStore } from '../../store/chatStore';
-import { trackEvent } from '../../utils/analytics';
+import { Download, Share2, DownloadCloud, Info } from 'lucide-react';
+import { useChatStore } from '@/store/chatStore';
+import { trackEvent } from '@/utils/analytics';
+import { INSTALL_INSTRUCTIONS } from '@/utils/constants';
 
 interface SidebarHeaderProps {
   onShowAbout?: () => void;
@@ -18,7 +19,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
     const checkPlatform = () => {
       const ua = window.navigator.userAgent.toLowerCase();
       const ios = /iphone|ipad|ipod/.test(ua);
-      const mac = /macintosh/.test(ua) && 'ontouchend' in document; // Check if it's iPadOS as well
+      const mac = /macintosh/.test(ua) && 'ontouchend' in document;
       const isMacDevice = /macintosh/.test(ua) && !ios;
 
       setIsIOS(ios);
@@ -60,11 +61,9 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
       }
     } else if (isIOS || isMac) {
       trackEvent('pwa_install_click', { method: isIOS ? 'ios_manual' : 'mac_manual' });
-      // For iOS and macOS where beforeinstallprompt isn't supported, 
-      // show an alert with manual instructions
       const message = isIOS 
-        ? "To install on iOS: tap the Share button (square with arrow) and then 'Add to Home Screen' ➕"
-        : "To install on macOS: in Safari, go to File > Add to Dock... or use the Share menu ➕";
+        ? INSTALL_INSTRUCTIONS.IOS
+        : INSTALL_INSTRUCTIONS.MAC;
       alert(message);
     }
   }, [deferredPrompt, isIOS, isMac]);
@@ -118,9 +117,6 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
   return (
     <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-300 dark:border-gray-700/50 flex-shrink-0">
       <div className="flex items-center gap-3">
-        {/*<div className="w-10 h-10 bg-[#dfe5e7] dark:bg-[#111b21] rounded-full flex items-center justify-center text-[#54656f] dark:text-[#aebac1] overflow-hidden">*/}
-        {/*  <User className="w-6 h-6" />*/}
-        {/*</div>*/}
         <div className="hidden sm:block">
           <h2 className="text-sm font-semibold text-[#111b21] dark:text-[#e9edef] leading-tight">WhatsApp Backup Viewer</h2>
           <p className="text-[11px] text-[#667781] dark:text-[#8696a0]">Archive Tool</p>

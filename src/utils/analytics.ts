@@ -1,5 +1,3 @@
-
-// Helper for Google Analytics event tracking
 export const trackEvent = (eventName: string, params: Record<string, any> = {}) => {
   if (typeof window !== 'undefined' && (window as any).gtag) {
     try {

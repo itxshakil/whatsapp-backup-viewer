@@ -1,11 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import JSZip from 'jszip';
-import { useChatStore } from '../../store/chatStore';
-import { normalizeMessages } from '../../utils/normalizeMessages';
-import { trackEvent } from '../../utils/analytics';
+import { useChatStore } from '@/store/chatStore';
+import { normalizeMessages } from '@/utils/normalizeMessages';
+import { trackEvent } from '@/utils/analytics';
 import { Upload, AlertCircle, Save, FileArchive, Trash2 } from 'lucide-react';
-import { Message } from '../../types/message';
-import { SavedChat } from '../../store/db';
 
 export const FileUploader: React.FC = React.memo(() => {
   const { setChatData, setError, error, savedChats, loadChat, deleteChat } = useChatStore();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { VirtuosoGrid } from 'react-virtuoso';
-import { useChatStore } from '../../store/chatStore';
-import { X, Grid, Layout } from 'lucide-react';
+import { useChatStore } from '@/store/chatStore';
+import { Grid, Layout } from 'lucide-react';
 
 interface MediaGalleryProps {
   onClose: () => void;
