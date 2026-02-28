@@ -51,7 +51,7 @@ export default defineConfig({
           }
         ]
       },
-      includeAssets: ['favicon.png', 'wa-bg.png', 'screenshots/*.png'],
+      includeAssets: ['favicon.png', 'wa-bg.png', 'screenshots/*.png', 'splash/*.png'],
       manifest: {
         name: 'WhatsApp Backup Viewer',
         short_name: 'WA Viewer',
