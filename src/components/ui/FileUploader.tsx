@@ -209,6 +209,32 @@ export const FileUploader: React.FC = React.memo(() => {
     setShouldSave(e.target.checked);
   }, []);
 
+  // Listen for shared files from the service worker
+  React.useEffect(() => {
+    const channel = new BroadcastChannel('share-target');
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.file) {
+        processFile(event.data.file);
+        // Clear the URL parameter
+        const url = new URL(window.location.href);
+        url.searchParams.delete('share-target');
+        window.history.replaceState({}, '', url.toString());
+      }
+    };
+
+    channel.onmessage = handleMessage;
+    
+    // If we're already on the share-target page, tell the SW we're ready
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('share-target') === 'true') {
+      channel.postMessage('READY');
+    }
+
+    return () => {
+      channel.close();
+    };
+  }, [processFile]);
+
   return (
     <div className="flex flex-col w-full max-w-2xl gap-6">
       <div 

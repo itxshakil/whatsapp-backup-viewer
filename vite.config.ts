@@ -8,9 +8,16 @@ export default defineConfig({
     react(),
     VitePWA({
       devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module'
       },
-      registerType: 'prompt',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      registerType: 'autoUpdate',
+      injectManifest: {
+        injectionPoint: 'self.__WB_MANIFEST'
+      },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,png}'],
         runtimeCaching: [
@@ -181,7 +188,20 @@ export default defineConfig({
             url: "/?action=recent",
             icons: [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
           }
-        ]
+        ],
+        share_target: {
+          action: "/",
+          method: "POST",
+          enctype: "multipart/form-data",
+          params: {
+            files: [
+              {
+                name: "file",
+                accept: [".zip", ".txt"]
+              }
+            ]
+          }
+        }
       }
     })
   ],
