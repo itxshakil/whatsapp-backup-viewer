@@ -202,20 +202,7 @@ export default defineConfig({
             url: "/?action=recent",
             icons: [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
           }
-        ],
-        share_target: {
-          action: "/",
-          method: "POST",
-          enctype: "multipart/form-data",
-          params: {
-            files: [
-              {
-                name: "file",
-                accept: [".zip", ".txt"]
-              }
-            ]
-          }
-        }
+        ]
       }
     })
   ],

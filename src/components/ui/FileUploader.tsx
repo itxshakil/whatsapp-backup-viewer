@@ -209,32 +209,6 @@ export const FileUploader: React.FC = React.memo(() => {
     setShouldSave(e.target.checked);
   }, []);
 
-  // Listen for shared files from the service worker
-  React.useEffect(() => {
-    const channel = new BroadcastChannel('share-target');
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data && event.data.file) {
-        processFile(event.data.file);
-        // Clear the URL parameter
-        const url = new URL(window.location.href);
-        url.searchParams.delete('share-target');
-        window.history.replaceState({}, '', url.toString());
-      }
-    };
-
-    channel.onmessage = handleMessage;
-    
-    // If we're already on the share-target page, tell the SW we're ready
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('share-target') === 'true') {
-      channel.postMessage('READY');
-    }
-
-    return () => {
-      channel.close();
-    };
-  }, [processFile]);
-
   return (
     <div className="flex flex-col w-full max-w-2xl gap-6">
       <div 
@@ -298,7 +272,7 @@ export const FileUploader: React.FC = React.memo(() => {
             {savedChats.map((chat: any) => (
               <div 
                 key={chat.id} 
-                className="group flex flex-col p-3 bg-white dark:bg-[#202c33] border border-gray-100 dark:border-gray-800 rounded-lg hover:border-teal-300 dark:hover:border-teal-900 transition-all cursor-pointer relative shadow-sm hover:shadow-md"
+                className="group text-left flex flex-col p-3 bg-white dark:bg-[#202c33] border border-gray-100 dark:border-gray-800 rounded-lg hover:border-teal-300 dark:hover:border-teal-900 transition-all cursor-pointer relative shadow-sm hover:shadow-md"
                 onClick={() => chat.id && handleLoadChat(chat.id)}
               >
                 <div className="flex justify-between items-start mb-1">
