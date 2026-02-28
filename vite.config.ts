@@ -44,11 +44,11 @@ export default defineConfig({
           }
         ]
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'wa-bg.png'],
+      includeAssets: ['favicon.png', 'wa-bg.png', 'screenshots/*.png'],
       manifest: {
         name: 'WhatsApp Backup Viewer',
         short_name: 'WA Viewer',
-        description: 'Private and secure WhatsApp chat backup viewer and analyzer',
+        description: 'Private and secure WhatsApp chat backup viewer and analyzer. Explore your chat memories with a full media gallery, deep analytics, and smart search - all while keeping your data 100% local and private.',
         theme_color: '#075e54',
         background_color: '#ffffff',
         display: 'standalone',
@@ -59,38 +59,118 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any'
+            "src": "/icons/icon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png",
+            "purpose": "any"
           },
           {
-            src: 'icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'maskable'
+            "src": "/icons/icon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png",
+            "purpose": "any"
           },
           {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any'
+            "src": "/icons/icon-48x48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-64x64.png",
+            "sizes": "64x64",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-180x180.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-192x192-maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+          },
+          {
+            "src": "/icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/icon-512x512-maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
           }
         ],
         screenshots: [
           {
-            src: 'screenshots/mobile-chat.png',
-            sizes: '750x1334',
-            type: 'image/png',
-            form_factor: 'narrow',
-            label: 'WhatsApp-style Chat Interface'
+            src: "/screenshots/mobile-1.png",
+            sizes: "760x1396",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "WhatsApp Chat View"
           },
           {
-            src: 'screenshots/desktop-analytics.png',
-            sizes: '1920x1080',
-            type: 'image/png',
-            form_factor: 'wide',
-            label: 'Detailed Chat Analytics'
+            src: "/screenshots/mobile-2.png",
+            sizes: "760x1396",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Chat Memories and Media"
+          },
+          {
+            src: "/screenshots/desktop-1.png",
+            sizes: "2480x1200",
+            type: "image/png",
+            form_factor: "wide",
+            label: "WhatsApp Analytics Dashboard"
+          },
+          {
+            src: "/screenshots/desktop-2.png",
+            sizes: "1240x600",
+            type: "image/png",
+            form_factor: "wide",
+            label: "Comprehensive Chat Statistics"
           }
         ],
         shortcuts: [
@@ -99,7 +179,7 @@ export default defineConfig({
             short_name: "Recent",
             description: "View your recently opened WhatsApp chats",
             url: "/?action=recent",
-            icons: [{ "src": "icon-192.png", "sizes": "192x192" }]
+            icons: [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
           }
         ]
       }
