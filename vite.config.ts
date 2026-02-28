@@ -152,32 +152,46 @@ export default defineConfig({
         ],
         screenshots: [
           {
-            src: "/screenshots/mobile-1.png",
-            sizes: "760x1396",
+            src: "/screenshots/homepage-mobile.png",
+            sizes: "390x844",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "WhatsApp Backup Viewer - Homepage"
+          },
+          {
+            src: "/screenshots/homepage-wide.png",
+            sizes: "1280x800",
+            type: "image/png",
+            form_factor: "wide",
+            label: "WhatsApp Backup Viewer - Homepage"
+          },
+          {
+            src: "/screenshots/chat-mobile.png",
+            sizes: "390x844",
             type: "image/png",
             form_factor: "narrow",
             label: "WhatsApp Chat View"
           },
           {
-            src: "/screenshots/mobile-2.png",
-            sizes: "760x1396",
-            type: "image/png",
-            form_factor: "narrow",
-            label: "Chat Memories and Media"
-          },
-          {
-            src: "/screenshots/desktop-1.png",
-            sizes: "2480x1200",
+            src: "/screenshots/chat-wide.png",
+            sizes: "1280x800",
             type: "image/png",
             form_factor: "wide",
+            label: "WhatsApp Chat View"
+          },
+          {
+            src: "/screenshots/analytics-mobile.png",
+            sizes: "390x844",
+            type: "image/png",
+            form_factor: "narrow",
             label: "WhatsApp Analytics Dashboard"
           },
           {
-            src: "/screenshots/desktop-2.png",
-            sizes: "1240x600",
+            src: "/screenshots/analytics-wide.png",
+            sizes: "1280x800",
             type: "image/png",
             form_factor: "wide",
-            label: "Comprehensive Chat Statistics"
+            label: "WhatsApp Analytics Dashboard"
           }
         ],
         shortcuts: [
