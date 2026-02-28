@@ -237,7 +237,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
     <div 
       ref={bubbleRef}
       id={`msg-${message.id}`}
-      className={`flex w-full group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-3 mb-1' : 'my-[1px]'} ${className} ${isHighlighted ? 'animate-pulse-highlight' : ''}`}
+      className={`flex w-full group/msg ${isMe ? 'justify-end' : 'justify-start'} ${showTail ? 'mt-3 mb-1' : 'my-px'} ${className} ${isHighlighted ? 'animate-pulse-highlight' : ''}`}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchEnd}
@@ -270,11 +270,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
         <div className="relative min-w-[60px] pr-12">
           <MediaContent message={message} isMe={isMe} />
           {message.type !== 'call' && (
-            <div className="text-[14.2px] leading-[1.4] whitespace-pre-wrap break-words px-1 pb-1">
+            <div className="text-[14.2px] leading-[1.4] whitespace-pre-wrap wrap-break-word px-1 pb-1">
               {message.type === 'text' ? renderContentWithLinks(message.content) : null}
             </div>
           )}
-          <div className="text-[11px] text-[#667781] dark:text-[#8696a0] absolute right-0 bottom-0.5 flex-shrink-0 select-none flex items-center gap-1 bg-inherit pl-1 rounded-tl-md">
+          <div className="text-[11px] text-[#667781] dark:text-[#8696a0] absolute right-0 bottom-0.5 shrink-0 select-none flex items-center gap-1 bg-inherit pl-1 rounded-tl-md">
             {message.isEdited && (
               <span className="text-[9px] font-medium opacity-70 uppercase tracking-tight">edited</span>
             )}

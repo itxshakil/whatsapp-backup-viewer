@@ -268,7 +268,7 @@ export const FileUploader: React.FC = React.memo(() => {
 
         {error && (
           <div className="mt-6 flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm max-w-[350px]">
-            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
             <p>{error}</p>
           </div>
         )}

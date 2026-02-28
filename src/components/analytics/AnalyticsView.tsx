@@ -184,7 +184,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = React.memo(({ message
                       {count} msgs
                     </div>
                   </div>
-                  <span className="text-[8px] text-gray-400 mt-1 flex-shrink-0">
+                  <span className="text-[8px] text-gray-400 mt-1 shrink-0">
                     {hour % 6 === 0 ? `${hour}h` : ''}
                   </span>
                 </div>

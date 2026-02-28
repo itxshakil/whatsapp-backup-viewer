@@ -179,7 +179,7 @@ export const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
           </div>
         )}
         {showMediaGallery && (
-          <div className="absolute inset-0 z-[40] md:z-auto md:relative">
+          <div className="absolute inset-0 z-40 md:z-auto md:relative">
             <MediaGallery onClose={closeMediaGallery} />
           </div>
         )}

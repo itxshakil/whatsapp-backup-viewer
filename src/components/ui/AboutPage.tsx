@@ -7,8 +7,8 @@ interface AboutPageProps {
 
 export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
   return (
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-[#111b21] flex flex-col animate-fade-in h-[100dvh] overflow-hidden">
-      <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-300 dark:border-gray-700/50 flex-shrink-0">
+    <div className="fixed inset-0 z-100 bg-white dark:bg-[#111b21] flex flex-col animate-fade-in h-dvh overflow-hidden">
+      <div className="h-[60px] flex items-center justify-between px-4 bg-[#f0f2f5] dark:bg-[#202c33] border-b border-gray-300 dark:border-gray-700/50 shrink-0">
         <div className="flex items-center gap-4">
           <button 
             onClick={onClose} 
@@ -94,7 +94,7 @@ export const AboutPage: React.FC<AboutPageProps> = React.memo(({ onClose }) => {
             </div>
           </section>
 
-          <section className="bg-gradient-to-br from-[#f0f2f5] to-teal-50 dark:from-[#111b21] dark:to-teal-900/10 p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center space-y-8 shadow-sm">
+          <section className="bg-linear-to-br from-[#f0f2f5] to-teal-50 dark:from-[#111b21] dark:to-teal-900/10 p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center space-y-8 shadow-sm">
             <div className="space-y-3">
               <h2 className="text-2xl font-bold text-[#111b21] dark:text-[#e9edef]">❤️ Built With Care</h2>
               <p className="text-[#667781] dark:text-[#8696a0] max-w-lg mx-auto leading-relaxed">

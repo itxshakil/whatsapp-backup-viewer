@@ -100,7 +100,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     if (!metadata) return null;
     return (
       <div className="p-4 mt-2 bg-[#f0f2f5] dark:bg-[#111b21]/50 border-y border-gray-100 dark:border-gray-800/50">
-        <h4 className="text-[12px] font-semibold text-teal-700 dark:text-[#00a884] uppercase tracking-[0.1em] mb-3">Chat Info</h4>
+        <h4 className="text-[12px] font-semibold text-teal-700 dark:text-[#00a884] uppercase tracking-widest mb-3">Chat Info</h4>
         <div className="space-y-4">
           <div>
             <p className="text-[11px] text-[#667781] dark:text-[#8696a0] uppercase font-bold mb-2">Participants</p>
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
             isActive ? 'bg-[#ebebeb] dark:bg-[#2a3942]' : ''
           }`}
         >
-          <div className="w-12 h-12 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+          <div className="w-12 h-12 bg-gray-200 dark:bg-[#202c33] rounded-full flex items-center justify-center mr-3 shrink-0">
             <MessageSquare className="text-[#8696a0] w-6 h-6" />
           </div>
           <div className="flex-1 min-w-0 pr-10">
@@ -169,7 +169,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     return (
       <div className="p-4 bg-white dark:bg-[#111b21] border-t border-gray-100 dark:border-gray-800/50">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-[12px] font-semibold text-teal-700 dark:text-[#00a884] uppercase tracking-[0.1em] flex items-center gap-2">
+          <h4 className="text-[12px] font-semibold text-teal-700 dark:text-[#00a884] uppercase tracking-widest flex items-center gap-2">
             <Calendar size={14} />
             Jump to Date
           </h4>
@@ -273,7 +273,7 @@ export const Sidebar: React.FC<{ onClose?: () => void; onShowAbout?: () => void 
     if (savedChats.length === 0) return null;
     return (
       <div className="mt-2 w-full text-left">
-        <h4 className="text-[12px] font-semibold text-[#667781] dark:text-[#8696a0] uppercase tracking-[0.1em] mb-3 px-3">Recent Chats</h4>
+        <h4 className="text-[12px] font-semibold text-[#667781] dark:text-[#8696a0] uppercase tracking-widest mb-3 px-3">Recent Chats</h4>
         <div className="space-y-0">
           {chatItems}
         </div>

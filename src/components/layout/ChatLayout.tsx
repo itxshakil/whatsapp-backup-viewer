@@ -9,7 +9,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = React.memo(({ sidebar, cont
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
-    <div className="flex min-h-[100dvh] w-full overflow-hidden bg-[#f0f2f5] dark:bg-[#0b141a] relative">
+    <div className="flex min-h-dvh w-full overflow-hidden bg-[#f0f2f5] dark:bg-[#0b141a] relative">
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-30 md:hidden transition-opacity duration-300"
