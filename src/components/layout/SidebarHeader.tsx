@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, Download, Share2, DownloadCloud, Info } from 'lucide-react';
 import { useChatStore } from '../../store/chatStore';
+import { trackEvent } from '../../utils/analytics';
 
 interface SidebarHeaderProps {
   onShowAbout?: () => void;
@@ -9,6 +10,26 @@ interface SidebarHeaderProps {
 export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowAbout }) => {
   const { messages, metadata } = useChatStore();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    const checkPlatform = () => {
+      const ua = window.navigator.userAgent.toLowerCase();
+      const ios = /iphone|ipad|ipod/.test(ua);
+      const mac = /macintosh/.test(ua) && 'ontouchend' in document; // Check if it's iPadOS as well
+      const isMacDevice = /macintosh/.test(ua) && !ios;
+
+      setIsIOS(ios);
+      setIsMac(isMacDevice || mac);
+
+      const standalone = (window.navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches;
+      setIsStandalone(standalone);
+    };
+
+    checkPlatform();
+  }, []);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -24,18 +45,29 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
   }, []);
 
   const handleInstallClick = useCallback(async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null);
-      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-        try {
-          navigator.vibrate([10, 30, 10]);
-        } catch (e) {}
+    if (deferredPrompt) {
+      trackEvent('pwa_install_click', { method: 'beforeinstallprompt' });
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      trackEvent('pwa_install_result', { outcome });
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          try {
+            navigator.vibrate([10, 30, 10]);
+          } catch (e) {}
+        }
       }
+    } else if (isIOS || isMac) {
+      trackEvent('pwa_install_click', { method: isIOS ? 'ios_manual' : 'mac_manual' });
+      // For iOS and macOS where beforeinstallprompt isn't supported, 
+      // show an alert with manual instructions
+      const message = isIOS 
+        ? "To install on iOS: tap the Share button (square with arrow) and then 'Add to Home Screen' ➕"
+        : "To install on macOS: in Safari, go to File > Add to Dock... or use the Share menu ➕";
+      alert(message);
     }
-  }, [deferredPrompt]);
+  }, [deferredPrompt, isIOS, isMac]);
 
   useEffect(() => {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -95,11 +127,11 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = React.memo(({ onShowA
         </div>
       </div>
       <div className="flex items-center gap-1.5 text-[#54656f] dark:text-[#aebac1]">
-        {deferredPrompt && (
+        {(deferredPrompt || ((isIOS || isMac) && !isStandalone)) && (
           <button 
             onClick={handleInstallClick}
             className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors text-teal-600 dark:text-teal-500"
-            title="Install App"
+            title={isIOS || isMac ? "How to Install App" : "Install App"}
           >
             <DownloadCloud size={20} />
           </button>
