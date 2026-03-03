@@ -13,7 +13,7 @@ interface MessageListProps {
 
 const DateHeader: React.FC<{ label: string; id: string }> = React.memo(({ label, id }) => (
   <div id={id} className="flex justify-center my-4 sticky top-2 z-10 pointer-events-none">
-    <div className="bg-wa-other-bubble/90 backdrop-blur-sm text-wa-text-secondary text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm uppercase pointer-events-auto">
+    <div className="bg-wa-other-bubble/90 backdrop-blur-sm text-wa-text-secondary text-xs font-semibold p-1 rounded-lg shadow-sm pointer-events-auto">
       {label}
     </div>
   </div>

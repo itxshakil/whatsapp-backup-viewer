@@ -26,14 +26,14 @@ export const useGroupedMessages = (messages: Message[]) => {
       const isFirstOfDate = !prevDate || !currentDate.isSame(prevDate);
 
       if (isFirstOfDate) {
-        let dateLabel = currentDate.format('MMMM D, YYYY');
+        let dateLabel = currentDate.format('D MMMM YYYY');
         const today = dayjs().startOf('day');
         const yesterday = dayjs().subtract(1, 'day').startOf('day');
 
         if (currentDate.isSame(today)) {
-          dateLabel = 'TODAY';
+          dateLabel = 'Today';
         } else if (currentDate.isSame(yesterday)) {
-          dateLabel = 'YESTERDAY';
+          dateLabel = 'Yesterday';
         }
         
         result.push({

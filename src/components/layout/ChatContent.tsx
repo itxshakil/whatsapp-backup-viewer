@@ -159,7 +159,7 @@ export const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
   }
 
   return (
-    <div className="flex flex-col h-full animate-fade-in relative overflow-hidden">
+    <div className="flex flex-col h-full animate-fade-in relative overflow-hidden mb-2">
       <ChatHeader 
         metadata={metadata}
         showAnalytics={showAnalytics}

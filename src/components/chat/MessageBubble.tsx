@@ -11,8 +11,8 @@ interface MessageBubbleProps {
 }
 
 const SystemMessage: React.FC<{ content: string; highlightText: (text: string) => React.ReactNode }> = React.memo(({ content, highlightText }) => (
-  <div className="flex justify-center my-3 px-4">
-    <div className="bg-wa-search-bg dark:bg-wa-incoming-chat-bg text-wa-text-secondary text-[12.5px] px-3 py-1.5 rounded-lg shadow-sm border border-transparent dark:border-wa-divider uppercase tracking-tight font-normal text-center max-w-[85%]">
+  <div className="flex justify-center my-1.5 px-2">
+    <div className="bg-yellow-200 dark:bg-wa-active-chat-bg/50 text-wa-active-chat-bg dark:text-yellow-400 text-xs px-3 py-1.5 rounded-lg shadow-sm border border-transparent dark:border-wa-divider text-center max-w-full">
       {highlightText(content)}
     </div>
   </div>
