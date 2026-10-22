@@ -8,6 +8,7 @@ import { trackEvent } from '@/utils/analytics';
 import dayjs from 'dayjs';
 import { VirtuosoHandle } from 'react-virtuoso';
 import { useChatScroll } from '@/hooks/useChatScroll';
+import { useIncomingFiles } from '@/hooks/useIncomingFiles';
 import { exportChatAsJSON } from '@/utils/exportHelpers';
 import { ChatHeader } from './ChatHeader';
 import { ScrollButtons } from '../ui/ScrollButtons';
@@ -24,6 +25,8 @@ export const ChatContent = ({ onShowAbout }: { onShowAbout: () => void }) => {
     setHighlightedMessageId, 
     highlightedMessageId 
   } = useChatStore();
+
+  useIncomingFiles();
 
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showMediaGallery, setShowMediaGallery] = useState(false);

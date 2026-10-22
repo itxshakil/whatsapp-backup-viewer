@@ -210,7 +210,33 @@ export default defineConfig({
             url: "/?action=recent",
             icons: [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
           }
-        ]
+        ],
+        // WhatsApp's "Export chat" hands the file to the share sheet; src/sw.ts receives it.
+        share_target: {
+          action: '/share',
+          method: 'POST',
+          enctype: 'multipart/form-data',
+          params: {
+            files: [
+              {
+                name: 'chat',
+                accept: ['application/zip', 'application/x-zip-compressed', 'text/plain', '.zip', '.txt']
+              }
+            ]
+          }
+        },
+        file_handlers: [
+          {
+            action: '/',
+            accept: {
+              'application/zip': ['.zip'],
+              'text/plain': ['.txt']
+            }
+          }
+        ],
+        launch_handler: {
+          client_mode: 'focus-existing'
+        }
       }
     })
   ],

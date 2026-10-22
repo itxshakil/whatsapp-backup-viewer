@@ -60,6 +60,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           });
         }
         await refreshSavedChats();
+        // Without this the browser may evict saved chats under storage pressure.
+        navigator.storage?.persist?.().catch(() => {});
       } catch (err) {
         console.error('Failed to auto-save chat:', err);
       }
