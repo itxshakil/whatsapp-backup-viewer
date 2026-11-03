@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://whatsapp-backup-viewer.shakiltech.com/sitemap.xml
